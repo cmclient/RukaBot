@@ -22,14 +22,14 @@ public class BanCommand extends Command {
         if (args.length == 0) {
             channel.sendMessage(new RukaEmbed()
                     .create(false)
-                    .setDescription(this.getUsage("<other user mention> [reason]")));
+                    .setDescription(this.getUsage("<user mention> [reason]")));
             return;
         }
         List<User> mentions = event.getMessage().getMentionedUsers();
         if (mentions.isEmpty()) {
             channel.sendMessage(new RukaEmbed()
                     .create(false)
-                    .setDescription(this.getUsage("<other user mention> [reason]")));
+                    .setDescription(this.getUsage("<user mention> [reason]")));
             return;
         }
         User other = mentions.get(0);
