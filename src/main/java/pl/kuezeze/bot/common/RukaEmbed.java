@@ -8,7 +8,7 @@ public class RukaEmbed {
 
     public EmbedBuilder create() {
         EmbedBuilder builder = new EmbedBuilder();
-        builder.setFooter("RukaBot | v0.1-snapshot");
+        builder.setFooter("RukaBot | v1.0-SNAPSHOT");
         builder.setTimestampToNow();
         return builder;
     }

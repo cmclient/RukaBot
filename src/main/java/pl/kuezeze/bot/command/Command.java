@@ -63,7 +63,7 @@ public abstract class Command {
                 event.getChannel().sendMessage(
                         new RukaEmbed()
                                 .create(false)
-                                .setTitle(":interrobang: This command can be used only by server owner. (" + this.permission.name() + ")")
+                                .setTitle(":interrobang: This command can be used only by server owner")
                 );
                 return;
             }

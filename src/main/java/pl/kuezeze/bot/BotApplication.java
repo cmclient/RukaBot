@@ -9,8 +9,10 @@ import org.javacord.api.entity.activity.ActivityType;
 import org.javacord.api.entity.permission.PermissionType;
 import org.javacord.api.entity.permission.Permissions;
 import pl.kuezeze.bot.config.Config;
+import pl.kuezeze.bot.database.Database;
 import pl.kuezeze.bot.listener.CommandListener;
 import pl.kuezeze.bot.manager.CommandManager;
+import pl.kuezeze.bot.manager.ServerDataManager;
 
 public class BotApplication {
 
@@ -18,7 +20,9 @@ public class BotApplication {
 
     private final Logger logger;
     private Config config;
+    private Database database;
     private CommandManager commandManager;
+    private ServerDataManager serverDataManager;
     private DiscordApi api;
 
     public BotApplication() {
@@ -32,6 +36,13 @@ public class BotApplication {
         this.logger.info("Loading configuration...");
         (this.config = new Config()).load(this);
         BasicConfigurator.configure();
+        this.logger.info("Loading database...");
+        if ((this.database = new Database()).connect(this)) {
+            this.logger.info("Writing tables...");
+            this.database.update("CREATE TABLE IF NOT EXISTS `servers` (`id` INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,`serverId` int NOT NULL);");
+            this.logger.info("Loading servers data...");
+            (this.serverDataManager = new ServerDataManager()).load(this);
+        }
         this.logger.info("Token: " + this.censor(this.config.getToken()));
         this.logger.info("Loading commands...");
         (this.commandManager = new CommandManager()).load(this);
@@ -59,6 +70,10 @@ public class BotApplication {
 
     public Config getConfig() {
         return config;
+    }
+
+    public Database getDatabase() {
+        return database;
     }
 
     public CommandManager getCommandManager() {

@@ -70,3 +70,4 @@ hs_err_pid*
 
 # Project exclude paths
 /target/
+/rukabot.db
