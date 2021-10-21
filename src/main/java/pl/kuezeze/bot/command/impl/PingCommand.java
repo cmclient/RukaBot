@@ -7,7 +7,7 @@ import org.javacord.api.event.message.MessageCreateEvent;
 import pl.kuezeze.bot.command.Command;
 import pl.kuezeze.bot.common.RukaEmbed;
 
-import java.time.temporal.ChronoUnit;
+import java.util.concurrent.TimeUnit;
 
 public class PingCommand extends Command {
 
@@ -17,6 +17,8 @@ public class PingCommand extends Command {
 
     @Override
     protected void execute(MessageCreateEvent event, User user, TextChannel channel, String[] args) {
-        EmbedBuilder embed = new RukaEmbed().create(true).setTitle(":watch: Response time: " + this.bot.getApi().getLatestGatewayLatency().get(ChronoUnit.MILLIS));
+        long ms = TimeUnit.MILLISECONDS.convert(this.bot.getApi().getLatestGatewayLatency().getNano(), TimeUnit.NANOSECONDS);
+        EmbedBuilder embed = new RukaEmbed().create(true).setTitle(":watch: Response time: " + ms + "ms");
+        channel.sendMessage(embed);
     }
 }

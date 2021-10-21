@@ -46,7 +46,7 @@ public class BotApplication {
     }
 
     private String censor(String s) {
-        return s.substring(0, s.length() / 2) + s.substring(s.length() / 2).replaceAll("\\.", "*");
+        return s.substring(0, s.length() / 2) + s.substring(s.length() / 2).replaceAll(".", "*");
     }
 
     public static BotApplication getInstance() {
