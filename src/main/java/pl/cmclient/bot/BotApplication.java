@@ -14,6 +14,8 @@ import pl.cmclient.bot.listener.CommandListener;
 import pl.cmclient.bot.manager.CommandManager;
 import pl.cmclient.bot.manager.ServerDataManager;
 
+import java.util.concurrent.TimeUnit;
+
 public class BotApplication {
 
     private static BotApplication instance;
@@ -33,6 +35,7 @@ public class BotApplication {
     }
 
     private void start() {
+        this.logger.info(this.getAsciiArtLogo());
         this.logger.info("Loading configuration...");
         (this.config = new Config()).load(this);
         BasicConfigurator.configure();
@@ -54,8 +57,37 @@ public class BotApplication {
         this.api.addListener(new CommandListener(this));
         this.logger.info("Setting activity...");
         this.api.updateActivity(ActivityType.WATCHING, this.getConfig().getPrefix() + "help");
+        this.logger.info("Adding shutdown hook...");
+        this.addShutdownHook();
         this.logger.info(this.config.getBotName() + " | v1.0-SNAPSHOT has been loaded successfully.");
         this.logger.info("Invite: " + this.api.createBotInvite(Permissions.fromBitmask(PermissionType.ADMINISTRATOR.getValue())));
+    }
+
+    private String getAsciiArtLogo() {
+        return "\n" +
+                ",------.         ,--.           ,-----.           ,--.   \n" +
+                "|  .--. ',--.,--.|  |,-. ,--,--.|  |) /_  ,---. ,-'  '-. \n" +
+                "|  '--'.'|  ||  ||     /' ,-.  ||  .-.  \\| .-. |'-.  .-' \n" +
+                "|  |\\  \\ '  ''  '|  \\  \\\\ '-'  ||  '--' /' '-' '  |  |   \n" +
+                "`--' '--' `----' `--'`--'`--`--'`------'  `---'   `--'   ";
+    }
+
+    private void addShutdownHook() {
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+            this.logger.info("Waiting for database tasks for complete...");
+            try {
+                this.database.executor.shutdown();
+                if (this.database.executor.awaitTermination(2, TimeUnit.SECONDS)) {
+                    this.logger.info("Database tasks completed successfully...");
+                } else {
+                    this.logger.warn("Can't complete some database tasks!");
+                }
+                this.database.disconnect();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            this.logger.info("Goodbye!");
+        }));
     }
 
     private String censor(String s) {

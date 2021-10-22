@@ -20,13 +20,18 @@ public class Database {
             String sqliteDatabaseName = bot.getConfig().getSqliteDatabaseName();
             bot.getLogger().info("Database: sqLite (" + sqliteDatabaseName + ")");
             Class.forName("org.sqlite.JDBC");
-            connection = DriverManager.getConnection("jdbc:sqlite:" + sqliteDatabaseName + ".db");
+            connection = DriverManager.getConnection("jdbc:sqlite:" + sqliteDatabaseName);
             this.connected = true;
             return true;
         } catch (SQLException | ClassNotFoundException ex) {
             bot.getLogger().error("Unable to connect to database", ex);
+            this.connected = false;
             return false;
         }
+    }
+
+    public void disconnect() throws SQLException {
+        this.connection.close();
     }
 
     public void update(String update) {
