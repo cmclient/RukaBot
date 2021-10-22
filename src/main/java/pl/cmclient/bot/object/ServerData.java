@@ -15,7 +15,7 @@ public class ServerData {
     private final long serverId;
     private final Database database;
     private boolean inviteBans;
-    private Map<User, PermissionType> userPermissions;
+    private final Map<User, PermissionType> userPermissions;
 
     public ServerData(long serverId) {
         this.serverId = serverId;
@@ -27,6 +27,7 @@ public class ServerData {
     public ServerData(ResultSet rs) throws SQLException {
         this.serverId = rs.getLong("serverId");
         this.inviteBans = rs.getBoolean("inviteBans");
+        this.userPermissions = new ConcurrentHashMap<>();
         this.database = BotApplication.getInstance().getDatabase();
     }
 
@@ -43,6 +44,10 @@ public class ServerData {
         this.database.update("UPDATE `servers` SET " +
                 "`inviteBans`='" + (this.inviteBans ? 1 : 0) + "' WHERE `serverId` = '" + this.serverId + "'");
         this.database.update("UPDATE servers SET 'inviteBans'='" + (inviteBans ? 1 : 0) + "' WHERE 'serverId' = " + this.serverId);
+    }
+
+    public Map<User, PermissionType> getUserPermissions() {
+        return userPermissions;
     }
 
     private void insert() {

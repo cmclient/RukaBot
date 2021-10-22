@@ -4,6 +4,8 @@ import java.util.Collection;
 
 public class StringHelper {
 
+    private StringHelper() {}
+
     public static String join(Collection<String> collection, String separator) {
         StringBuilder builder = new StringBuilder();
         for (String s : collection) {

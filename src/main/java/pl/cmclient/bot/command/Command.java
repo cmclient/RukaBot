@@ -63,7 +63,7 @@ public abstract class Command {
         return "Usage: " + this.bot.getConfig().getPrefix() + this.name + " " + args;
     }
 
-    public void run(MessageCreateEvent event, String[] args) {
+    public void run(MessageCreateEvent event, String... args) {
         if (this.onlyOwner) {
             if (event.getServer().get().getOwner().get() != event.getMessageAuthor().asUser().get()) {
                 event.getChannel().sendMessage(
@@ -86,5 +86,5 @@ public abstract class Command {
         this.execute(event, event.getMessageAuthor().asUser().get(), event.getChannel().asTextChannel().get(), args);
     }
 
-    protected abstract void execute(MessageCreateEvent event, User user, TextChannel channel, String[] args);
+    protected abstract void execute(MessageCreateEvent event, User user, TextChannel channel, String... args);
 }

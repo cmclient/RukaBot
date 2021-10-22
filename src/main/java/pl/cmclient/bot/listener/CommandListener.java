@@ -6,6 +6,7 @@ import org.javacord.api.listener.message.MessageCreateListener;
 import pl.cmclient.bot.BotApplication;
 
 import java.util.Arrays;
+import java.util.Locale;
 
 public class CommandListener implements MessageCreateListener {
 
@@ -25,7 +26,7 @@ public class CommandListener implements MessageCreateListener {
         String msg = event.getMessage().getContent();
 
         event.getMessageAuthor().asUser().ifPresent(user -> event.getServer().ifPresent(server -> {
-            if ((msg.toLowerCase().contains("discord.gg/") || msg.toLowerCase().contains("discord.com/invite/"))
+            if ((msg.toLowerCase(Locale.ROOT).contains("discord.gg/") || msg.toLowerCase(Locale.ROOT).contains("discord.com/invite/"))
                     && !server.hasAnyPermission(user, PermissionType.MANAGE_MESSAGES, PermissionType.ADMINISTRATOR)
                     && this.bot.getServerDataManager().getOrCreate(server.getId()).isInviteBans()) {
                 server.banUser(user, 7, "[" + this.bot.getConfig().getBotName() +"] Automatic ban for " + user.getMentionTag() + " (Sending server invites)");
