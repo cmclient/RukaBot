@@ -3,11 +3,14 @@ package pl.kuezeze.bot.manager;
 import org.reflections.Reflections;
 import pl.kuezeze.bot.BotApplication;
 import pl.kuezeze.bot.command.Command;
+import pl.kuezeze.bot.command.CommandType;
+import pl.kuezeze.bot.helper.StringHelper;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 public class CommandManager {
 
@@ -31,6 +34,19 @@ public class CommandManager {
 
     public List<Command> getCommands() {
         return commands;
+    }
+
+    public String getCommandsList() {
+        StringBuilder builder = new StringBuilder("\n");
+        for (CommandType type : CommandType.values()) {
+            builder.append(type.getName()).append(":\n");
+            List<String> list = this.commands.stream().filter(command -> command.getCommandType() == type).map(command -> "`" + command.getName() + "`").collect(Collectors.toList());
+            if (list.isEmpty()) {
+                list.add("`No commands`");
+            }
+            builder.append(StringHelper.join(list, ", ")).append("\n\n");
+        }
+        return builder.toString();
     }
 
     public void add(Command command) {

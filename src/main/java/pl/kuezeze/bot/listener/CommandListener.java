@@ -25,9 +25,8 @@ public class CommandListener implements MessageCreateListener {
 
         if (msg.startsWith(prefix)) {
             String[] split = msg.split(" ");
-            String[] args = Arrays.copyOfRange(split, 1, split.length);
             String commandName = split[0].substring(this.bot.getConfig().getPrefix().length());
-            this.bot.getCommandManager().get(commandName).ifPresent(command -> command.run(event, args));
+            this.bot.getCommandManager().get(commandName).ifPresent(command -> command.run(event, Arrays.copyOfRange(split, 1, split.length)));
         }
     }
 }

@@ -39,7 +39,7 @@ public class BotApplication {
         this.logger.info("Loading database...");
         if ((this.database = new Database()).connect(this)) {
             this.logger.info("Writing tables...");
-            this.database.update("CREATE TABLE IF NOT EXISTS `servers` (`id` INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,`serverId` int NOT NULL);");
+            this.database.update("CREATE TABLE IF NOT EXISTS `servers` (`id` INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, `serverId` int NOT NULL);");
             this.logger.info("Loading servers data...");
             (this.serverDataManager = new ServerDataManager()).load(this);
         }
@@ -78,6 +78,10 @@ public class BotApplication {
 
     public CommandManager getCommandManager() {
         return commandManager;
+    }
+
+    public ServerDataManager getServerDataManager() {
+        return serverDataManager;
     }
 
     public DiscordApi getApi() {

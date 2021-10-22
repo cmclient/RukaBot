@@ -15,14 +15,16 @@ public abstract class Command {
 
     private final String name;
     private final String description;
+    private final CommandType commandType;
     private final List<String> aliases;
     private final boolean onlyOwner;
     private final PermissionType permission;
     protected BotApplication bot;
 
-    public Command(String name, String description, String[] aliases, boolean onlyOwner, PermissionType permission) {
+    public Command(String name, String description, CommandType commandType, String[] aliases, boolean onlyOwner, PermissionType permission) {
         this.name = name;
         this.description = description;
+        this.commandType = commandType;
         this.aliases = Collections.unmodifiableList(Arrays.asList(aliases));
         this.onlyOwner = onlyOwner;
         this.permission = permission;
@@ -35,6 +37,10 @@ public abstract class Command {
 
     public String getDescription() {
         return description;
+    }
+
+    public CommandType getCommandType() {
+        return commandType;
     }
 
     public List<String> getAliases() {

@@ -8,18 +8,19 @@ import pl.kuezeze.bot.command.Command;
 import pl.kuezeze.bot.command.CommandType;
 import pl.kuezeze.bot.common.RukaEmbed;
 
-import java.util.concurrent.TimeUnit;
+public class AvatarCommand extends Command {
 
-public class PingCommand extends Command {
-
-    public PingCommand() {
-        super("ping", "Response time from Discord Gateway", CommandType.GENERAL, new String[0], false, null);
+    public AvatarCommand() {
+        super("avatar", "Sends your avatar", CommandType.GENERAL, new String[0], false, null);
     }
 
     @Override
     protected void execute(MessageCreateEvent event, User user, TextChannel channel, String[] args) {
-        long ms = TimeUnit.MILLISECONDS.convert(this.bot.getApi().getLatestGatewayLatency().getNano(), TimeUnit.NANOSECONDS);
-        EmbedBuilder embed = new RukaEmbed().create(true).setTitle(":watch: Response time: " + ms + "ms");
+        EmbedBuilder embed = new RukaEmbed().create(true);
+        embed.setDescription("Bot prefix: **" + this.bot.getConfig().getPrefix() + "**\nAvailable commands:");
+        this.bot.getCommandManager().getCommands().forEach(command -> {
+            embed.addField(command.getName(), command.getDescription());
+        });
         channel.sendMessage(embed);
     }
 }
