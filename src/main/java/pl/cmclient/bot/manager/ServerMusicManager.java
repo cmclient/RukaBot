@@ -92,6 +92,11 @@ public class ServerMusicManager {
         channel.sendMessage(new RukaEmbed().create(true).setTitle("Volume has been set to: **" + volume + "**%"));
     }
 
+    public AudioTrack getPlayingTrack(Server server) {
+        ServerAudioManager audioManager = this.getAudioManager(server);
+        return audioManager.player.getPlayingTrack();
+    }
+
     private synchronized ServerAudioManager getAudioManager(Server server) {
         ServerAudioManager audioManager = this.serverAudioManagers.get(server.getId());
         if (audioManager == null) {
