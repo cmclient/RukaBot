@@ -7,7 +7,8 @@ public enum CommandType {
     ECONOMY(3, "\uD83D\uDCB0 Economy"),
     FUN(4, "\uD83D\uDE42 Fun"),
     GENERAL(5, "\uD83E\uDE84 General"),
-    OWNER(6, "\uD83D\uDC51 Owner");
+    MUSIC(6,"\uD83C\uDFB5 Music"),
+    OWNER(7, "\uD83D\uDC51 Owner");
 
     private final int id;
     private final String name;

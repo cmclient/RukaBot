@@ -21,12 +21,11 @@ public class CommandManager {
     }
 
     public void load(BotApplication bot) {
-        String packageName = bot.getClass().getName().replace(bot.getClass().getSimpleName(), "command.impl");
-        new Reflections(packageName).getSubTypesOf(Command.class).forEach(command -> {
+        new Reflections(bot.getClass().getName().replace(bot.getClass().getSimpleName(), "command.impl")).getSubTypesOf(Command.class).forEach(command -> {
             try {
-                command.newInstance();
-            } catch (InstantiationException | IllegalAccessException e) {
-                e.printStackTrace();
+                command.getDeclaredConstructor().newInstance();
+            } catch (Exception ex) {
+                bot.getLogger().error("Can't load command: " + command.getName(), ex);
             }
         });
         bot.getLogger().info("Loaded " + commands.size() + " commands.");

@@ -1,6 +1,6 @@
 package pl.cmclient.bot.command.impl;
 
-import org.javacord.api.entity.channel.TextChannel;
+import org.javacord.api.entity.channel.ServerTextChannel;
 import org.javacord.api.entity.permission.PermissionType;
 import org.javacord.api.entity.user.User;
 import org.javacord.api.event.message.MessageCreateEvent;
@@ -19,7 +19,7 @@ public class KickCommand extends Command {
     }
 
     @Override
-    protected void execute(MessageCreateEvent event, User user, TextChannel channel, String[] args) {
+    protected void execute(MessageCreateEvent event, User user, ServerTextChannel channel, String[] args) {
         if (args.length == 0) {
             channel.sendMessage(new RukaEmbed()
                     .create(false)

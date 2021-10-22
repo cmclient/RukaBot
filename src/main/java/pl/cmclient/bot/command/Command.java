@@ -1,6 +1,6 @@
 package pl.cmclient.bot.command;
 
-import org.javacord.api.entity.channel.TextChannel;
+import org.javacord.api.entity.channel.ServerTextChannel;
 import org.javacord.api.entity.permission.PermissionType;
 import org.javacord.api.entity.user.User;
 import org.javacord.api.event.message.MessageCreateEvent;
@@ -79,9 +79,9 @@ public abstract class Command {
                 return;
             }
 
-            event.getChannel().asTextChannel().ifPresent(channel -> this.execute(event, user, channel, args));
+            event.getChannel().asServerTextChannel().ifPresent(channel -> this.execute(event, user, channel, args));
         }));
     }
 
-    protected abstract void execute(MessageCreateEvent event, User user, TextChannel channel, String... args);
+    protected abstract void execute(MessageCreateEvent event, User user, ServerTextChannel channel, String... args);
 }

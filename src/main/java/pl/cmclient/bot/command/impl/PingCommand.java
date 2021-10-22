@@ -1,7 +1,6 @@
 package pl.cmclient.bot.command.impl;
 
-import org.javacord.api.entity.channel.TextChannel;
-import org.javacord.api.entity.message.embed.EmbedBuilder;
+import org.javacord.api.entity.channel.ServerTextChannel;
 import org.javacord.api.entity.user.User;
 import org.javacord.api.event.message.MessageCreateEvent;
 import pl.cmclient.bot.command.Command;
@@ -17,9 +16,8 @@ public class PingCommand extends Command {
     }
 
     @Override
-    protected void execute(MessageCreateEvent event, User user, TextChannel channel, String[] args) {
-        EmbedBuilder embed = new RukaEmbed().create(true).setTitle(":watch: Response time: " +
-                TimeUnit.MILLISECONDS.convert(this.bot.getApi().getLatestGatewayLatency().getNano(), TimeUnit.NANOSECONDS)+ "ms");
-        channel.sendMessage(embed);
+    protected void execute(MessageCreateEvent event, User user, ServerTextChannel channel, String[] args) {
+        channel.sendMessage(new RukaEmbed().create(true).setTitle(":watch: Response time: " +
+                TimeUnit.MILLISECONDS.convert(this.bot.getApi().getLatestGatewayLatency().getNano(), TimeUnit.NANOSECONDS)+ "ms"));
     }
 }

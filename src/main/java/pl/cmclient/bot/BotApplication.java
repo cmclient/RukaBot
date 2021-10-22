@@ -1,6 +1,5 @@
 package pl.cmclient.bot;
 
-import org.apache.log4j.BasicConfigurator;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.javacord.api.DiscordApi;
@@ -13,6 +12,8 @@ import pl.cmclient.bot.database.Database;
 import pl.cmclient.bot.listener.CommandListener;
 import pl.cmclient.bot.manager.CommandManager;
 import pl.cmclient.bot.manager.ServerDataManager;
+import pl.cmclient.bot.manager.ServerMusicManager;
+import pl.cmclient.bot.manager.YoutubeApiManager;
 
 import java.util.concurrent.TimeUnit;
 
@@ -25,6 +26,8 @@ public class BotApplication {
     private Database database;
     private CommandManager commandManager;
     private ServerDataManager serverDataManager;
+    private ServerMusicManager serverMusicManager;
+    private YoutubeApiManager youtubeApiManager;
     private DiscordApi api;
 
     public BotApplication() {
@@ -38,7 +41,6 @@ public class BotApplication {
         this.logger.info(this.getAsciiArtLogo());
         this.logger.info("Loading configuration...");
         (this.config = new Config()).load(this);
-        BasicConfigurator.configure();
         this.logger.info("Loading database...");
         if ((this.database = new Database()).connect(this)) {
             this.logger.info("Writing tables...");
@@ -48,6 +50,9 @@ public class BotApplication {
         } else {
             this.logger.warn("Unable to connect to the database.");
         }
+        this.logger.info("Loading audio player...");
+        this.serverMusicManager = new ServerMusicManager();
+        this.youtubeApiManager = new YoutubeApiManager(this);
         this.logger.info("Token: " + this.censor(this.config.getToken()));
         this.logger.info("Loading commands...");
         (this.commandManager = new CommandManager()).load(this);
@@ -116,6 +121,14 @@ public class BotApplication {
 
     public ServerDataManager getServerDataManager() {
         return serverDataManager;
+    }
+
+    public ServerMusicManager getServerMusicManager() {
+        return serverMusicManager;
+    }
+
+    public YoutubeApiManager getYoutubeApiManager() {
+        return youtubeApiManager;
     }
 
     public DiscordApi getApi() {

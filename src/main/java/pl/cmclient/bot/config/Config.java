@@ -11,6 +11,7 @@ public class Config {
     private String sqliteDatabaseName;
     private String token;
     private String prefix;
+    private String youtubeApiKey;
 
     public void load(BotApplication bot) {
         File file = new File("rukabot.cfg");
@@ -25,12 +26,16 @@ public class Config {
             this.sqliteDatabaseName = properties.getProperty("sqliteDatabaseName");
             this.token = envToken == null ? properties.getProperty("token") : envToken;
             this.prefix = properties.getProperty("prefix");
+            this.youtubeApiKey = properties.getProperty("youtubeApiKey");
         } catch (IOException e) {
             e.printStackTrace();
         }
         if (this.token.equals("default")) {
             bot.getLogger().warn("Edit configuration (" + file.getAbsolutePath() + ")");
             System.exit(0);
+        }
+        if (this.youtubeApiKey.equals("default")) {
+            bot.getLogger().warn("YouTube api key not defined! Searching music by keywords will not be available.");
         }
     }
 
@@ -50,11 +55,16 @@ public class Config {
         return prefix;
     }
 
+    public String getYoutubeApiKey() {
+        return youtubeApiKey;
+    }
+
     private void saveDefault(Properties properties, File file) {
         properties.setProperty("botName", "RukaBot");
         properties.setProperty("sqliteDatabaseName", "rukabot.db");
         properties.setProperty("token", "default");
         properties.setProperty("prefix", "r!");
+        properties.setProperty("youtubeApiKey", "default");
         try (OutputStream out = new FileOutputStream(file)) {
             properties.store(out, null);
         } catch (IOException e) {
