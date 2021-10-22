@@ -9,7 +9,6 @@ import pl.cmclient.bot.helper.StringHelper;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 public class CommandManager {
@@ -21,8 +20,8 @@ public class CommandManager {
     }
 
     public void load(BotApplication bot) {
-        Set<Class<? extends Command>> commands = new Reflections("pl.cmclient.bot.command.impl").getSubTypesOf(Command.class);
-        commands.forEach(command -> {
+        String packageName = bot.getClass().getName().replace(bot.getClass().getSimpleName(), "command.impl");
+        new Reflections(packageName).getSubTypesOf(Command.class).forEach(command -> {
             try {
                 command.newInstance();
             } catch (InstantiationException | IllegalAccessException e) {

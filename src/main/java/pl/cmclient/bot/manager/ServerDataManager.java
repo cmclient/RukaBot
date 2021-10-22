@@ -44,6 +44,6 @@ public class ServerDataManager {
     }
 
     public ServerData getOrCreate(long id) {
-        return this.servers.stream().filter(serverData -> serverData.getServerId() == id).findAny().orElse(this.add(id));
+        return this.servers.stream().filter(serverData -> serverData.getServerId() == id).findAny().orElseGet(() -> this.add(id));
     }
 }
