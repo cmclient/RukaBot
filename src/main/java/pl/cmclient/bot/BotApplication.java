@@ -87,7 +87,7 @@ public class BotApplication {
                 e.printStackTrace();
             }
             this.logger.info("Goodbye!");
-        }));
+        }, "Shutdown Hook"));
     }
 
     private String censor(String s) {
