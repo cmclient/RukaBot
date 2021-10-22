@@ -65,13 +65,11 @@ public abstract class Command {
 
     public void run(MessageCreateEvent event, String... args) {
         event.getServer().ifPresent(server -> event.getMessageAuthor().asUser().ifPresent(user -> {
-            if (this.onlyOwner) {
-                if (user.getId() != server.getOwnerId()) {
-                    event.getChannel().sendMessage(new RukaEmbed()
-                            .create(false)
-                            .setTitle(":interrobang: This command can be used only by server owner"));
-                    return;
-                }
+            if (this.onlyOwner && user.getId() != server.getOwnerId()) {
+                event.getChannel().sendMessage(new RukaEmbed()
+                        .create(false)
+                        .setTitle(":interrobang: This command can be used only by server owner"));
+                return;
             }
 
             if (this.permission != null && !event.getServer().get().hasAnyPermission(user, PermissionType.ADMINISTRATOR, this.permission)) {
