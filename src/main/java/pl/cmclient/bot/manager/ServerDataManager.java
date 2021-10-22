@@ -25,8 +25,8 @@ public class ServerDataManager {
             } catch (SQLException e) {
                 e.printStackTrace();
             }
+            bot.getLogger().info("Loaded " + servers.size() + " servers data");
         });
-        bot.getLogger().info("Loaded " + servers.size() + " servers data");
     }
 
     public List<ServerData> getServers() {

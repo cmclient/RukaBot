@@ -1,5 +1,6 @@
 package pl.cmclient.bot.listener;
 
+import org.javacord.api.entity.permission.PermissionType;
 import org.javacord.api.event.message.MessageCreateEvent;
 import org.javacord.api.listener.message.MessageCreateListener;
 import pl.cmclient.bot.BotApplication;
@@ -22,6 +23,14 @@ public class CommandListener implements MessageCreateListener {
 
         String prefix = this.bot.getConfig().getPrefix();
         String msg = event.getMessage().getContent();
+
+        event.getMessageAuthor().asUser().ifPresent(user -> event.getServer().ifPresent(server -> {
+            if ((msg.toLowerCase().contains("discord.gg/") || msg.toLowerCase().contains("discord.com/invite/"))
+                    && !server.hasAnyPermission(user, PermissionType.MANAGE_MESSAGES, PermissionType.ADMINISTRATOR)
+                    && this.bot.getServerDataManager().getOrCreate(server.getId()).isInviteBans()) {
+                server.banUser(user, 7, "[RukaBot] Automatic ban for " + user.getMentionTag() + " (Sending server invites)");
+            }
+        }));
 
         if (msg.startsWith(prefix)) {
             String[] split = msg.split(" ");
