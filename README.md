@@ -1,6 +1,8 @@
 RukaBot is a open source Discord bot coded in Java with JavaCord.
 Feel free to add a star ⭐ to the repository to promote the project.
 
+![CodeQualityScore](https://www.code-inspector.com/project/29488/score/svg) ![CodeQualityGrade](https://www.code-inspector.com/project/29488/status/svg)
+
 ## How to build
 ```sh
 git clone https://github.com/cmclient/RukaBot
