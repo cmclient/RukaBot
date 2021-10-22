@@ -8,6 +8,7 @@ import java.util.Properties;
 public class Config {
 
     private String botName;
+    private String sqliteDatabaseName;
     private String token;
     private String prefix;
 
@@ -21,6 +22,7 @@ public class Config {
             properties.load(reader);
             String envToken = System.getenv("DISCORD_TOKEN");
             this.botName = properties.getProperty("botName");
+            this.sqliteDatabaseName = properties.getProperty("sqliteDatabaseName");
             this.token = envToken == null ? properties.getProperty("token") : envToken;
             this.prefix = properties.getProperty("prefix");
         } catch (IOException e) {
@@ -36,6 +38,10 @@ public class Config {
         return botName;
     }
 
+    public String getSqliteDatabaseName() {
+        return sqliteDatabaseName;
+    }
+
     public String getToken() {
         return token;
     }
@@ -46,6 +52,7 @@ public class Config {
 
     private void saveDefault(Properties properties, File file) {
         properties.setProperty("botName", "RukaBot");
+        properties.setProperty("sqliteDatabaseName", "rukabot.db");
         properties.setProperty("token", "defualt");
         properties.setProperty("prefix", "r!");
         try (OutputStream out = new FileOutputStream(file)) {

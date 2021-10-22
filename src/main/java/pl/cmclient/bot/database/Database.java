@@ -13,12 +13,15 @@ public class Database {
 
     public final ExecutorService executor = Executors.newScheduledThreadPool(10);
     private Connection connection;
+    private boolean connected;
 
     public boolean connect(BotApplication bot) {
         try {
-            bot.getLogger().info("Database: sqLite (rukabot.db)");
+            String sqliteDatabaseName = bot.getConfig().getSqliteDatabaseName();
+            bot.getLogger().info("Database: sqLite (" + sqliteDatabaseName + ")");
             Class.forName("org.sqlite.JDBC");
-            connection = DriverManager.getConnection("jdbc:sqlite:rukabot.db");
+            connection = DriverManager.getConnection("jdbc:sqlite:" + sqliteDatabaseName + ".db");
+            this.connected = true;
             return true;
         } catch (SQLException | ClassNotFoundException ex) {
             bot.getLogger().error("Unable to connect to database", ex);
@@ -27,6 +30,7 @@ public class Database {
     }
 
     public void update(String update) {
+        if (!connected) return;
         executor.submit(() -> {
             try {
                 connection.createStatement().executeUpdate(update);
@@ -37,6 +41,7 @@ public class Database {
     }
 
     public void query(String query, QueryCallback callback) {
+        if (!this.connected) return;
         executor.submit(() -> {
             try (ResultSet rs = connection.createStatement().executeQuery(query)) {
                 callback.receivedResultSet(rs);

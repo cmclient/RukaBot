@@ -42,6 +42,8 @@ public class BotApplication {
             this.database.update("CREATE TABLE IF NOT EXISTS `servers` (`id` INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, `serverId` int NOT NULL, `inviteBans` int NOT NULL);");
             this.logger.info("Loading servers data...");
             (this.serverDataManager = new ServerDataManager()).load(this);
+        } else {
+            this.logger.warn("Unable to connect to the database.");
         }
         this.logger.info("Token: " + this.censor(this.config.getToken()));
         this.logger.info("Loading commands...");
