@@ -64,26 +64,25 @@ public abstract class Command {
     }
 
     public void run(MessageCreateEvent event, String... args) {
-        if (this.onlyOwner) {
-            if (event.getServer().get().getOwner().get() != event.getMessageAuthor().asUser().get()) {
-                event.getChannel().sendMessage(
-                        new RukaEmbed()
-                                .create(false)
-                                .setTitle(":interrobang: This command can be used only by server owner")
-                );
+        event.getServer().ifPresent(server -> event.getMessageAuthor().asUser().ifPresent(user -> {
+            if (this.onlyOwner) {
+                if (user.getId() != server.getOwnerId()) {
+                    event.getChannel().sendMessage(new RukaEmbed()
+                            .create(false)
+                            .setTitle(":interrobang: This command can be used only by server owner"));
+                    return;
+                }
+            }
+
+            if (this.permission != null && !event.getServer().get().hasAnyPermission(user, PermissionType.ADMINISTRATOR, this.permission)) {
+                event.getChannel().sendMessage(new RukaEmbed()
+                        .create(false)
+                        .setTitle(":interrobang: You do not have sufficient privileges to use this command. (" + this.permission.name() + ")"));
                 return;
             }
-        }
-        if (this.permission != null &&
-                !event.getServer().get().hasAnyPermission(event.getMessageAuthor().asUser().get(), PermissionType.ADMINISTRATOR, this.permission)) {
-            event.getChannel().sendMessage(
-                    new RukaEmbed()
-                            .create(false)
-                            .setTitle(":interrobang: You do not have sufficient privileges to use this command. (" + this.permission.name() + ")")
-            );
-            return;
-        }
-        this.execute(event, event.getMessageAuthor().asUser().get(), event.getChannel().asTextChannel().get(), args);
+
+            event.getChannel().asTextChannel().ifPresent(channel -> this.execute(event, user, channel, args));
+        }));
     }
 
     protected abstract void execute(MessageCreateEvent event, User user, TextChannel channel, String... args);
