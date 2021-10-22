@@ -1,4 +1,4 @@
-package pl.kuezeze.bot;
+package pl.cmclient.bot;
 
 import org.apache.log4j.BasicConfigurator;
 import org.apache.logging.log4j.LogManager;
@@ -8,11 +8,11 @@ import org.javacord.api.DiscordApiBuilder;
 import org.javacord.api.entity.activity.ActivityType;
 import org.javacord.api.entity.permission.PermissionType;
 import org.javacord.api.entity.permission.Permissions;
-import pl.kuezeze.bot.config.Config;
-import pl.kuezeze.bot.database.Database;
-import pl.kuezeze.bot.listener.CommandListener;
-import pl.kuezeze.bot.manager.CommandManager;
-import pl.kuezeze.bot.manager.ServerDataManager;
+import pl.cmclient.bot.config.Config;
+import pl.cmclient.bot.database.Database;
+import pl.cmclient.bot.listener.CommandListener;
+import pl.cmclient.bot.manager.CommandManager;
+import pl.cmclient.bot.manager.ServerDataManager;
 
 public class BotApplication {
 

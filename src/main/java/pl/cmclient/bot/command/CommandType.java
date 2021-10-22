@@ -1,4 +1,4 @@
-package pl.kuezeze.bot.command;
+package pl.cmclient.bot.command;
 
 public enum CommandType {
     GLOBAL(0, "\uD83C\uDF10 Global"),

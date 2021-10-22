@@ -1,6 +1,6 @@
-package pl.kuezeze;
+package pl.cmclient;
 
-import pl.kuezeze.bot.BotApplication;
+import pl.cmclient.bot.BotApplication;
 
 public class Main {
 

@@ -1,6 +1,7 @@
-package pl.kuezeze.bot.common;
+package pl.cmclient.bot.common;
 
 import org.javacord.api.entity.message.embed.EmbedBuilder;
+import pl.cmclient.bot.BotApplication;
 
 import java.awt.*;
 
@@ -8,7 +9,7 @@ public class RukaEmbed {
 
     public EmbedBuilder create() {
         EmbedBuilder builder = new EmbedBuilder();
-        builder.setFooter("RukaBot | v1.0-SNAPSHOT");
+        builder.setFooter("RukaBot | v1.0-SNAPSHOT", BotApplication.getInstance().getApi().getYourself().getAvatar());
         builder.setTimestampToNow();
         return builder;
     }

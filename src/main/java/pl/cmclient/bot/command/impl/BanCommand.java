@@ -1,21 +1,21 @@
-package pl.kuezeze.bot.command.impl;
+package pl.cmclient.bot.command.impl;
 
 import org.javacord.api.entity.channel.TextChannel;
 import org.javacord.api.entity.permission.PermissionType;
 import org.javacord.api.entity.user.User;
 import org.javacord.api.event.message.MessageCreateEvent;
-import pl.kuezeze.bot.command.Command;
-import pl.kuezeze.bot.command.CommandType;
-import pl.kuezeze.bot.common.RukaEmbed;
-import pl.kuezeze.bot.helper.StringHelper;
+import pl.cmclient.bot.command.Command;
+import pl.cmclient.bot.command.CommandType;
+import pl.cmclient.bot.common.RukaEmbed;
+import pl.cmclient.bot.helper.StringHelper;
 
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
-public class KickCommand extends Command {
+public class BanCommand extends Command {
 
-    public KickCommand() {
-        super("kick", "Kick user from server", CommandType.MODERATION, new String[0], false, PermissionType.KICK_MEMBERS);
+    public BanCommand() {
+        super("ban", "Bans user from server", CommandType.MODERATION, new String[0], false, PermissionType.BAN_MEMBERS);
     }
 
     @Override
@@ -35,14 +35,14 @@ public class KickCommand extends Command {
         }
         event.getServer().ifPresent(server -> {
             User other = mentions.get(0);
-            if (server.canKickUser(this.bot.getApi().getYourself(), other)) {
+            if (server.canBanUser(this.bot.getApi().getYourself(), other)) {
                 channel.sendMessage(new RukaEmbed()
                         .create(false)
                         .setDescription(":warning: I do not have permission to ban this user."));
                 return;
             }
             String reason = args.length == 1 ? "No reason" : StringHelper.join(args, "", 2, args.length);
-            CompletableFuture<Void> future = server.kickUser(other, reason);
+            CompletableFuture<Void> future = server.banUser(other, 0, reason);
             future.whenComplete((unused, throwable) -> {
                 if (throwable != null) {
                     channel.sendMessage(new RukaEmbed()
@@ -53,7 +53,7 @@ public class KickCommand extends Command {
                 }
                 channel.sendMessage(new RukaEmbed()
                         .create(true)
-                        .setDescription(":white_check_mark: User " + other.getMentionTag() + " has been kicked from this server")
+                        .setDescription(":white_check_mark: User " + other.getMentionTag() + " has been banned from this server")
                         .addField("Reason", reason));
                 future.complete(unused);
             });

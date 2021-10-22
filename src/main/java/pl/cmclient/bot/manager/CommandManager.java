@@ -1,10 +1,10 @@
-package pl.kuezeze.bot.manager;
+package pl.cmclient.bot.manager;
 
 import org.reflections.Reflections;
-import pl.kuezeze.bot.BotApplication;
-import pl.kuezeze.bot.command.Command;
-import pl.kuezeze.bot.command.CommandType;
-import pl.kuezeze.bot.helper.StringHelper;
+import pl.cmclient.bot.BotApplication;
+import pl.cmclient.bot.command.Command;
+import pl.cmclient.bot.command.CommandType;
+import pl.cmclient.bot.helper.StringHelper;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,7 +21,7 @@ public class CommandManager {
     }
 
     public void load(BotApplication bot) {
-        Set<Class<? extends Command>> commands = new Reflections("pl.kuezeze.bot.command.impl").getSubTypesOf(Command.class);
+        Set<Class<? extends Command>> commands = new Reflections("pl.cmclient.bot.command.impl").getSubTypesOf(Command.class);
         commands.forEach(command -> {
             try {
                 command.newInstance();

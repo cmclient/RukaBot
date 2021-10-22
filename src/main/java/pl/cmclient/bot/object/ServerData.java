@@ -1,4 +1,4 @@
-package pl.kuezeze.bot.object;
+package pl.cmclient.bot.object;
 
 import org.javacord.api.entity.permission.PermissionType;
 import org.javacord.api.entity.user.User;

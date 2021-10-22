@@ -1,6 +1,6 @@
-package pl.kuezeze.bot.database;
+package pl.cmclient.bot.database;
 
-import pl.kuezeze.bot.BotApplication;
+import pl.cmclient.bot.BotApplication;
 
 import java.sql.Connection;
 import java.sql.DriverManager;

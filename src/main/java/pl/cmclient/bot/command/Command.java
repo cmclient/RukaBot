@@ -1,11 +1,11 @@
-package pl.kuezeze.bot.command;
+package pl.cmclient.bot.command;
 
 import org.javacord.api.entity.channel.TextChannel;
 import org.javacord.api.entity.permission.PermissionType;
 import org.javacord.api.entity.user.User;
 import org.javacord.api.event.message.MessageCreateEvent;
-import pl.kuezeze.bot.BotApplication;
-import pl.kuezeze.bot.common.RukaEmbed;
+import pl.cmclient.bot.BotApplication;
+import pl.cmclient.bot.common.RukaEmbed;
 
 import java.util.Arrays;
 import java.util.Collections;

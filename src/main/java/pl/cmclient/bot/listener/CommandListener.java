@@ -1,8 +1,8 @@
-package pl.kuezeze.bot.listener;
+package pl.cmclient.bot.listener;
 
 import org.javacord.api.event.message.MessageCreateEvent;
 import org.javacord.api.listener.message.MessageCreateListener;
-import pl.kuezeze.bot.BotApplication;
+import pl.cmclient.bot.BotApplication;
 
 import java.util.Arrays;
 

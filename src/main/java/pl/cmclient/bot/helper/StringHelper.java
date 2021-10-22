@@ -1,4 +1,4 @@
-package pl.kuezeze.bot.helper;
+package pl.cmclient.bot.helper;
 
 import java.util.Collection;
 

@@ -1,6 +1,6 @@
-package pl.kuezeze.bot.config;
+package pl.cmclient.bot.config;
 
-import pl.kuezeze.bot.BotApplication;
+import pl.cmclient.bot.BotApplication;
 
 import java.io.*;
 import java.util.Properties;

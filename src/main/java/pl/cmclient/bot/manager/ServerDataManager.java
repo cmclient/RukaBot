@@ -1,7 +1,7 @@
-package pl.kuezeze.bot.manager;
+package pl.cmclient.bot.manager;
 
-import pl.kuezeze.bot.BotApplication;
-import pl.kuezeze.bot.object.ServerData;
+import pl.cmclient.bot.BotApplication;
+import pl.cmclient.bot.object.ServerData;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
