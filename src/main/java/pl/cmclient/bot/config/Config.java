@@ -53,7 +53,7 @@ public class Config {
     private void saveDefault(Properties properties, File file) {
         properties.setProperty("botName", "RukaBot");
         properties.setProperty("sqliteDatabaseName", "rukabot.db");
-        properties.setProperty("token", "defualt");
+        properties.setProperty("token", "default");
         properties.setProperty("prefix", "r!");
         try (OutputStream out = new FileOutputStream(file)) {
             properties.store(out, null);
