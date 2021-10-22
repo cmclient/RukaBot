@@ -18,8 +18,8 @@ public class PingCommand extends Command {
 
     @Override
     protected void execute(MessageCreateEvent event, User user, TextChannel channel, String[] args) {
-        long ms = TimeUnit.MILLISECONDS.convert(this.bot.getApi().getLatestGatewayLatency().getNano(), TimeUnit.NANOSECONDS);
-        EmbedBuilder embed = new RukaEmbed().create(true).setTitle(":watch: Response time: " + ms + "ms");
+        EmbedBuilder embed = new RukaEmbed().create(true).setTitle(":watch: Response time: " +
+                TimeUnit.MILLISECONDS.convert(this.bot.getApi().getLatestGatewayLatency().getNano(), TimeUnit.NANOSECONDS)+ "ms");
         channel.sendMessage(embed);
     }
 }
