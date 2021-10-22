@@ -2,7 +2,7 @@ package pl.cmclient;
 
 import pl.cmclient.bot.BotApplication;
 
-public class Main {
+public final class Main {
 
     private Main() {}
 

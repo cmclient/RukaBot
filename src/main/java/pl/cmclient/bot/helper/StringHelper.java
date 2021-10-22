@@ -2,7 +2,7 @@ package pl.cmclient.bot.helper;
 
 import java.util.Collection;
 
-public class StringHelper {
+public final class StringHelper {
 
     private StringHelper() {}
 
