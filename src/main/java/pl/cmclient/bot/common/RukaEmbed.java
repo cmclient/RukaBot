@@ -9,7 +9,7 @@ public class RukaEmbed {
 
     public EmbedBuilder create() {
         EmbedBuilder builder = new EmbedBuilder();
-        builder.setFooter("RukaBot | v1.0-SNAPSHOT", BotApplication.getInstance().getApi().getYourself().getAvatar());
+        builder.setFooter(BotApplication.getInstance().getConfig().getBotName() + " | v1.0-SNAPSHOT", BotApplication.getInstance().getApi().getYourself().getAvatar());
         builder.setTimestampToNow();
         return builder;
     }

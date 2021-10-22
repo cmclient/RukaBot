@@ -28,7 +28,7 @@ public class CommandListener implements MessageCreateListener {
             if ((msg.toLowerCase().contains("discord.gg/") || msg.toLowerCase().contains("discord.com/invite/"))
                     && !server.hasAnyPermission(user, PermissionType.MANAGE_MESSAGES, PermissionType.ADMINISTRATOR)
                     && this.bot.getServerDataManager().getOrCreate(server.getId()).isInviteBans()) {
-                server.banUser(user, 7, "[RukaBot] Automatic ban for " + user.getMentionTag() + " (Sending server invites)");
+                server.banUser(user, 7, "[" + this.bot.getConfig().getBotName() +"] Automatic ban for " + user.getMentionTag() + " (Sending server invites)");
             }
         }));
 

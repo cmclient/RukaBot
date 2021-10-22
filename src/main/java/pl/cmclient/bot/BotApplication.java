@@ -52,7 +52,7 @@ public class BotApplication {
         this.api.addListener(new CommandListener(this));
         this.logger.info("Setting activity...");
         this.api.updateActivity(ActivityType.WATCHING, this.getConfig().getPrefix() + "help");
-        this.logger.info("RukaBot | v1.0-SNAPSHOT has been loaded successfully.");
+        this.logger.info(this.config.getBotName() + " | v1.0-SNAPSHOT has been loaded successfully.");
         this.logger.info("Invite: " + this.api.createBotInvite(Permissions.fromBitmask(PermissionType.ADMINISTRATOR.getValue())));
     }
 
