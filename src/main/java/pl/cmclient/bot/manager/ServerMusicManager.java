@@ -97,7 +97,7 @@ public class ServerMusicManager {
         return audioManager.player.getPlayingTrack();
     }
 
-    private synchronized ServerAudioManager getAudioManager(Server server) {
+    private ServerAudioManager getAudioManager(Server server) {
         ServerAudioManager audioManager = this.serverAudioManagers.get(server.getId());
         if (audioManager == null) {
             audioManager = new ServerAudioManager(this.playerManager);

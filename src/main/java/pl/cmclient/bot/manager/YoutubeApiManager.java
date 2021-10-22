@@ -24,8 +24,7 @@ public class YoutubeApiManager {
             return Optional.of(keyword);
         }
         try {
-            keyword = keyword.replace(" ", "+");
-            String url = "https://www.googleapis.com/youtube/v3/search?part=snippet&maxResults=1&q=" + keyword + "&key=" + this.bot.getConfig().getYoutubeApiKey();
+            String url = "https://www.googleapis.com/youtube/v3/search?part=snippet&maxResults=1&q=" + keyword.replace(" ", "+") + "&key=" + this.bot.getConfig().getYoutubeApiKey();
             Document doc = Jsoup.connect(url).ignoreContentType(true).timeout(5000).get();
             JsonObject object = new Gson().fromJson(doc.text(), JsonElement.class).getAsJsonObject();
             JsonArray jsonArray = object.get("items").getAsJsonArray();
