@@ -49,9 +49,13 @@ public class PlayCommand extends Command {
         if (!url.contains("://")) {
             channel.sendMessage(new RukaEmbed().create(true)
                     .setTitle("Searching **" + url + "** on YouTube..."));
-            this.bot.getYoutubeApiManager().search(url).ifPresent(videoUrl -> {
-                this.bot.getServerMusicManager().queue(videoUrl, user, server, channel);
-            });
+
+            if (this.bot.getConfig().getYoutubeApiKey().equals("default")) {
+                channel.sendMessage(new RukaEmbed().create(false)
+                        .setTitle("Searching on YouTube is not available!"));
+            } else {
+                this.bot.getYoutubeApiManager().search(url).ifPresent(videoUrl -> this.bot.getServerMusicManager().queue(videoUrl, user, server, channel));
+            }
         } else {
             this.bot.getServerMusicManager().queue(url, user, server, channel);
         }
