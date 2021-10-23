@@ -32,7 +32,7 @@ public class ServerData {
     public ServerData(ResultSet rs) throws SQLException {
         this.serverId = rs.getLong("serverId");
         this.inviteBans = rs.getBoolean("inviteBans");
-        this.bannedWords = List.of(rs.getString("bannedWords").split(","));
+        this.bannedWords = new ArrayList<>(List.of(rs.getString("bannedWords").split(",")));
         this.userPermissions = new ConcurrentHashMap<>();
         this.database = BotApplication.getInstance().getDatabase();
     }

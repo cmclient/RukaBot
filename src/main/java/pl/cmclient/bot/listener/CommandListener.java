@@ -41,11 +41,13 @@ public class CommandListener implements MessageCreateListener {
                 return;
             }
 
-            for (String s : msgFormatted.split(" ")) {
-                if (serverData.containsBannedWord(s)) {
-                    event.getMessage().delete();
-                    user.sendMessage(new RukaEmbed().create(false)
-                            .setTitle("You can't send that message in this server!"));
+            if (!msg.startsWith(prefix + "config bannedWords")) {
+                for (String s : msgFormatted.split(" ")) {
+                    if (serverData.containsBannedWord(s)) {
+                        event.getMessage().delete();
+                        user.sendMessage(new RukaEmbed().create(false)
+                                .setTitle("You can't send that message in this server!"));
+                    }
                 }
             }
         }));
