@@ -32,8 +32,6 @@ public class UserInfoCommand extends Command {
                 .addField("Display Name", infoUser.getMentionTag(), true)
                 .addField("Name + Discriminator", infoUser.getDiscriminatedName(), true)
                 .addField("User Id", String.valueOf(infoUser.getId()), true)
-                .addField("Online Status", infoUser.getStatus().getStatusString(), true)
-                .addField("Connected Clients", infoUser.getCurrentClients().toString())
                 .addField("Activity", infoUser.getActivities().isEmpty() ? "none" : infoUser.getActivities().stream().map(Activity::getName).collect(Collectors.joining("\n")), true)
                 .setAuthor(infoUser));
     }
