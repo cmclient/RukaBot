@@ -53,10 +53,12 @@ public class PlayCommand extends Command {
                 .setTitle("You are not connected in any voice channel."))));
     }
 
-    private void play(Server server, ServerTextChannel channel, String[] args) {
+    private void play(Server server, ServerTextChannel channel, String... args) {
         String url = StringHelper.join(args, " ", 0, args.length);
 
-        if (!url.contains("://")) {
+        if (url.contains("://")) {
+            this.bot.getMusicManager().queue(url, server, channel);
+        } else {
             channel.sendMessage(new RukaEmbed().create(true)
                     .setTitle("Searching **" + url + "** on YouTube..."));
 
@@ -66,8 +68,6 @@ public class PlayCommand extends Command {
             } else {
                 this.bot.getYoutubeApiManager().search(url).ifPresent(videoUrl -> this.bot.getMusicManager().queue(videoUrl, server, channel));
             }
-        } else {
-            this.bot.getMusicManager().queue(url, server, channel);
         }
     }
 }

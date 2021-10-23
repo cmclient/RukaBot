@@ -20,19 +20,16 @@ public class VolumeCommand extends Command {
                     .setTitle(this.getUsage("<volume>")));
             return;
         }
-        int volume = Integer.parseInt(args[0]);
-        if (volume <= 0 || volume > 100) {
-            channel.sendMessage(new RukaEmbed().create(false).setTitle("Minimum volume is 1, maximum is 100"));
-            return;
-        }
-        event.getServer().ifPresent(server -> server.getConnectedVoiceChannel(event.getApi().getYourself()).ifPresent(voiceChannel -> {
-            if (!voiceChannel.isConnected(this.bot.getApi().getYourself())) {
-                channel.sendMessage(new RukaEmbed().create(false)
-                        .setTitle("I'm not connected to any channel!"));
-            } else {
-                server.getAudioConnection().ifPresent(connection -> this.bot.getMusicManager().setVolume(volume, server, channel));
+
+        event.getServer().ifPresent(server -> server.getAudioConnection().ifPresentOrElse(connection -> {
+            int volume = Integer.parseInt(args[0]);
+            if (volume <= 0 || volume > 100) {
+                channel.sendMessage(new RukaEmbed().create(false).setTitle("Minimum volume is 1, maximum is 100"));
+                return;
             }
-        }));
+            this.bot.getMusicManager().setVolume(volume, server, channel);
+        }, () -> event.getChannel().sendMessage(new RukaEmbed().create(false)
+                .setTitle("I'm not connected to any channel!"))));
     }
 
     private boolean isNumber(final String s) {
