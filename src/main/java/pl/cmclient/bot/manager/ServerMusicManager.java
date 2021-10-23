@@ -9,24 +9,25 @@ import com.sedmelluq.discord.lavaplayer.track.AudioPlaylist;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import org.javacord.api.entity.channel.ServerTextChannel;
 import org.javacord.api.entity.server.Server;
-import org.javacord.api.entity.user.User;
 import pl.cmclient.bot.common.RukaEmbed;
+import pl.cmclient.bot.object.AudioPlayer;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.TimeUnit;
 
 public class ServerMusicManager {
 
     private final AudioPlayerManager playerManager;
-    private final Map<Long, ServerAudioManager> serverAudioManagers;
+    private final Map<Long, AudioPlayer> audioPlayers;
 
     public ServerMusicManager() {
         AudioSourceManagers.registerRemoteSources(this.playerManager = new DefaultAudioPlayerManager());
-        this.serverAudioManagers = new ConcurrentHashMap<>();
+        this.audioPlayers = new ConcurrentHashMap<>();
     }
 
-    public void queue(String url, User user, Server server, ServerTextChannel channel) {
-        ServerAudioManager audioManager = this.getAudioManager(server);
+    public void queue(String url, Server server, ServerTextChannel channel) {
+        AudioPlayer audioManager = this.get(server);
         this.playerManager.loadItemOrdered(audioManager, url, new AudioLoadResultHandler() {
             @Override
             public void trackLoaded(AudioTrack track) {
@@ -64,8 +65,8 @@ public class ServerMusicManager {
         });
     }
 
-    public void stop(User user, Server server, ServerTextChannel channel) {
-        ServerAudioManager audioManager = this.getAudioManager(server);
+    public void stop(Server server, ServerTextChannel channel) {
+        AudioPlayer audioManager = this.get(server);
         AudioTrack track = audioManager.scheduler.getPlayingTrack();
         if (track == null) {
             channel.sendMessage(new RukaEmbed().create(false).setTitle("Currently nothing playing."));
@@ -75,8 +76,8 @@ public class ServerMusicManager {
         channel.sendMessage(new RukaEmbed().create(true).setTitle("Stopped playing **" + track.getInfo().title + "**"));
     }
 
-    public void skip(User user, Server server, ServerTextChannel channel) {
-        ServerAudioManager audioManager = this.getAudioManager(server);
+    public void skip(Server server, ServerTextChannel channel) {
+        AudioPlayer audioManager = this.get(server);
         AudioTrack track = audioManager.scheduler.getPlayingTrack();
         if (track == null) {
             channel.sendMessage(new RukaEmbed().create(false).setTitle("Currently nothing playing."));
@@ -86,28 +87,30 @@ public class ServerMusicManager {
         channel.sendMessage(new RukaEmbed().create(true).setTitle("Skipped **" + track.getInfo().title + "**"));
     }
 
-    public void setVolume(int volume, User user, Server server, ServerTextChannel channel) {
-        ServerAudioManager audioManager = this.getAudioManager(server);
+    public void setVolume(int volume, Server server, ServerTextChannel channel) {
+        AudioPlayer audioManager = this.get(server);
         audioManager.player.setVolume(volume);
         channel.sendMessage(new RukaEmbed().create(true).setTitle("Volume has been set to: **" + volume + "**%"));
     }
 
     public AudioTrack getPlayingTrack(Server server) {
-        ServerAudioManager audioManager = this.getAudioManager(server);
+        AudioPlayer audioManager = this.get(server);
         return audioManager.player.getPlayingTrack();
     }
 
-    public ServerAudioManager getAudioManager(Server server) {
-        ServerAudioManager audioManager = this.serverAudioManagers.get(server.getId());
+    public AudioPlayer get(Server server) {
+        AudioPlayer audioManager = this.audioPlayers.get(server.getId());
         if (audioManager == null) {
-            audioManager = new ServerAudioManager(this.playerManager);
-            this.serverAudioManagers.put(server.getId(), audioManager);
+            audioManager = new AudioPlayer(this.playerManager);
+            this.audioPlayers.put(server.getId(), audioManager);
         }
         return audioManager;
     }
 
-
-    public AudioPlayerManager getPlayerManager() {
-        return playerManager;
+    public long setPosition(Server server, long position, TimeUnit unit) {
+        long frameNumber = (unit.toMillis(position) / 20);
+        long positionInMillis = frameNumber * 20;
+        this.getPlayingTrack(server).setPosition(positionInMillis);
+        return positionInMillis;
     }
 }

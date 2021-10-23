@@ -16,7 +16,7 @@ public class StopCommand extends Command {
     @Override
     protected void execute(MessageCreateEvent event, User user, ServerTextChannel channel, String[] args) {
         event.getServer().ifPresent(server -> server.getAudioConnection().ifPresentOrElse(connection -> {
-            this.bot.getServerMusicManager().stop(user, server, channel);
+            this.bot.getServerMusicManager().stop(server, channel);
         }, () -> event.getChannel().sendMessage(new RukaEmbed().create(false)
                 .setTitle("I'm not connected to any channel!"))));
     }

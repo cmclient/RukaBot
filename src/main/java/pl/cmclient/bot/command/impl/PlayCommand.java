@@ -30,15 +30,15 @@ public class PlayCommand extends Command {
 
                 if (!voiceChannel.isConnected(event.getApi().getYourself()) && server.getAudioConnection().isEmpty()) {
                     voiceChannel.connect().thenAccept(audioConnection -> {
-                        audioConnection.setAudioSource(this.bot.getServerMusicManager().getAudioManager(server).getSendHandler());
+                        audioConnection.setAudioSource(this.bot.getServerMusicManager().get(server).getSendHandler());
                         audioConnection.setSelfDeafened(true);
-                        this.play(user, server, channel, args);
+                        this.play(server, channel, args);
                     });
 
                 } else if (server.getAudioConnection().isPresent()) {
                     server.getAudioConnection().ifPresent(audioConnection -> {
                         if(audioConnection.getChannel().getId() == voiceChannel.getId()) {
-                            this.play(user, server, channel, args);
+                            this.play(server, channel, args);
                         } else {
                             event.getChannel().sendMessage(new RukaEmbed().create(false)
                                     .setTitle("You are not connected with the same channel as the bot."));
@@ -53,7 +53,7 @@ public class PlayCommand extends Command {
                 .setTitle("You are not connected in any voice channel."))));
     }
 
-    private void play(User user, Server server, ServerTextChannel channel, String[] args) {
+    private void play(Server server, ServerTextChannel channel, String[] args) {
         String url = StringHelper.join(args, " ", 0, args.length);
 
         if (!url.contains("://")) {
@@ -64,10 +64,10 @@ public class PlayCommand extends Command {
                 channel.sendMessage(new RukaEmbed().create(false)
                         .setTitle("Searching on YouTube is not available!"));
             } else {
-                this.bot.getYoutubeApiManager().search(url).ifPresent(videoUrl -> this.bot.getServerMusicManager().queue(videoUrl, user, server, channel));
+                this.bot.getYoutubeApiManager().search(url).ifPresent(videoUrl -> this.bot.getServerMusicManager().queue(videoUrl, server, channel));
             }
         } else {
-            this.bot.getServerMusicManager().queue(url, user, server, channel);
+            this.bot.getServerMusicManager().queue(url, server, channel);
         }
     }
 }

@@ -17,7 +17,7 @@ public class LeaveCommand extends Command {
     protected void execute(MessageCreateEvent event, User user, ServerTextChannel channel, String[] args) {
         event.getServer().ifPresent(server -> server.getConnectedVoiceChannel(event.getApi().getYourself()).ifPresentOrElse(voiceChannel -> {
             server.getAudioConnection().ifPresentOrElse(connection -> {
-                this.bot.getServerMusicManager().getAudioManager(server).player.stopTrack();
+                this.bot.getServerMusicManager().get(server).player.stopTrack();
                 connection.close();
             }, () -> event.getChannel().sendMessage(new RukaEmbed().create(false)
                     .setTitle("The bot doesn't seem to be in any voice channel.")));
