@@ -17,7 +17,7 @@ public class AvatarCommand extends Command {
     protected void execute(MessageCreateEvent event, User user, ServerTextChannel channel, String[] args) {
         User avatarUser = event.getMessage().getMentionedUsers().isEmpty() ? user : event.getMessage().getMentionedUsers().get(0);
         if (avatarUser == null) {
-            channel.sendMessage(new RukaEmbed().create(true)
+            channel.sendMessage(new RukaEmbed().create(false)
                     .setDescription(this.getUsage("<user mention>")));
             return;
         }

@@ -21,9 +21,8 @@ public class UserInfoCommand extends Command {
     protected void execute(MessageCreateEvent event, User user, ServerTextChannel channel, String[] args) {
         User infoUser = event.getMessage().getMentionedUsers().isEmpty() ? user : event.getMessage().getMentionedUsers().get(0);
         if (infoUser == null) {
-            EmbedBuilder embed = new RukaEmbed().create(true);
-            embed.setDescription(this.getUsage("<user mention>"));
-            channel.sendMessage(embed);
+            channel.sendMessage(new RukaEmbed().create(false)
+                    .setDescription(this.getUsage("<user mention>")));
             return;
         }
 

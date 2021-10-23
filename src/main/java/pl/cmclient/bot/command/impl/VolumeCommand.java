@@ -17,7 +17,7 @@ public class VolumeCommand extends Command {
     protected void execute(MessageCreateEvent event, User user, ServerTextChannel channel, String[] args) {
         if (args.length == 0 || !this.isNumber(args[0])) {
             channel.sendMessage(new RukaEmbed().create(false)
-                    .setTitle(this.getUsage("<volume>")));
+                    .setDescription(this.getUsage("<volume>")));
             return;
         }
 

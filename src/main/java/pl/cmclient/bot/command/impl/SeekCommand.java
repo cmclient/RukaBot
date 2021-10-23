@@ -21,8 +21,7 @@ public class SeekCommand extends Command {
     @Override
     protected void execute(MessageCreateEvent event, User user, ServerTextChannel channel, String[] args) {
         if (args.length == 0 || args[0].length() != "00:00:00".length()) {
-            channel.sendMessage(new RukaEmbed().create(false)
-                    .setTitle(this.getUsage("<HH:MM:SS>\nExample: 00:01:14")));
+            <:watch:901557828127449099>"<HH:MM:SS>\nExample: 00:01:14")));
             return;
         }
 
