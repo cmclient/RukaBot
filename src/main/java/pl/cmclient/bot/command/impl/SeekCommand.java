@@ -9,15 +9,23 @@ import pl.cmclient.bot.command.CommandType;
 import pl.cmclient.bot.common.RukaEmbed;
 
 import java.time.Duration;
+import java.time.LocalTime;
+import java.util.concurrent.TimeUnit;
 
-public class NowPlayingCommand extends Command {
+public class SeekCommand extends Command {
 
-    public NowPlayingCommand() {
-        super("nowplaying", "Sends currently played song", CommandType.MUSIC, new String[0], false, null);
+    public SeekCommand() {
+        super("seek", "Seek", CommandType.MUSIC, new String[0], false, null);
     }
 
     @Override
     protected void execute(MessageCreateEvent event, User user, ServerTextChannel channel, String[] args) {
+        if (args.length == 0 || !args[0].contains(":")) {
+            channel.sendMessage(new RukaEmbed().create(false)
+                    .setTitle(this.getUsage("<HH:MM:SS>")));
+            return;
+        }
+
         event.getServer().ifPresent(server -> server.getAudioConnection().ifPresentOrElse(connection -> {
             AudioTrack track = this.bot.getMusicManager().getPlayingTrack(server);
 
@@ -27,22 +35,17 @@ public class NowPlayingCommand extends Command {
                 return;
             }
 
+            this.bot.getMusicManager().setPosition(server, this.formatDuration(args[0]).toMillis(), TimeUnit.MILLISECONDS);
+
             channel.sendMessage(new RukaEmbed().create(true)
                     .setAuthor(track.getInfo().title, track.getInfo().uri, "https://img.youtube.com/vi/" + track.getInfo().identifier + "/maxresdefault.jpg")
-                    .setTitle(":play_pause: " + this.formatDuration(this.bot.getMusicManager().getPosition(server)))
+                    .setTitle(":play_pause: " + args[0])
                     .setThumbnail("https://img.youtube.com/vi/" + track.getInfo().identifier + "/maxresdefault.jpg"));
         }, () -> event.getChannel().sendMessage(new RukaEmbed().create(false)
                 .setTitle("I'm not connected to any channel!"))));
     }
 
-    private String formatDuration(Duration duration) {
-        long seconds = duration.getSeconds();
-        long absSeconds = Math.abs(seconds);
-        String positive = String.format(
-                "%d:%02d:%02d",
-                absSeconds / 3600,
-                (absSeconds % 3600) / 60,
-                absSeconds % 60);
-        return seconds < 0 ? "-" + positive : positive;
+    private Duration formatDuration(String duration) {
+        return Duration.between(LocalTime.MIN, LocalTime.parse(duration));
     }
 }

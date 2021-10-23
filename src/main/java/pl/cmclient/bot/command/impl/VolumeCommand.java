@@ -30,7 +30,7 @@ public class VolumeCommand extends Command {
                 channel.sendMessage(new RukaEmbed().create(false)
                         .setTitle("I'm not connected to any channel!"));
             } else {
-                server.getAudioConnection().ifPresent(connection -> this.bot.getServerMusicManager().setVolume(volume, server, channel));
+                server.getAudioConnection().ifPresent(connection -> this.bot.getMusicManager().setVolume(volume, server, channel));
             }
         }));
     }

@@ -30,7 +30,7 @@ public class PlayCommand extends Command {
 
                 if (!voiceChannel.isConnected(event.getApi().getYourself()) && server.getAudioConnection().isEmpty()) {
                     voiceChannel.connect().thenAccept(audioConnection -> {
-                        audioConnection.setAudioSource(this.bot.getServerMusicManager().get(server).getSendHandler());
+                        audioConnection.setAudioSource(this.bot.getMusicManager().get(server).getSendHandler());
                         audioConnection.setSelfDeafened(true);
                         this.play(server, channel, args);
                     });
@@ -64,10 +64,10 @@ public class PlayCommand extends Command {
                 channel.sendMessage(new RukaEmbed().create(false)
                         .setTitle("Searching on YouTube is not available!"));
             } else {
-                this.bot.getYoutubeApiManager().search(url).ifPresent(videoUrl -> this.bot.getServerMusicManager().queue(videoUrl, server, channel));
+                this.bot.getYoutubeApiManager().search(url).ifPresent(videoUrl -> this.bot.getMusicManager().queue(videoUrl, server, channel));
             }
         } else {
-            this.bot.getServerMusicManager().queue(url, server, channel);
+            this.bot.getMusicManager().queue(url, server, channel);
         }
     }
 }

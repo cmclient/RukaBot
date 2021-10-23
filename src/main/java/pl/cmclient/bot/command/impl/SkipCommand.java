@@ -16,7 +16,7 @@ public class SkipCommand extends Command {
     @Override
     protected void execute(MessageCreateEvent event, User user, ServerTextChannel channel, String[] args) {
         event.getServer().ifPresent(server -> server.getAudioConnection().ifPresentOrElse(connection -> {
-            this.bot.getServerMusicManager().skip(server, channel);
+            this.bot.getMusicManager().skip(server, channel);
         }, () -> event.getChannel().sendMessage(new RukaEmbed().create(false)
                 .setTitle("I'm not connected to any channel!"))));
     }

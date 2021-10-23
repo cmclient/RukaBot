@@ -12,16 +12,17 @@ import org.javacord.api.entity.server.Server;
 import pl.cmclient.bot.common.RukaEmbed;
 import pl.cmclient.bot.object.AudioPlayer;
 
+import java.time.Duration;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
-public class ServerMusicManager {
+public class MusicManager {
 
     private final AudioPlayerManager playerManager;
     private final Map<Long, AudioPlayer> audioPlayers;
 
-    public ServerMusicManager() {
+    public MusicManager() {
         AudioSourceManagers.registerRemoteSources(this.playerManager = new DefaultAudioPlayerManager());
         this.audioPlayers = new ConcurrentHashMap<>();
     }
@@ -33,8 +34,8 @@ public class ServerMusicManager {
             public void trackLoaded(AudioTrack track) {
                 audioManager.scheduler.queue(track);
                 channel.sendMessage(new RukaEmbed().create(true)
+                        .setAuthor(track.getInfo().title, track.getInfo().uri, "https://img.youtube.com/vi/" + track.getInfo().identifier + "/maxresdefault.jpg")
                         .setTitle("Added track to queue")
-                        .setDescription(track.getInfo().title)
                         .setThumbnail("https://img.youtube.com/vi/" + track.getInfo().identifier + "/maxresdefault.jpg"));
             }
 
@@ -46,8 +47,8 @@ public class ServerMusicManager {
                 }
                 audioManager.scheduler.queue(track);
                 channel.sendMessage(new RukaEmbed().create(true)
+                        .setAuthor(track.getInfo().title, track.getInfo().uri, "https://img.youtube.com/vi/" + track.getInfo().identifier + "/maxresdefault.jpg")
                         .setTitle("Added track to queue")
-                        .setDescription(track.getInfo().title)
                         .setThumbnail("https://img.youtube.com/vi/" + track.getInfo().identifier + "/maxresdefault.jpg"));
             }
 
@@ -84,7 +85,11 @@ public class ServerMusicManager {
             return;
         }
         audioManager.scheduler.nextTrack();
-        channel.sendMessage(new RukaEmbed().create(true).setTitle("Skipped **" + track.getInfo().title + "**"));
+        AudioTrack nextTrack = audioManager.scheduler.getPlayingTrack();
+        channel.sendMessage(new RukaEmbed().create(true)
+                .setAuthor(nextTrack.getInfo().title, nextTrack.getInfo().uri, "https://img.youtube.com/vi/" + nextTrack.getInfo().identifier + "/maxresdefault.jpg")
+                .setTitle("Skipped track **" + track.getInfo().title + "**")
+                .setThumbnail("https://img.youtube.com/vi/" + track.getInfo().identifier + "/maxresdefault.jpg"));
     }
 
     public void setVolume(int volume, Server server, ServerTextChannel channel) {
@@ -112,5 +117,9 @@ public class ServerMusicManager {
         long positionInMillis = frameNumber * 20;
         this.getPlayingTrack(server).setPosition(positionInMillis);
         return positionInMillis;
+    }
+
+    public Duration getPosition(Server server) {
+        return Duration.ofMillis(this.getPlayingTrack(server).getPosition());
     }
 }

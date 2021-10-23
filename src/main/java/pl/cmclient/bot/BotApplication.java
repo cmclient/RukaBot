@@ -12,7 +12,7 @@ import pl.cmclient.bot.database.Database;
 import pl.cmclient.bot.listener.CommandListener;
 import pl.cmclient.bot.manager.CommandManager;
 import pl.cmclient.bot.manager.ServerDataManager;
-import pl.cmclient.bot.manager.ServerMusicManager;
+import pl.cmclient.bot.manager.MusicManager;
 import pl.cmclient.bot.manager.YoutubeApiManager;
 
 import java.util.concurrent.TimeUnit;
@@ -26,7 +26,7 @@ public class BotApplication {
     private Database database;
     private CommandManager commandManager;
     private ServerDataManager serverDataManager;
-    private ServerMusicManager serverMusicManager;
+    private MusicManager musicManager;
     private YoutubeApiManager youtubeApiManager;
     private DiscordApi api;
 
@@ -51,7 +51,7 @@ public class BotApplication {
             this.logger.warn("Unable to connect to the database.");
         }
         this.logger.info("Loading audio player...");
-        this.serverMusicManager = new ServerMusicManager();
+        this.musicManager = new MusicManager();
         this.youtubeApiManager = new YoutubeApiManager(this);
         this.logger.info("Token: " + this.censor(this.config.getToken()));
         this.logger.info("Loading commands...");
@@ -123,8 +123,8 @@ public class BotApplication {
         return serverDataManager;
     }
 
-    public ServerMusicManager getServerMusicManager() {
-        return serverMusicManager;
+    public MusicManager getMusicManager() {
+        return musicManager;
     }
 
     public YoutubeApiManager getYoutubeApiManager() {
