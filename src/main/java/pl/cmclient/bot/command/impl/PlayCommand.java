@@ -40,16 +40,16 @@ public class PlayCommand extends Command {
                         if(audioConnection.getChannel().getId() == voiceChannel.getId()) {
                             this.play(server, channel, args);
                         } else {
-                            event.getChannel().sendMessage(new RukaEmbed().create(false)
+                            channel.sendMessage(new RukaEmbed().create(false)
                                     .setTitle("You are not connected with the same channel as the bot."));
                         }
                     });
                 }
             } else {
-                event.getChannel().sendMessage(new RukaEmbed().create(false)
+                channel.sendMessage(new RukaEmbed().create(false)
                         .setTitle("I cannot connect, cannot see, or do not have the permission to speak on the channel."));
             }
-        }, () -> event.getChannel().sendMessage(new RukaEmbed().create(false)
+        }, () -> channel.sendMessage(new RukaEmbed().create(false)
                 .setTitle("You are not connected in any voice channel."))));
     }
 

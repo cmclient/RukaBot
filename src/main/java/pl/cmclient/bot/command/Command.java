@@ -7,8 +7,6 @@ import org.javacord.api.event.message.MessageCreateEvent;
 import pl.cmclient.bot.BotApplication;
 import pl.cmclient.bot.common.RukaEmbed;
 
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 public abstract class Command {
@@ -19,13 +17,13 @@ public abstract class Command {
     private final List<String> aliases;
     private final boolean onlyOwner;
     private final PermissionType permission;
-    protected BotApplication bot;
+    protected final BotApplication bot;
 
     public Command(String name, String description, CommandType commandType, String[] aliases, boolean onlyOwner, PermissionType permission) {
         this.name = name;
         this.description = description;
         this.commandType = commandType;
-        this.aliases = Collections.unmodifiableList(Arrays.asList(aliases));
+        this.aliases = List.of(aliases);
         this.onlyOwner = onlyOwner;
         this.permission = permission;
         (this.bot = BotApplication.getInstance()).getCommandManager().add(this);

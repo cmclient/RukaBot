@@ -31,9 +31,9 @@ public class ClearQueueCommand extends Command {
 
             int tracks = audioPlayer.scheduler.clearQueue();
 
-            event.getChannel().sendMessage(new RukaEmbed().create(true)
+            channel.sendMessage(new RukaEmbed().create(true)
                     .setTitle("Removed " + tracks + " from song queue."));
-        }, () -> event.getChannel().sendMessage(new RukaEmbed().create(false)
+        }, () -> channel.sendMessage(new RukaEmbed().create(false)
                 .setTitle("I'm not connected to any channel!"))));
     }
 }

@@ -28,7 +28,7 @@ public class VolumeCommand extends Command {
                 return;
             }
             this.bot.getMusicManager().setVolume(volume, server, channel);
-        }, () -> event.getChannel().sendMessage(new RukaEmbed().create(false)
+        }, () -> channel.sendMessage(new RukaEmbed().create(false)
                 .setTitle("I'm not connected to any channel!"))));
     }
 

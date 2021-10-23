@@ -19,9 +19,9 @@ public class LeaveCommand extends Command {
             server.getAudioConnection().ifPresentOrElse(connection -> {
                 this.bot.getMusicManager().get(server).player.stopTrack();
                 connection.close();
-            }, () -> event.getChannel().sendMessage(new RukaEmbed().create(false)
+            }, () -> channel.sendMessage(new RukaEmbed().create(false)
                     .setTitle("The bot doesn't seem to be in any voice channel.")));
-        }, () -> event.getChannel().sendMessage(new RukaEmbed().create(false)
+        }, () -> channel.sendMessage(new RukaEmbed().create(false)
                 .setTitle("The bot doesn't seem to be in any voice channel."))));
     }
 }

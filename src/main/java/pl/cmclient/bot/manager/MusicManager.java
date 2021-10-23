@@ -36,6 +36,7 @@ public class MusicManager {
                 channel.sendMessage(new RukaEmbed().create(true)
                         .setAuthor(track.getInfo().title, track.getInfo().uri, "https://img.youtube.com/vi/" + track.getInfo().identifier + "/maxresdefault.jpg")
                         .setTitle("Added track to queue")
+                        .setDescription(audioManager.scheduler.getQueue().size() == 0 ? "" : "Position in queue: " + audioManager.scheduler.getQueue().size())
                         .setThumbnail("https://img.youtube.com/vi/" + track.getInfo().identifier + "/maxresdefault.jpg"));
             }
 
@@ -49,6 +50,7 @@ public class MusicManager {
                 channel.sendMessage(new RukaEmbed().create(true)
                         .setAuthor(track.getInfo().title, track.getInfo().uri, "https://img.youtube.com/vi/" + track.getInfo().identifier + "/maxresdefault.jpg")
                         .setTitle("Added track to queue")
+                        .setDescription(audioManager.scheduler.getQueue().size() == 0 ? "" : "Position in queue: " + audioManager.scheduler.getQueue().size())
                         .setThumbnail("https://img.youtube.com/vi/" + track.getInfo().identifier + "/maxresdefault.jpg"));
             }
 

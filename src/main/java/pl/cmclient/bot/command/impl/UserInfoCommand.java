@@ -27,7 +27,7 @@ public class UserInfoCommand extends Command {
             return;
         }
 
-        event.getChannel().sendMessage(new EmbedBuilder()
+        channel.sendMessage(new EmbedBuilder()
                 .setTitle("User Info")
                 .addField("Display Name", infoUser.getMentionTag(), true)
                 .addField("Name + Discriminator", infoUser.getDiscriminatedName(), true)

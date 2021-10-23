@@ -37,7 +37,7 @@ public class QueueCommand extends Command {
             channel.sendMessage(new RukaEmbed().create(true)
                     .setTitle("Song queue:")
                     .setDescription(sb.toString()));
-        }, () -> event.getChannel().sendMessage(new RukaEmbed().create(false)
+        }, () -> channel.sendMessage(new RukaEmbed().create(false)
                 .setTitle("I'm not connected to any channel!"))));
     }
 }
