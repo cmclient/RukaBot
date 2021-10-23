@@ -54,19 +54,19 @@ public class PlayCommand extends Command {
     }
 
     private void play(Server server, ServerTextChannel channel, String... args) {
-        String url = StringHelper.join(args, " ", 0, args.length);
+        String query = StringHelper.join(args, " ", 0, args.length);
 
-        if (url.contains("://")) {
-            this.bot.getMusicManager().queue(url, server, channel);
+        if (query.contains("://")) {
+            this.bot.getMusicManager().queue(query, server, channel);
         } else {
             channel.sendMessage(new RukaEmbed().create(true)
-                    .setTitle("Searching **" + url + "** on YouTube..."));
+                    .setTitle("Searching **" + query + "** on YouTube..."));
 
             if (this.bot.getConfig().getYoutubeApiKey().equals("default")) {
                 channel.sendMessage(new RukaEmbed().create(false)
                         .setTitle("Searching on YouTube is not available!"));
             } else {
-                this.bot.getYoutubeApiManager().search(url).ifPresent(videoUrl -> this.bot.getMusicManager().queue(videoUrl, server, channel));
+                this.bot.getYoutubeApiManager().search(query).ifPresent(videoUrl -> this.bot.getMusicManager().queue(videoUrl, server, channel));
             }
         }
     }

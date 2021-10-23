@@ -4,6 +4,8 @@ import org.javacord.api.entity.permission.PermissionType;
 import org.javacord.api.event.message.MessageCreateEvent;
 import org.javacord.api.listener.message.MessageCreateListener;
 import pl.cmclient.bot.BotApplication;
+import pl.cmclient.bot.common.RukaEmbed;
+import pl.cmclient.bot.object.ServerData;
 
 import java.util.Arrays;
 import java.util.Locale;
@@ -26,10 +28,25 @@ public class CommandListener implements MessageCreateListener {
         String msg = event.getMessage().getContent();
 
         event.getMessageAuthor().asUser().ifPresent(user -> event.getServer().ifPresent(server -> {
-            if ((msg.toLowerCase(Locale.ROOT).contains("discord.gg/") || msg.toLowerCase(Locale.ROOT).contains("discord.com/invite/"))
+            ServerData serverData = this.bot.getServerDataManager().get(server.getId());
+            String msgFormatted = msg.toLowerCase(Locale.ROOT);
+
+            if ((msgFormatted.contains("discord.gg/") || msgFormatted.contains("discord.com/invite/"))
                     && !server.hasAnyPermission(user, PermissionType.MANAGE_MESSAGES, PermissionType.ADMINISTRATOR)
-                    && this.bot.getServerDataManager().get(server.getId()).isInviteBans()) {
-                server.banUser(user, 7, "[" + this.bot.getConfig().getBotName() +"] Automatic ban for " + user.getMentionTag() + " (Sending server invites)");
+                    && serverData.isInviteBans()) {
+                event.getMessage().delete();
+                user.sendMessage(new RukaEmbed().create(false)
+                        .setTitle("You has been banned for sending invites!"));
+                server.banUser(user, 7, "[" + this.bot.getConfig().getBotName() + "] Automatic ban for " + user.getMentionTag() + " (Sending server invites)");
+                return;
+            }
+
+            for (String s : msgFormatted.split(" ")) {
+                if (serverData.containsBannedWord(s)) {
+                    event.getMessage().delete();
+                    user.sendMessage(new RukaEmbed().create(false)
+                            .setTitle("You can't send that message in this server!"));
+                }
             }
         }));
 

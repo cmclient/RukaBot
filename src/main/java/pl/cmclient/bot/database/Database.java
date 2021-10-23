@@ -11,7 +11,7 @@ import java.util.concurrent.Executors;
 
 public class Database {
 
-    public final ExecutorService executor = Executors.newScheduledThreadPool(10);
+    public final ExecutorService executor = Executors.newScheduledThreadPool(Runtime.getRuntime().availableProcessors() * 2);
     private Connection connection;
     private boolean connected;
 
@@ -32,6 +32,7 @@ public class Database {
 
     public void disconnect() throws SQLException {
         this.connection.close();
+        this.connected = false;
     }
 
     public void update(String update) {
