@@ -32,7 +32,7 @@ public class VolumeCommand extends Command {
                 .setTitle("I'm not connected to any channel!"))));
     }
 
-    private boolean isNumber(final String s) {
+    private boolean isNumber(String s) {
         try {
             Integer.parseInt(s);
             return true;
