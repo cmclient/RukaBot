@@ -36,16 +36,16 @@ public class CommandManager {
     }
 
     public String getCommandsList() {
-        StringBuilder builder = new StringBuilder("\n");
+        StringBuilder sb = new StringBuilder("\n");
         for (CommandType type : CommandType.values()) {
-            builder.append(type.getName()).append(":\n");
+            sb.append(type.getName()).append(":\n");
             List<String> list = this.commands.stream().filter(command -> command.getCommandType() == type).map(command -> "`" + command.getName() + "`").collect(Collectors.toList());
             if (list.isEmpty()) {
                 list.add("`No commands`");
             }
-            builder.append(StringHelper.join(list, ", ")).append("\n\n");
+            sb.append(StringHelper.join(list, ", ")).append("\n\n");
         }
-        return builder.toString();
+        return sb.toString();
     }
 
     public void add(Command command) {
