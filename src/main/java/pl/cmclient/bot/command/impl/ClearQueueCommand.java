@@ -11,9 +11,9 @@ import pl.cmclient.bot.object.AudioPlayer;
 
 import java.util.concurrent.BlockingQueue;
 
-public class ClearQueue extends Command {
+public class ClearQueueCommand extends Command {
 
-    public ClearQueue() {
+    public ClearQueueCommand() {
         super("clearqueue", "Clears song queue", CommandType.MUSIC, new String[0], false, null);
     }
 

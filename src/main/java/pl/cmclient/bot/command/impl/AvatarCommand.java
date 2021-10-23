@@ -23,9 +23,8 @@ public class AvatarCommand extends Command {
             channel.sendMessage(embed);
             return;
         }
-        EmbedBuilder embed = new RukaEmbed().create(true);
-        embed.setDescription(avatarUser.getMentionTag() + "'s avatar")
-                .setImage(avatarUser.getAvatar().getUrl().toString() + "?size=2048");
-        channel.sendMessage(embed);
+        channel.sendMessage(new RukaEmbed().create(true)
+                .setDescription(avatarUser.getMentionTag() + "'s avatar")
+                .setImage(avatarUser.getAvatar().getUrl().toString() + "?size=2048"));
     }
 }
