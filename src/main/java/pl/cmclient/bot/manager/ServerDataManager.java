@@ -6,7 +6,6 @@ import pl.cmclient.bot.object.ServerData;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 public class ServerDataManager {
 
@@ -39,11 +38,7 @@ public class ServerDataManager {
         return serverData;
     }
 
-    public Optional<ServerData> get(long id) {
-        return this.servers.stream().filter(serverData -> serverData.getServerId() == id).findAny();
-    }
-
-    public ServerData getOrCreate(long id) {
+    public ServerData get(long id) {
         return this.servers.stream().filter(serverData -> serverData.getServerId() == id).findAny().orElseGet(() -> this.add(id));
     }
 }

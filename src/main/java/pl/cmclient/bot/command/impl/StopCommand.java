@@ -7,16 +7,16 @@ import pl.cmclient.bot.command.Command;
 import pl.cmclient.bot.command.CommandType;
 import pl.cmclient.bot.common.RukaEmbed;
 
-public class SkipCommand extends Command {
+public class StopCommand extends Command {
 
-    public SkipCommand() {
-        super("skip", "Skip to next track", CommandType.MUSIC, new String[0], false, null);
+    public StopCommand() {
+        super("stop", "Stop playing music", CommandType.MUSIC, new String[0], false, null);
     }
 
     @Override
     protected void execute(MessageCreateEvent event, User user, ServerTextChannel channel, String[] args) {
         event.getServer().ifPresent(server -> server.getAudioConnection().ifPresentOrElse(connection -> {
-            this.bot.getServerMusicManager().skip(user, server, channel);
+            this.bot.getServerMusicManager().stop(user, server, channel);
         }, () -> event.getChannel().sendMessage(new RukaEmbed().create(false)
                 .setTitle("I'm not connected to any channel!"))));
     }

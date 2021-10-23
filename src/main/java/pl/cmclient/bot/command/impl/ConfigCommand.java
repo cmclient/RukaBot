@@ -26,7 +26,7 @@ public class ConfigCommand extends Command {
 
         if (args[0].equalsIgnoreCase("inviteBans")) {
             event.getServer().ifPresent(server -> {
-                ServerData serverData = this.bot.getServerDataManager().getOrCreate(server.getId());
+                ServerData serverData = this.bot.getServerDataManager().get(server.getId());
                 if (args.length == 1) {
                     channel.sendMessage(new RukaEmbed()
                             .create(true)

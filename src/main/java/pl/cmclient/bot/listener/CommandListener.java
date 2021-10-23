@@ -28,7 +28,7 @@ public class CommandListener implements MessageCreateListener {
         event.getMessageAuthor().asUser().ifPresent(user -> event.getServer().ifPresent(server -> {
             if ((msg.toLowerCase(Locale.ROOT).contains("discord.gg/") || msg.toLowerCase(Locale.ROOT).contains("discord.com/invite/"))
                     && !server.hasAnyPermission(user, PermissionType.MANAGE_MESSAGES, PermissionType.ADMINISTRATOR)
-                    && this.bot.getServerDataManager().getOrCreate(server.getId()).isInviteBans()) {
+                    && this.bot.getServerDataManager().get(server.getId()).isInviteBans()) {
                 server.banUser(user, 7, "[" + this.bot.getConfig().getBotName() +"] Automatic ban for " + user.getMentionTag() + " (Sending server invites)");
             }
         }));

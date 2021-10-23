@@ -1,7 +1,7 @@
 package pl.cmclient.bot.command.impl;
 
 import org.javacord.api.entity.channel.ServerTextChannel;
-import org.javacord.api.entity.channel.ServerVoiceChannel;
+import org.javacord.api.entity.permission.PermissionType;
 import org.javacord.api.entity.server.Server;
 import org.javacord.api.entity.user.User;
 import org.javacord.api.event.message.MessageCreateEvent;
@@ -25,22 +25,32 @@ public class PlayCommand extends Command {
             return;
         }
 
+        event.getServer().ifPresent(server -> event.getMessageAuthor().getConnectedVoiceChannel().ifPresentOrElse(voiceChannel -> {
+            if(voiceChannel.canYouConnect() && voiceChannel.canYouSee() && voiceChannel.hasPermission(event.getApi().getYourself(), PermissionType.SPEAK)){
 
-        event.getServer().ifPresent(server -> {
-            if (!user.getConnectedVoiceChannel(server).isPresent()) {
-                channel.sendMessage(new RukaEmbed().create(false)
-                        .setTitle("You are not connected to any channel!"));
-                return;
-            }
+                if (!voiceChannel.isConnected(event.getApi().getYourself()) && server.getAudioConnection().isEmpty()) {
+                    voiceChannel.connect().thenAccept(audioConnection -> {
+                        audioConnection.setAudioSource(this.bot.getServerMusicManager().getAudioManager(server).getSendHandler());
+                        audioConnection.setSelfDeafened(true);
+                        this.play(user, server, channel, args);
+                    });
 
-            ServerVoiceChannel voiceChannel = user.getConnectedVoiceChannel(server).get();
-
-            if (!voiceChannel.isConnected(this.bot.getApi().getYourself())) {
-                voiceChannel.connect().thenAccept(audioConnection -> this.play(user, server, channel, args));
+                } else if (server.getAudioConnection().isPresent()) {
+                    server.getAudioConnection().ifPresent(audioConnection -> {
+                        if(audioConnection.getChannel().getId() == voiceChannel.getId()) {
+                            this.play(user, server, channel, args);
+                        } else {
+                            event.getChannel().sendMessage(new RukaEmbed().create(false)
+                                    .setTitle("You are not connected with the same channel as the bot."));
+                        }
+                    });
+                }
             } else {
-                play(user, server, channel, args);
+                event.getChannel().sendMessage(new RukaEmbed().create(false)
+                        .setTitle("I cannot connect, cannot see, or do not have the permission to speak on the channel."));
             }
-        });
+        }, () -> event.getChannel().sendMessage(new RukaEmbed().create(false)
+                .setTitle("You are not connected in any voice channel."))));
     }
 
     private void play(User user, Server server, ServerTextChannel channel, String[] args) {

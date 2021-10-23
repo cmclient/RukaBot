@@ -97,16 +97,12 @@ public class ServerMusicManager {
         return audioManager.player.getPlayingTrack();
     }
 
-    private ServerAudioManager getAudioManager(Server server) {
+    public ServerAudioManager getAudioManager(Server server) {
         ServerAudioManager audioManager = this.serverAudioManagers.get(server.getId());
         if (audioManager == null) {
             audioManager = new ServerAudioManager(this.playerManager);
             this.serverAudioManagers.put(server.getId(), audioManager);
         }
-        server.getAudioConnection().ifPresent(audioConnection -> {
-            audioConnection.setAudioSource(this.serverAudioManagers.get(server.getId()).getSendHandler());
-            audioConnection.setSelfDeafened(true);
-        });
         return audioManager;
     }
 
