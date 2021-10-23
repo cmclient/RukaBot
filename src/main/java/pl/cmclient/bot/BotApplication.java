@@ -10,6 +10,7 @@ import org.javacord.api.entity.permission.Permissions;
 import pl.cmclient.bot.config.Config;
 import pl.cmclient.bot.database.Database;
 import pl.cmclient.bot.listener.CommandListener;
+import pl.cmclient.bot.listener.MessageEditListener;
 import pl.cmclient.bot.manager.CommandManager;
 import pl.cmclient.bot.manager.ServerDataManager;
 import pl.cmclient.bot.manager.MusicManager;
@@ -60,6 +61,7 @@ public class BotApplication {
         this.api = new DiscordApiBuilder().setToken(this.config.getToken()).login().join();
         this.logger.info("Loading listeners...");
         this.api.addListener(new CommandListener(this));
+        this.api.addListener(new MessageEditListener(this));
         this.logger.info("Setting activity...");
         this.api.updateActivity(ActivityType.WATCHING, this.getConfig().getPrefix() + "help");
         this.logger.info("Adding shutdown hook...");
@@ -70,11 +72,12 @@ public class BotApplication {
 
     private String getAsciiArtLogo() {
         return "\n" +
-                ",------.         ,--.           ,-----.           ,--.   \n" +
-                "|  .--. ',--.,--.|  |,-. ,--,--.|  |) /_  ,---. ,-'  '-. \n" +
-                "|  '--'.'|  ||  ||     /' ,-.  ||  .-.  \\| .-. |'-.  .-' \n" +
-                "|  |\\  \\ '  ''  '|  \\  \\\\ '-'  ||  '--' /' '-' '  |  |   \n" +
-                "`--' '--' `----' `--'`--'`--`--'`------'  `---'   `--'   ";
+                "██████╗░██╗░░░██╗██╗░░██╗░█████╗░██████╗░░█████╗░████████╗\n" +
+                "██╔══██╗██║░░░██║██║░██╔╝██╔══██╗██╔══██╗██╔══██╗╚══██╔══╝\n" +
+                "██████╔╝██║░░░██║█████═╝░███████║██████╦╝██║░░██║░░░██║░░░\n" +
+                "██╔══██╗██║░░░██║██╔═██╗░██╔══██║██╔══██╗██║░░██║░░░██║░░░\n" +
+                "██║░░██║╚██████╔╝██║░╚██╗██║░░██║██████╦╝╚█████╔╝░░░██║░░░\n" +
+                "╚═╝░░╚═╝░╚═════╝░╚═╝░░╚═╝╚═╝░░╚═╝╚═════╝░░╚════╝░░░░╚═╝░░░";
     }
 
     private void addShutdownHook() {
