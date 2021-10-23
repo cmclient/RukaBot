@@ -29,7 +29,7 @@ public class NowPlayingCommand extends Command {
 
             channel.sendMessage(new RukaEmbed().create(true)
                     .setAuthor(track.getInfo().title, track.getInfo().uri, "https://img.youtube.com/vi/" + track.getInfo().identifier + "/maxresdefault.jpg")
-                    .setTitle(":play_pause: " + this.formatDuration(this.bot.getMusicManager().getPosition(server)))
+                    .setTitle("<:watch:901557828127449099> " + this.formatDuration(this.bot.getMusicManager().getPosition(server)))
                     .setThumbnail("https://img.youtube.com/vi/" + track.getInfo().identifier + "/maxresdefault.jpg"));
         }, () -> event.getChannel().sendMessage(new RukaEmbed().create(false)
                 .setTitle("I'm not connected to any channel!"))));

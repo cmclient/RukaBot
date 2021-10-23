@@ -35,11 +35,17 @@ public class SeekCommand extends Command {
                 return;
             }
 
+            if (!track.isSeekable()) {
+                channel.sendMessage(new RukaEmbed().create(false)
+                        .setTitle("This track is not seekable!"));
+                return;
+            }
+
             this.bot.getMusicManager().setPosition(server, this.formatDuration(args[0]).toMillis(), TimeUnit.MILLISECONDS);
 
             channel.sendMessage(new RukaEmbed().create(true)
                     .setAuthor(track.getInfo().title, track.getInfo().uri, "https://img.youtube.com/vi/" + track.getInfo().identifier + "/maxresdefault.jpg")
-                    .setTitle(":play_pause: " + args[0])
+                    .setTitle("<:watch:901557828127449099> " + args[0])
                     .setThumbnail("https://img.youtube.com/vi/" + track.getInfo().identifier + "/maxresdefault.jpg"));
         }, () -> event.getChannel().sendMessage(new RukaEmbed().create(false)
                 .setTitle("I'm not connected to any channel!"))));

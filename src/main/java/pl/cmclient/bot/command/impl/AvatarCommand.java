@@ -1,7 +1,6 @@
 package pl.cmclient.bot.command.impl;
 
 import org.javacord.api.entity.channel.ServerTextChannel;
-import org.javacord.api.entity.message.embed.EmbedBuilder;
 import org.javacord.api.entity.user.User;
 import org.javacord.api.event.message.MessageCreateEvent;
 import pl.cmclient.bot.command.Command;
@@ -18,9 +17,8 @@ public class AvatarCommand extends Command {
     protected void execute(MessageCreateEvent event, User user, ServerTextChannel channel, String[] args) {
         User avatarUser = event.getMessage().getMentionedUsers().isEmpty() ? user : event.getMessage().getMentionedUsers().get(0);
         if (avatarUser == null) {
-            EmbedBuilder embed = new RukaEmbed().create(true);
-            embed.setDescription(this.getUsage("<user mention>"));
-            channel.sendMessage(embed);
+            channel.sendMessage(new RukaEmbed().create(true)
+                    .setDescription(this.getUsage("<user mention>")));
             return;
         }
         channel.sendMessage(new RukaEmbed().create(true)
