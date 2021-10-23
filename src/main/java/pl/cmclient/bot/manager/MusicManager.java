@@ -103,6 +103,13 @@ public class MusicManager {
         return audioManager.player.getPlayingTrack();
     }
 
+    public long setPosition(Server server, long position, TimeUnit unit) {
+        long frameNumber = (unit.toMillis(position) / 20);
+        long positionInMillis = frameNumber * 20;
+        this.getPlayingTrack(server).setPosition(positionInMillis);
+        return positionInMillis;
+    }
+
     public AudioPlayer get(Server server) {
         AudioPlayer audioManager = this.audioPlayers.get(server.getId());
         if (audioManager == null) {
@@ -110,13 +117,6 @@ public class MusicManager {
             this.audioPlayers.put(server.getId(), audioManager);
         }
         return audioManager;
-    }
-
-    public long setPosition(Server server, long position, TimeUnit unit) {
-        long frameNumber = (unit.toMillis(position) / 20);
-        long positionInMillis = frameNumber * 20;
-        this.getPlayingTrack(server).setPosition(positionInMillis);
-        return positionInMillis;
     }
 
     public Duration getPosition(Server server) {

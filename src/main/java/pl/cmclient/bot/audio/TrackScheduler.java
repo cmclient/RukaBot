@@ -24,6 +24,16 @@ public class TrackScheduler extends AudioEventAdapter {
         }
     }
 
+    public BlockingQueue<AudioTrack> getQueue() {
+        return queue;
+    }
+
+    public int clearQueue() {
+        int i = this.queue.size();
+        this.queue.clear();
+        return i;
+    }
+
     public AudioTrack getPlayingTrack() {
         return this.player.getPlayingTrack();
     }
