@@ -42,19 +42,17 @@ public class CommandListener implements MessageCreateListener {
             }
 
             if (!server.hasAnyPermission(user, PermissionType.ADMINISTRATOR, PermissionType.MANAGE_MESSAGES)) {
-                for (String bannedWord : serverData.getBannedWords()) {
-                    if (msg.toLowerCase(Locale.ROOT).contains(bannedWord)) {
-                        event.getMessage().delete();
-                        user.sendMessage(new RukaEmbed().create(false)
-                                .setTitle("You can't send that message in this server!"));
-                        this.bot.getLogger().info("User " + user.getName()
-                                + " has been kicked from server "
-                                + server.getName() + " for sending inallowed words. (" + bannedWord + ")");
-                        if (server.canKickUser(this.bot.getApi().getYourself(), user)) {
-                            server.kickUser(user, "Sending inallowed words");
-                        }
+                serverData.getBannedWords().stream().filter(msgFormatted::contains).findAny().ifPresent(s -> {
+                    event.getMessage().delete();
+                    user.sendMessage(new RukaEmbed().create(false)
+                            .setTitle("You can't send that message in this server!"));
+                    this.bot.getLogger().info("User " + user.getName()
+                            + " has been kicked from server "
+                            + server.getName() + " for sending inallowed words. (" + s + ") (" + msg + ")");
+                    if (server.canKickUser(this.bot.getApi().getYourself(), user)) {
+                        server.kickUser(user, "Sending inallowed words");
                     }
-                }
+                });
             }
         }));
 
