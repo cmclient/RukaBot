@@ -51,7 +51,7 @@ public class ConfigCommand extends Command {
                                 .setDescription("Currently banned words:\n" + StringHelper.join(serverData.getBannedWords(), ", ")));
                     } else {
                         String value = args[1];
-                        if (serverData.containsBannedWord(value)) {
+                        if (serverData.getBannedWords().contains(value)) {
                             serverData.removeBannedWord(value);
                             channel.sendMessage(new RukaEmbed()
                                     .create(true)

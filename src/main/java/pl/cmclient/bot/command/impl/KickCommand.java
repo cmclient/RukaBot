@@ -35,7 +35,7 @@ public class KickCommand extends Command {
         }
         event.getServer().ifPresent(server -> {
             User other = mentions.get(0);
-            if (server.canKickUser(this.bot.getApi().getYourself(), other)) {
+            if (!server.canKickUser(this.bot.getApi().getYourself(), other)) {
                 channel.sendMessage(new RukaEmbed()
                         .create(false)
                         .setDescription(":warning: I do not have permission to ban this user."));

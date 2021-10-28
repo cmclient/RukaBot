@@ -47,7 +47,12 @@ public class CommandListener implements MessageCreateListener {
                         event.getMessage().delete();
                         user.sendMessage(new RukaEmbed().create(false)
                                 .setTitle("You can't send that message in this server!"));
-                        server.kickUser(user, "Sending inallowed words");
+                        this.bot.getLogger().info("User " + user.getName()
+                                + " has been kicked from server "
+                                + server.getName() + " for sending inallowed words. (" + bannedWord + ")");
+                        if (server.canKickUser(this.bot.getApi().getYourself(), user)) {
+                            server.kickUser(user, "Sending inallowed words");
+                        }
                     }
                 }
             }
