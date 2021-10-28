@@ -48,9 +48,9 @@ public class CommandListener implements MessageCreateListener {
                             .setTitle("You can't send that message in this server!"));
                     this.bot.getLogger().info("User " + user.getName()
                             + " has been kicked from server "
-                            + server.getName() + " for sending inallowed words. (" + s + ") (" + msg + ")");
+                            + server.getName() + " for sending not allowed words. (" + s + ") (" + msg + ")");
                     if (server.canKickUser(this.bot.getApi().getYourself(), user)) {
-                        server.kickUser(user, "Sending inallowed words");
+                        server.kickUser(user, "Sending not allowed words");
                     }
                 });
             }
