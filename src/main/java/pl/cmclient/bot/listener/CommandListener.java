@@ -41,7 +41,7 @@ public class CommandListener implements MessageCreateListener {
                 return;
             }
 
-            if (!msg.startsWith(prefix + "config bannedWords")) {
+            if (!server.hasAnyPermission(user, PermissionType.ADMINISTRATOR, PermissionType.MANAGE_MESSAGES)) {
                 for (String bannedWord : serverData.getBannedWords()) {
                     if (msg.toLowerCase(Locale.ROOT).contains(bannedWord)) {
                         event.getMessage().delete();
