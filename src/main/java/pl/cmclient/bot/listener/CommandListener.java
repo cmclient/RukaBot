@@ -42,11 +42,12 @@ public class CommandListener implements MessageCreateListener {
             }
 
             if (!msg.startsWith(prefix + "config bannedWords")) {
-                for (String s : msgFormatted.split(" ")) {
-                    if (serverData.containsBannedWord(s)) {
+                for (String bannedWord : serverData.getBannedWords()) {
+                    if (msg.toLowerCase(Locale.ROOT).contains(bannedWord)) {
                         event.getMessage().delete();
                         user.sendMessage(new RukaEmbed().create(false)
                                 .setTitle("You can't send that message in this server!"));
+                        server.kickUser(user, "Sending inallowed words");
                     }
                 }
             }

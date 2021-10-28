@@ -55,10 +55,6 @@ public class ServerData {
         return bannedWords;
     }
 
-    public boolean containsBannedWord(String s) {
-        return this.bannedWords.contains(s);
-    }
-
     public void addBannedWord(String s) {
         this.bannedWords.add(s);
         this.database.update("UPDATE `servers` SET " +
