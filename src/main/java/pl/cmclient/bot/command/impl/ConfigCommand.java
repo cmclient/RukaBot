@@ -49,8 +49,15 @@ public class ConfigCommand extends Command {
                         channel.sendMessage(new RukaEmbed()
                                 .create(true)
                                 .setDescription("Currently banned words:\n" + StringHelper.join(serverData.getBannedWords(), ", ")));
+                        return;
                     } else {
-                        String value = args[1];
+                        String value = args[1].trim();
+                        if (value.isEmpty()) {
+                            channel.sendMessage(new RukaEmbed()
+                                    .create(false)
+                                    .setDescription(this.getUsage("<key> [value]") + "\nConfiguration keys: `inviteBans`, `bannedWords`"));
+                            return;
+                        }
                         if (serverData.getBannedWords().contains(value)) {
                             serverData.removeBannedWord(value);
                             channel.sendMessage(new RukaEmbed()
