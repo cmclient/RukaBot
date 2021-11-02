@@ -26,7 +26,7 @@ public class PlayCommand extends Command {
         }
 
         event.getServer().ifPresent(server -> event.getMessageAuthor().getConnectedVoiceChannel().ifPresentOrElse(voiceChannel -> {
-            if(voiceChannel.canYouConnect() && voiceChannel.canYouSee() && voiceChannel.hasPermission(event.getApi().getYourself(), PermissionType.SPEAK)){
+            if (voiceChannel.canYouConnect() && voiceChannel.canYouSee() && voiceChannel.hasPermission(event.getApi().getYourself(), PermissionType.SPEAK)) {
 
                 if (!voiceChannel.isConnected(event.getApi().getYourself()) && server.getAudioConnection().isEmpty()) {
                     voiceChannel.connect().thenAccept(audioConnection -> {
@@ -37,7 +37,7 @@ public class PlayCommand extends Command {
 
                 } else if (server.getAudioConnection().isPresent()) {
                     server.getAudioConnection().ifPresent(audioConnection -> {
-                        if(audioConnection.getChannel().getId() == voiceChannel.getId()) {
+                        if (audioConnection.getChannel().getId() == voiceChannel.getId()) {
                             this.play(server, channel, args);
                         } else {
                             channel.sendMessage(new RukaEmbed().create(false)
@@ -66,7 +66,10 @@ public class PlayCommand extends Command {
                 channel.sendMessage(new RukaEmbed().create(false)
                         .setTitle("Searching on YouTube is not available!"));
             } else {
-                this.bot.getYoutubeApiManager().search(query).ifPresent(videoUrl -> this.bot.getMusicManager().queue(videoUrl, server, channel));
+                this.bot.getYoutubeApiManager().search(query)
+                        .ifPresentOrElse(url -> this.bot.getMusicManager().queue(url, server, channel),
+                                () -> channel.sendMessage(new RukaEmbed().create(false)
+                                        .setTitle("Cannot find any song by this URL.")));
             }
         }
     }
