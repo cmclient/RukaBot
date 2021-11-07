@@ -9,10 +9,10 @@ import pl.cmclient.bot.command.Command;
 import pl.cmclient.bot.command.CommandType;
 import pl.cmclient.bot.common.RukaEmbed;
 
-public class RemoveUnneccessaryInvitesCommand extends Command {
+public class RemoveUnusedInvitesCommand extends Command {
 
-    public RemoveUnneccessaryInvitesCommand() {
-        super("removeunneccessaryinvites", "Removes invites with less than 10 uses", CommandType.ADMINISTRATION, new String[0], false, PermissionType.MANAGE_CHANNELS);
+    public RemoveUnusedInvitesCommand() {
+        super("removeunusedinvites", "Removes invites with less than 10 uses", CommandType.ADMINISTRATION, new String[0], false, PermissionType.MANAGE_CHANNELS);
     }
 
     @Override
