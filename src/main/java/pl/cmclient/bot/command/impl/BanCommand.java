@@ -41,7 +41,7 @@ public class BanCommand extends Command {
                         .setDescription(":warning: I do not have permission to ban this user."));
                 return;
             }
-            String reason = args.length == 1 ? "No reason" : StringHelper.join(args, " ", 2, args.length);
+            String reason = args.length == 1 ? "No reason" : StringHelper.join(args, " ", 1, args.length);
             CompletableFuture<Void> future = server.banUser(other, 0, reason);
             future.whenComplete((unused, throwable) -> {
                 if (throwable != null) {
