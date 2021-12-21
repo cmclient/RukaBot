@@ -25,7 +25,7 @@ public class UnbanAllCommand extends Command {
                             .create()
                             .setColor(Color.yellow)
                             .setDescription("Are you sure to unban **" + bans.size()
-                                    + "** users? If yes execute command: **" + this.bot.getConfig().getPrefix() + "unbanall yes"));
+                                    + "** users? If yes execute command: **" + this.bot.getConfig().getPrefix() + "unbanall yes**"));
                     return;
                 }
                 channel.sendMessage(new RukaEmbed()
