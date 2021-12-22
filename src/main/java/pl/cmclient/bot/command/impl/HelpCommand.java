@@ -17,6 +17,6 @@ public class HelpCommand extends Command {
     protected void execute(MessageCreateEvent event, User user, ServerTextChannel channel, String[] args) {
         channel.sendMessage(new CustomEmbed().create(true)
                 .setAuthor(this.bot.getApi().getYourself())
-                .setTitle("Bot prefix: **" + this.bot.getConfig().getPrefix() + "**\nAvailable commands:\n" + this.bot.getCommandManager().getCommandsList()));
+                .setTitle("Bot prefix: **" + this.bot.getConfig().getPrefix() + "**\n**Available commands**:").setDescription(this.bot.getCommandManager().getCommandsList()));
     }
 }
