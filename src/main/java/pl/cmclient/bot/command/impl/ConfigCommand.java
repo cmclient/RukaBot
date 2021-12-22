@@ -6,7 +6,7 @@ import org.javacord.api.entity.user.User;
 import org.javacord.api.event.message.MessageCreateEvent;
 import pl.cmclient.bot.command.Command;
 import pl.cmclient.bot.command.CommandType;
-import pl.cmclient.bot.common.RukaEmbed;
+import pl.cmclient.bot.common.CustomEmbed;
 import pl.cmclient.bot.helper.StringHelper;
 import pl.cmclient.bot.object.ServerData;
 
@@ -21,7 +21,7 @@ public class ConfigCommand extends Command {
     @Override
     protected void execute(MessageCreateEvent event, User user, ServerTextChannel channel, String[] args) {
         if (args.length == 0) {
-            channel.sendMessage(new RukaEmbed()
+            channel.sendMessage(new CustomEmbed()
                     .create(false)
                     .setDescription(this.getUsage("<key> [value]") + "\nConfiguration keys: `inviteBans`, `bannedWords`"));
             return;
@@ -33,46 +33,46 @@ public class ConfigCommand extends Command {
             switch (args[0].toLowerCase(Locale.ROOT)) {
                 case "invitebans":
                     if (args.length == 1) {
-                        channel.sendMessage(new RukaEmbed()
+                        channel.sendMessage(new CustomEmbed()
                                 .create(true)
                                 .setDescription("Automatic bans for sending invites are **" + (serverData.isInviteBans() ? "enabled" : "disabled") + "**"));
                     } else {
                         boolean value = Boolean.parseBoolean(args[1]);
                         serverData.setInviteBans(value);
-                        channel.sendMessage(new RukaEmbed()
+                        channel.sendMessage(new CustomEmbed()
                                 .create(true)
                                 .setDescription("Automatic bans for sending has been **" + (value ? "enabled" : "disabled") + "**"));
                     }
                     break;
                 case "bannedwords":
                     if (args.length == 1) {
-                        channel.sendMessage(new RukaEmbed()
+                        channel.sendMessage(new CustomEmbed()
                                 .create(true)
                                 .setDescription("Currently banned words:\n" + StringHelper.join(serverData.getBannedWords(), ", ")));
                         return;
                     } else {
                         String value = args[1].trim();
                         if (value.isEmpty()) {
-                            channel.sendMessage(new RukaEmbed()
+                            channel.sendMessage(new CustomEmbed()
                                     .create(false)
                                     .setDescription(this.getUsage("<key> [value]") + "\nConfiguration keys: `inviteBans`, `bannedWords`"));
                             return;
                         }
                         if (serverData.getBannedWords().contains(value)) {
                             serverData.removeBannedWord(value);
-                            channel.sendMessage(new RukaEmbed()
+                            channel.sendMessage(new CustomEmbed()
                                     .create(true)
                                     .setDescription("Removed banned word: **" + value + "**"));
                         } else {
                             serverData.addBannedWord(value);
-                            channel.sendMessage(new RukaEmbed()
+                            channel.sendMessage(new CustomEmbed()
                                     .create(true)
                                     .setDescription("Added banned word: **" + value + "**"));
                         }
                     }
                     break;
                 default:
-                    channel.sendMessage(new RukaEmbed()
+                    channel.sendMessage(new CustomEmbed()
                             .create(false)
                             .setDescription(this.getUsage("<key> [value]") + "\nConfiguration keys: `inviteBans`, `bannedWords`"));
                     break;

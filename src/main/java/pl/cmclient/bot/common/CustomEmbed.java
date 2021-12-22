@@ -5,7 +5,7 @@ import pl.cmclient.bot.BotApplication;
 
 import java.awt.*;
 
-public class RukaEmbed {
+public class CustomEmbed {
 
     public EmbedBuilder create() {
         EmbedBuilder builder = new EmbedBuilder();

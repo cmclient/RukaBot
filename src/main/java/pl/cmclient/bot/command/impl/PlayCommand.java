@@ -7,7 +7,7 @@ import org.javacord.api.entity.user.User;
 import org.javacord.api.event.message.MessageCreateEvent;
 import pl.cmclient.bot.command.Command;
 import pl.cmclient.bot.command.CommandType;
-import pl.cmclient.bot.common.RukaEmbed;
+import pl.cmclient.bot.common.CustomEmbed;
 import pl.cmclient.bot.helper.StringHelper;
 
 public class PlayCommand extends Command {
@@ -19,7 +19,7 @@ public class PlayCommand extends Command {
     @Override
     protected void execute(MessageCreateEvent event, User user, ServerTextChannel channel, String[] args) {
         if (args.length == 0) {
-            channel.sendMessage(new RukaEmbed()
+            channel.sendMessage(new CustomEmbed()
                     .create(false)
                     .setDescription(this.getUsage("<url>")));
             return;
@@ -40,16 +40,16 @@ public class PlayCommand extends Command {
                         if (audioConnection.getChannel().getId() == voiceChannel.getId()) {
                             this.play(server, channel, args);
                         } else {
-                            channel.sendMessage(new RukaEmbed().create(false)
+                            channel.sendMessage(new CustomEmbed().create(false)
                                     .setTitle("You are not connected with the same channel as the bot."));
                         }
                     });
                 }
             } else {
-                channel.sendMessage(new RukaEmbed().create(false)
+                channel.sendMessage(new CustomEmbed().create(false)
                         .setTitle("I cannot connect, cannot see, or do not have the permission to speak on the channel."));
             }
-        }, () -> channel.sendMessage(new RukaEmbed().create(false)
+        }, () -> channel.sendMessage(new CustomEmbed().create(false)
                 .setTitle("You are not connected in any voice channel."))));
     }
 
@@ -59,16 +59,16 @@ public class PlayCommand extends Command {
         if (query.contains("://")) {
             this.bot.getMusicManager().queue(query, server, channel);
         } else {
-            channel.sendMessage(new RukaEmbed().create(true)
+            channel.sendMessage(new CustomEmbed().create(true)
                     .setTitle("Searching **" + query + "** on YouTube..."));
 
             if (this.bot.getConfig().getYoutubeApiKey().equals("default")) {
-                channel.sendMessage(new RukaEmbed().create(false)
+                channel.sendMessage(new CustomEmbed().create(false)
                         .setTitle("Searching on YouTube is not available!"));
             } else {
                 this.bot.getYoutubeApiManager().search(query)
                         .ifPresentOrElse(url -> this.bot.getMusicManager().queue(url, server, channel),
-                                () -> channel.sendMessage(new RukaEmbed().create(false)
+                                () -> channel.sendMessage(new CustomEmbed().create(false)
                                         .setTitle("Cannot find any song by this URL.")));
             }
         }

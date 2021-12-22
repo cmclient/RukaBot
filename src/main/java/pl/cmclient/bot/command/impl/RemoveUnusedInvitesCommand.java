@@ -7,7 +7,7 @@ import org.javacord.api.entity.user.User;
 import org.javacord.api.event.message.MessageCreateEvent;
 import pl.cmclient.bot.command.Command;
 import pl.cmclient.bot.command.CommandType;
-import pl.cmclient.bot.common.RukaEmbed;
+import pl.cmclient.bot.common.CustomEmbed;
 
 public class RemoveUnusedInvitesCommand extends Command {
 
@@ -22,7 +22,7 @@ public class RemoveUnusedInvitesCommand extends Command {
                         .stream()
                         .filter(richInvite -> richInvite.getUses() < 10)
                         .forEach(Invite::delete))
-                .thenAccept(unused -> channel.sendMessage(new RukaEmbed().create(false)
+                .thenAccept(unused -> channel.sendMessage(new CustomEmbed().create(false)
                         .setTitle("Completed removing invites."))));
     }
 }

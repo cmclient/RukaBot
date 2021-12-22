@@ -5,7 +5,7 @@ import org.javacord.api.entity.user.User;
 import org.javacord.api.event.message.MessageCreateEvent;
 import pl.cmclient.bot.command.Command;
 import pl.cmclient.bot.command.CommandType;
-import pl.cmclient.bot.common.RukaEmbed;
+import pl.cmclient.bot.common.CustomEmbed;
 
 public class HelpCommand extends Command {
 
@@ -15,7 +15,8 @@ public class HelpCommand extends Command {
 
     @Override
     protected void execute(MessageCreateEvent event, User user, ServerTextChannel channel, String[] args) {
-        channel.sendMessage(new RukaEmbed().create(true)
-                .setDescription("Bot prefix: **" + this.bot.getConfig().getPrefix() + "**\nAvailable commands:\n" + this.bot.getCommandManager().getCommandsList()));
+        channel.sendMessage(new CustomEmbed().create(true)
+                .setAuthor(this.bot.getApi().getYourself())
+                .setTitle("Bot prefix: **" + this.bot.getConfig().getPrefix() + "**\nAvailable commands:\n" + this.bot.getCommandManager().getCommandsList()));
     }
 }

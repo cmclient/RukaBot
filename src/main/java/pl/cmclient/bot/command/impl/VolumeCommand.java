@@ -5,7 +5,7 @@ import org.javacord.api.entity.user.User;
 import org.javacord.api.event.message.MessageCreateEvent;
 import pl.cmclient.bot.command.Command;
 import pl.cmclient.bot.command.CommandType;
-import pl.cmclient.bot.common.RukaEmbed;
+import pl.cmclient.bot.common.CustomEmbed;
 
 public class VolumeCommand extends Command {
 
@@ -16,7 +16,7 @@ public class VolumeCommand extends Command {
     @Override
     protected void execute(MessageCreateEvent event, User user, ServerTextChannel channel, String[] args) {
         if (args.length == 0 || !this.isNumber(args[0])) {
-            channel.sendMessage(new RukaEmbed().create(false)
+            channel.sendMessage(new CustomEmbed().create(false)
                     .setDescription(this.getUsage("<volume>")));
             return;
         }
@@ -24,11 +24,11 @@ public class VolumeCommand extends Command {
         event.getServer().ifPresent(server -> server.getAudioConnection().ifPresentOrElse(connection -> {
             int volume = Integer.parseInt(args[0]);
             if (volume <= 0 || volume > 100) {
-                channel.sendMessage(new RukaEmbed().create(false).setTitle("Minimum volume is 1, maximum is 100"));
+                channel.sendMessage(new CustomEmbed().create(false).setTitle("Minimum volume is 1, maximum is 100"));
                 return;
             }
             this.bot.getMusicManager().setVolume(volume, server, channel);
-        }, () -> channel.sendMessage(new RukaEmbed().create(false)
+        }, () -> channel.sendMessage(new CustomEmbed().create(false)
                 .setTitle("I'm not connected to any channel!"))));
     }
 

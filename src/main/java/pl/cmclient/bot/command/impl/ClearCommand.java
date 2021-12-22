@@ -6,7 +6,7 @@ import org.javacord.api.entity.user.User;
 import org.javacord.api.event.message.MessageCreateEvent;
 import pl.cmclient.bot.command.Command;
 import pl.cmclient.bot.command.CommandType;
-import pl.cmclient.bot.common.RukaEmbed;
+import pl.cmclient.bot.common.CustomEmbed;
 
 public class ClearCommand extends Command {
 
@@ -17,7 +17,7 @@ public class ClearCommand extends Command {
     @Override
     protected void execute(MessageCreateEvent event, User user, ServerTextChannel channel, String[] args) {
         if (args.length == 0 || !this.isNumber(args[0])) {
-            channel.sendMessage(new RukaEmbed()
+            channel.sendMessage(new CustomEmbed()
                     .create(false)
                     .setDescription(this.getUsage("<amount>")));
             return;
@@ -25,7 +25,7 @@ public class ClearCommand extends Command {
         int amount = Integer.parseInt(args[0]);
         channel.getMessages(amount)
                 .thenAcceptAsync(messages -> channel.deleteMessages(messages)
-                        .thenAcceptAsync(unused -> channel.sendMessage(new RukaEmbed().create(true)
+                        .thenAcceptAsync(unused -> channel.sendMessage(new CustomEmbed().create(true)
                                 .setTitle(amount + " messages has been purged."))));
     }
 

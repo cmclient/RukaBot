@@ -5,7 +5,7 @@ import org.javacord.api.entity.permission.PermissionType;
 import org.javacord.api.entity.user.User;
 import org.javacord.api.event.message.MessageCreateEvent;
 import pl.cmclient.bot.BotApplication;
-import pl.cmclient.bot.common.RukaEmbed;
+import pl.cmclient.bot.common.CustomEmbed;
 
 import java.util.List;
 
@@ -64,14 +64,14 @@ public abstract class Command {
     public void run(MessageCreateEvent event, String... args) {
         event.getServer().ifPresent(server -> event.getMessageAuthor().asUser().ifPresent(user -> {
             if (this.onlyOwner && user.getId() != server.getOwnerId()) {
-                event.getChannel().sendMessage(new RukaEmbed()
+                event.getChannel().sendMessage(new CustomEmbed()
                         .create(false)
                         .setTitle(":interrobang: This command can be used only by server owner"));
                 return;
             }
 
             if (this.permission != null && !event.getServer().get().hasAnyPermission(user, PermissionType.ADMINISTRATOR, this.permission)) {
-                event.getChannel().sendMessage(new RukaEmbed()
+                event.getChannel().sendMessage(new CustomEmbed()
                         .create(false)
                         .setTitle(":interrobang: You do not have sufficient privileges to use this command. (" + this.permission.name() + ")"));
                 return;

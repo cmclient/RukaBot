@@ -6,7 +6,7 @@ import org.javacord.api.entity.user.User;
 import org.javacord.api.event.message.MessageCreateEvent;
 import pl.cmclient.bot.command.Command;
 import pl.cmclient.bot.command.CommandType;
-import pl.cmclient.bot.common.RukaEmbed;
+import pl.cmclient.bot.common.CustomEmbed;
 
 import java.time.Duration;
 
@@ -22,16 +22,16 @@ public class NowPlayingCommand extends Command {
             AudioTrack track = this.bot.getMusicManager().getPlayingTrack(server);
 
             if (track == null) {
-                channel.sendMessage(new RukaEmbed().create(false)
+                channel.sendMessage(new CustomEmbed().create(false)
                         .setTitle("Currently i'm not playing any song."));
                 return;
             }
 
-            channel.sendMessage(new RukaEmbed().create(true)
+            channel.sendMessage(new CustomEmbed().create(true)
                     .setAuthor(track.getInfo().title, track.getInfo().uri, "https://img.youtube.com/vi/" + track.getInfo().identifier + "/maxresdefault.jpg")
                     .setTitle("<:watch:901557828127449099> " + this.formatDuration(this.bot.getMusicManager().getPosition(server)))
                     .setThumbnail("https://img.youtube.com/vi/" + track.getInfo().identifier + "/maxresdefault.jpg"));
-        }, () -> channel.sendMessage(new RukaEmbed().create(false)
+        }, () -> channel.sendMessage(new CustomEmbed().create(false)
                 .setTitle("I'm not connected to any channel!"))));
     }
 

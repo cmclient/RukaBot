@@ -6,7 +6,7 @@ import org.javacord.api.entity.user.User;
 import org.javacord.api.event.message.MessageCreateEvent;
 import pl.cmclient.bot.command.Command;
 import pl.cmclient.bot.command.CommandType;
-import pl.cmclient.bot.common.RukaEmbed;
+import pl.cmclient.bot.common.CustomEmbed;
 import pl.cmclient.bot.helper.StringHelper;
 
 import java.util.List;
@@ -21,14 +21,14 @@ public class KickCommand extends Command {
     @Override
     protected void execute(MessageCreateEvent event, User user, ServerTextChannel channel, String[] args) {
         if (args.length == 0) {
-            channel.sendMessage(new RukaEmbed()
+            channel.sendMessage(new CustomEmbed()
                     .create(false)
                     .setDescription(this.getUsage("<user mention> [reason]")));
             return;
         }
         List<User> mentions = event.getMessage().getMentionedUsers();
         if (mentions.isEmpty()) {
-            channel.sendMessage(new RukaEmbed()
+            channel.sendMessage(new CustomEmbed()
                     .create(false)
                     .setDescription(this.getUsage("<user mention> [reason]")));
             return;
@@ -36,7 +36,7 @@ public class KickCommand extends Command {
         event.getServer().ifPresent(server -> {
             User other = mentions.get(0);
             if (!server.canKickUser(this.bot.getApi().getYourself(), other)) {
-                channel.sendMessage(new RukaEmbed()
+                channel.sendMessage(new CustomEmbed()
                         .create(false)
                         .setDescription(":warning: I do not have permission to ban this user."));
                 return;
@@ -45,13 +45,13 @@ public class KickCommand extends Command {
             CompletableFuture<Void> future = server.kickUser(other, reason);
             future.whenComplete((unused, throwable) -> {
                 if (throwable != null) {
-                    channel.sendMessage(new RukaEmbed()
+                    channel.sendMessage(new CustomEmbed()
                             .create(false)
                             .setDescription("I cant kick him.\nError: " + throwable.getMessage()));
                     future.completeExceptionally(throwable);
                     return;
                 }
-                channel.sendMessage(new RukaEmbed()
+                channel.sendMessage(new CustomEmbed()
                         .create(true)
                         .setDescription(":white_check_mark: User " + other.getMentionTag() + " has been kicked from this server")
                         .addField("Reason", reason));

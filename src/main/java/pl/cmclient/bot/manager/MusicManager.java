@@ -9,7 +9,7 @@ import com.sedmelluq.discord.lavaplayer.track.AudioPlaylist;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import org.javacord.api.entity.channel.ServerTextChannel;
 import org.javacord.api.entity.server.Server;
-import pl.cmclient.bot.common.RukaEmbed;
+import pl.cmclient.bot.common.CustomEmbed;
 import pl.cmclient.bot.object.AudioPlayer;
 
 import java.time.Duration;
@@ -33,7 +33,7 @@ public class MusicManager {
             @Override
             public void trackLoaded(AudioTrack track) {
                 audioManager.scheduler.queue(track);
-                channel.sendMessage(new RukaEmbed().create(true)
+                channel.sendMessage(new CustomEmbed().create(true)
                         .setAuthor(track.getInfo().title, track.getInfo().uri, "https://img.youtube.com/vi/" + track.getInfo().identifier + "/maxresdefault.jpg")
                         .setTitle("Added track to queue")
                         .setDescription(audioManager.scheduler.getQueue().size() == 0 ? "" : "Position in queue: " + audioManager.scheduler.getQueue().size())
@@ -47,7 +47,7 @@ public class MusicManager {
                     track = playlist.getTracks().get(0);
                 }
                 audioManager.scheduler.queue(track);
-                channel.sendMessage(new RukaEmbed().create(true)
+                channel.sendMessage(new CustomEmbed().create(true)
                         .setAuthor(track.getInfo().title, track.getInfo().uri, "https://img.youtube.com/vi/" + track.getInfo().identifier + "/maxresdefault.jpg")
                         .setTitle("Added track to queue")
                         .setDescription(audioManager.scheduler.getQueue().size() == 0 ? "" : "Position in queue: " + audioManager.scheduler.getQueue().size())
@@ -56,13 +56,13 @@ public class MusicManager {
 
             @Override
             public void noMatches() {
-                channel.sendMessage(new RukaEmbed().create(false)
+                channel.sendMessage(new CustomEmbed().create(false)
                         .setTitle("Cannot find any song by this URL."));
             }
 
             @Override
             public void loadFailed(FriendlyException ex) {
-                channel.sendMessage(new RukaEmbed().create(false)
+                channel.sendMessage(new CustomEmbed().create(false)
                         .setTitle("Error while trying to play that song."));
             }
         });
@@ -72,23 +72,23 @@ public class MusicManager {
         AudioPlayer audioManager = this.get(server);
         AudioTrack track = audioManager.scheduler.getPlayingTrack();
         if (track == null) {
-            channel.sendMessage(new RukaEmbed().create(false).setTitle("Currently nothing playing."));
+            channel.sendMessage(new CustomEmbed().create(false).setTitle("Currently nothing playing."));
             return;
         }
         audioManager.scheduler.stopTrack();
-        channel.sendMessage(new RukaEmbed().create(true).setTitle("Stopped playing **" + track.getInfo().title + "**"));
+        channel.sendMessage(new CustomEmbed().create(true).setTitle("Stopped playing **" + track.getInfo().title + "**"));
     }
 
     public void skip(Server server, ServerTextChannel channel) {
         AudioPlayer audioManager = this.get(server);
         AudioTrack track = audioManager.scheduler.getPlayingTrack();
         if (track == null) {
-            channel.sendMessage(new RukaEmbed().create(false).setTitle("Currently nothing playing."));
+            channel.sendMessage(new CustomEmbed().create(false).setTitle("Currently nothing playing."));
             return;
         }
         audioManager.scheduler.nextTrack();
         AudioTrack nextTrack = audioManager.scheduler.getPlayingTrack();
-        channel.sendMessage(new RukaEmbed().create(true)
+        channel.sendMessage(new CustomEmbed().create(true)
                 .setAuthor(nextTrack.getInfo().title, nextTrack.getInfo().uri, "https://img.youtube.com/vi/" + nextTrack.getInfo().identifier + "/maxresdefault.jpg")
                 .setTitle("Skipped track **" + track.getInfo().title + "**")
                 .setThumbnail("https://img.youtube.com/vi/" + track.getInfo().identifier + "/maxresdefault.jpg"));
@@ -97,7 +97,7 @@ public class MusicManager {
     public void setVolume(int volume, Server server, ServerTextChannel channel) {
         AudioPlayer audioManager = this.get(server);
         audioManager.player.setVolume(volume);
-        channel.sendMessage(new RukaEmbed().create(true).setTitle("Volume has been set to: **" + volume + "**%"));
+        channel.sendMessage(new CustomEmbed().create(true).setTitle("Volume has been set to: **" + volume + "**%"));
     }
 
     public AudioTrack getPlayingTrack(Server server) {

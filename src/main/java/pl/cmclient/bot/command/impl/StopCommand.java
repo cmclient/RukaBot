@@ -5,7 +5,7 @@ import org.javacord.api.entity.user.User;
 import org.javacord.api.event.message.MessageCreateEvent;
 import pl.cmclient.bot.command.Command;
 import pl.cmclient.bot.command.CommandType;
-import pl.cmclient.bot.common.RukaEmbed;
+import pl.cmclient.bot.common.CustomEmbed;
 
 public class StopCommand extends Command {
 
@@ -17,7 +17,7 @@ public class StopCommand extends Command {
     protected void execute(MessageCreateEvent event, User user, ServerTextChannel channel, String[] args) {
         event.getServer().ifPresent(server -> server.getAudioConnection().ifPresentOrElse(connection -> {
             this.bot.getMusicManager().stop(server, channel);
-        }, () -> channel.sendMessage(new RukaEmbed().create(false)
+        }, () -> channel.sendMessage(new CustomEmbed().create(false)
                 .setTitle("I'm not connected to any channel!"))));
     }
 }

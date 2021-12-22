@@ -6,7 +6,7 @@ import org.javacord.api.event.message.MessageCreateEvent;
 import pl.cmclient.bot.audio.TrackScheduler;
 import pl.cmclient.bot.command.Command;
 import pl.cmclient.bot.command.CommandType;
-import pl.cmclient.bot.common.RukaEmbed;
+import pl.cmclient.bot.common.CustomEmbed;
 
 public class LoopCommand extends Command {
 
@@ -19,9 +19,9 @@ public class LoopCommand extends Command {
         event.getServer().ifPresent(server -> server.getAudioConnection().ifPresentOrElse(connection -> {
             TrackScheduler scheduler = this.bot.getMusicManager().get(server).scheduler;
             scheduler.setLoop(!scheduler.isLoop());
-            channel.sendMessage(new RukaEmbed().create(true)
+            channel.sendMessage(new CustomEmbed().create(true)
                     .setTitle("Loop mode has been: " + (scheduler.isLoop() ? "enabled" : "disabled")));
-        }, () -> channel.sendMessage(new RukaEmbed().create(false)
+        }, () -> channel.sendMessage(new CustomEmbed().create(false)
                 .setTitle("I'm not connected to any channel!"))));
     }
 }

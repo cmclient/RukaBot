@@ -4,7 +4,7 @@ import org.javacord.api.entity.permission.PermissionType;
 import org.javacord.api.event.message.MessageCreateEvent;
 import org.javacord.api.listener.message.MessageCreateListener;
 import pl.cmclient.bot.BotApplication;
-import pl.cmclient.bot.common.RukaEmbed;
+import pl.cmclient.bot.common.CustomEmbed;
 import pl.cmclient.bot.object.ServerData;
 
 import java.util.Arrays;
@@ -34,7 +34,7 @@ public class CommandListener implements MessageCreateListener {
             if ((msgFormatted.contains("discord.gg/") || msgFormatted.contains("discord.com/invite/"))
                     && !server.hasAnyPermission(user, PermissionType.MANAGE_MESSAGES, PermissionType.ADMINISTRATOR) && serverData.isInviteBans()) {
                 event.getMessage().delete()
-                        .thenAccept(unused -> user.sendMessage(new RukaEmbed().create(false).setTitle("You has been banned for sending invites!")))
+                        .thenAccept(unused -> user.sendMessage(new CustomEmbed().create(false).setTitle("You has been banned for sending invites!")))
                         .thenAccept(unused -> server.banUser(user, 7, "[" + this.bot.getConfig().getBotName() + "] Automatic ban for " + user.getMentionTag() + " (Sending server invites)"));
                 return;
             }
@@ -43,7 +43,7 @@ public class CommandListener implements MessageCreateListener {
                 serverData.getBannedWords().stream()
                         .filter(string -> !string.isEmpty())
                         .filter(msgFormatted::contains).findAny().ifPresent(s -> event.getMessage().delete()
-                                .thenAccept(unused -> user.sendMessage(new RukaEmbed().create(false).setTitle("You can't send that message in this server!")))
+                                .thenAccept(unused -> user.sendMessage(new CustomEmbed().create(false).setTitle("You can't send that message in this server!")))
                                 .thenAccept(unused -> server.kickUser(user, "[" + this.bot.getConfig().getBotName() + "] Automatic ban for sending inallowed words!"))
                                 .thenAccept(unused -> this.bot.getLogger().info("User " + user.getName() + " has been kicked from server "
                                         + server.getName() + " for sending not allowed words. (" + s + ") (" + msg + ")")));
