@@ -34,7 +34,6 @@ public class BotApplication {
     public BotApplication() {
         instance = this;
         this.logger = LogManager.getLogger(this.getClass());
-        this.config = new Config();
         this.start();
     }
 
@@ -42,6 +41,7 @@ public class BotApplication {
         this.logger.info(this.getAsciiArtLogo());
         this.logger.info("Loading configuration...");
         (this.config = new Config()).load(this);
+        this.logger.info("Token: " + this.censor(this.config.getToken()));
         this.logger.info("Loading database...");
         if ((this.database = new Database()).connect(this)) {
             this.logger.info("Writing tables...");
@@ -54,7 +54,6 @@ public class BotApplication {
         this.logger.info("Loading audio player...");
         this.musicManager = new MusicManager();
         this.youtubeApiManager = new YoutubeApiManager(this);
-        this.logger.info("Token: " + this.censor(this.config.getToken()));
         this.logger.info("Loading commands...");
         (this.commandManager = new CommandManager()).load(this);
         this.logger.info("Loading Discord API...");
