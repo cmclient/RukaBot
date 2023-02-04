@@ -10,8 +10,6 @@ import pl.cmclient.bot.common.CustomEmbed;
 import pl.cmclient.bot.helper.StringHelper;
 import pl.cmclient.bot.object.ServerData;
 
-import java.util.Locale;
-
 public class ConfigCommand extends Command {
 
     public ConfigCommand() {
@@ -30,7 +28,7 @@ public class ConfigCommand extends Command {
         event.getServer().ifPresent(server -> {
             ServerData serverData = this.bot.getServerDataManager().get(server.getId());
 
-            switch (args[0].toLowerCase(Locale.ROOT)) {
+            switch (args[0].toLowerCase()) {
                 case "invitebans":
                     if (args.length == 1) {
                         channel.sendMessage(new CustomEmbed()

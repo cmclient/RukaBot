@@ -11,6 +11,7 @@ import pl.cmclient.bot.helper.StringHelper;
 
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.TimeUnit;
 
 public class BanCommand extends Command {
 
@@ -42,7 +43,7 @@ public class BanCommand extends Command {
                 return;
             }
             String reason = args.length == 1 ? "No reason" : StringHelper.join(args, " ", 1, args.length);
-            CompletableFuture<Void> future = server.banUser(other, 0, reason);
+            CompletableFuture<Void> future = server.banUser(other, 0, TimeUnit.DAYS, reason);
             future.whenComplete((unused, throwable) -> {
                 if (throwable != null) {
                     channel.sendMessage(new CustomEmbed()

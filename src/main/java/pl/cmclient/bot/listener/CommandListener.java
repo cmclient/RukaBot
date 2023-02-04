@@ -8,7 +8,7 @@ import pl.cmclient.bot.common.CustomEmbed;
 import pl.cmclient.bot.object.ServerData;
 
 import java.util.Arrays;
-import java.util.Locale;
+import java.util.concurrent.TimeUnit;
 
 public class CommandListener implements MessageCreateListener {
 
@@ -29,13 +29,13 @@ public class CommandListener implements MessageCreateListener {
 
         event.getMessageAuthor().asUser().ifPresent(user -> event.getServer().ifPresent(server -> {
             ServerData serverData = this.bot.getServerDataManager().get(server.getId());
-            String msgFormatted = msg.toLowerCase(Locale.ROOT);
+            String msgFormatted = msg.toLowerCase();
 
             if ((msgFormatted.contains("discord.gg/") || msgFormatted.contains("discord.com/invite/"))
                     && !server.hasAnyPermission(user, PermissionType.MANAGE_MESSAGES, PermissionType.ADMINISTRATOR) && serverData.isInviteBans()) {
                 event.getMessage().delete()
                         .thenAccept(unused -> user.sendMessage(new CustomEmbed().create(false).setTitle("You has been banned for sending invites!")))
-                        .thenAccept(unused -> server.banUser(user, 7, "[" + this.bot.getConfig().getBotName() + "] Automatic ban for " + user.getMentionTag() + " (Sending server invites)"));
+                        .thenAccept(unused -> server.banUser(user, 7, TimeUnit.DAYS, "[" + this.bot.getConfig().getBotName() + "] Automatic ban for " + user.getMentionTag() + " (Sending server invites)"));
                 return;
             }
 

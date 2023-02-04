@@ -8,7 +8,6 @@ import pl.cmclient.bot.helper.StringHelper;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -52,6 +51,6 @@ public class CommandManager {
     }
 
     public Optional<Command> get(String name) {
-        return this.commands.stream().filter(command -> command.getName().equalsIgnoreCase(name) || command.getAliases().contains(name.toLowerCase(Locale.ROOT))).findAny();
+        return this.commands.stream().filter(command -> command.getName().equalsIgnoreCase(name) || command.getAliases().contains(name.toLowerCase())).findAny();
     }
 }

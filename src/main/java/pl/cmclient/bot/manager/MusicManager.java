@@ -9,6 +9,7 @@ import com.sedmelluq.discord.lavaplayer.track.AudioPlaylist;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import org.javacord.api.entity.channel.ServerTextChannel;
 import org.javacord.api.entity.server.Server;
+import pl.cmclient.bot.BotApplication;
 import pl.cmclient.bot.common.CustomEmbed;
 import pl.cmclient.bot.object.AudioPlayer;
 
@@ -64,6 +65,7 @@ public class MusicManager {
             public void loadFailed(FriendlyException ex) {
                 channel.sendMessage(new CustomEmbed().create(false)
                         .setTitle("Error while trying to play that song."));
+                BotApplication.getInstance().getLogger().error("Error while trying to play song", ex);
             }
         });
     }

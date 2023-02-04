@@ -57,7 +57,7 @@ public class BotApplication {
         this.logger.info("Loading commands...");
         (this.commandManager = new CommandManager()).load(this);
         this.logger.info("Loading Discord API...");
-        this.api = new DiscordApiBuilder().setToken(this.config.getToken()).login().join();
+        this.api = new DiscordApiBuilder().setAllIntents().setToken(this.config.getToken()).login().join();
         this.logger.info("Loading listeners...");
         this.api.addListener(new CommandListener(this));
         this.api.addListener(new MessageEditListener(this));
