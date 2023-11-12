@@ -23,8 +23,8 @@ public class VolumeCommand extends Command {
 
         event.getServer().ifPresent(server -> server.getAudioConnection().ifPresentOrElse(connection -> {
             int volume = Integer.parseInt(args[0]);
-            if (volume <= 0 || volume > 100) {
-                channel.sendMessage(new CustomEmbed().create(false).setTitle("Minimum volume is 1, maximum is 100"));
+            if (volume <= 0 || volume > 500) {
+                channel.sendMessage(new CustomEmbed().create(false).setTitle("Minimum volume is 1, maximum is 500"));
                 return;
             }
             this.bot.getMusicManager().setVolume(volume, server, channel);

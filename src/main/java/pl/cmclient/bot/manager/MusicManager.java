@@ -1,5 +1,6 @@
 package pl.cmclient.bot.manager;
 
+import com.sedmelluq.discord.lavaplayer.player.AudioConfiguration;
 import com.sedmelluq.discord.lavaplayer.player.AudioLoadResultHandler;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.player.DefaultAudioPlayerManager;
@@ -14,6 +15,8 @@ import pl.cmclient.bot.common.CustomEmbed;
 import pl.cmclient.bot.object.AudioPlayer;
 
 import java.time.Duration;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
@@ -25,6 +28,8 @@ public class MusicManager {
 
     public MusicManager() {
         AudioSourceManagers.registerRemoteSources(this.playerManager = new DefaultAudioPlayerManager());
+        this.playerManager.getConfiguration().setResamplingQuality(AudioConfiguration.ResamplingQuality.HIGH);
+        this.playerManager.getConfiguration().setOpusEncodingQuality(AudioConfiguration.OPUS_QUALITY_MAX);
         this.audioPlayers = new ConcurrentHashMap<>();
     }
 
@@ -44,13 +49,20 @@ public class MusicManager {
             @Override
             public void playlistLoaded(AudioPlaylist playlist) {
                 AudioTrack track = playlist.getSelectedTrack();
-                if (track == null) {
-                    track = playlist.getTracks().get(0);
+                List<AudioTrack> tracks = new ArrayList<>(playlist.getTracks());
+
+                if (track != null) {
+                    audioManager.scheduler.queue(track);
+                    tracks.remove(track);
+                } else {
+                    track = tracks.get(0);
                 }
-                audioManager.scheduler.queue(track);
+
+                tracks.forEach(audioManager.scheduler::queue);
+
                 channel.sendMessage(new CustomEmbed().create(true)
                         .setAuthor(track.getInfo().title, track.getInfo().uri, "https://img.youtube.com/vi/" + track.getInfo().identifier + "/maxresdefault.jpg")
-                        .setTitle("Added track to queue")
+                        .setTitle("Added playlist to queue (" + playlist.getTracks().size() + " songs)")
                         .setDescription(audioManager.scheduler.getQueue().size() == 0 ? "" : "Position in queue: " + audioManager.scheduler.getQueue().size())
                         .setThumbnail("https://img.youtube.com/vi/" + track.getInfo().identifier + "/maxresdefault.jpg"));
             }

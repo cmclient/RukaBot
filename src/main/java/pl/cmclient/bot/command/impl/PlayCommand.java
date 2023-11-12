@@ -57,7 +57,7 @@ public class PlayCommand extends Command {
         String query = StringHelper.join(args, " ", 0, args.length);
 
         if (query.contains("://")) {
-            this.bot.getMusicManager().queue(query, server, channel);
+            this.bot.getMusicManager().queue(query.replace("&list=LM", ""), server, channel);
         } else {
             channel.sendMessage(new CustomEmbed().create(true)
                     .setTitle("Searching **" + query + "** on YouTube..."));
