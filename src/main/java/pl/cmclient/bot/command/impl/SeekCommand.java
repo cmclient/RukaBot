@@ -1,58 +1,93 @@
 package pl.cmclient.bot.command.impl;
 
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
-import org.javacord.api.entity.channel.ServerTextChannel;
-import org.javacord.api.entity.user.User;
-import org.javacord.api.event.message.MessageCreateEvent;
+import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
+import net.dv8tion.jda.api.interactions.commands.OptionType;
+import net.dv8tion.jda.api.interactions.commands.build.Commands;
 import pl.cmclient.bot.command.Command;
 import pl.cmclient.bot.command.CommandType;
 import pl.cmclient.bot.common.CustomEmbed;
 
 import java.time.Duration;
 import java.time.LocalTime;
+import java.time.format.DateTimeParseException;
 import java.util.concurrent.TimeUnit;
 
 public class SeekCommand extends Command {
 
     public SeekCommand() {
-        super("seek", "Seek", CommandType.MUSIC, new String[0], false, null);
+        super(Commands.slash("seek", "Seek")
+                        .addOption(OptionType.STRING, "time", "Format: <HH:MM:SS> | Example: 00:01:14", true)
+                        .setGuildOnly(true),
+                CommandType.MUSIC, false);
     }
 
     @Override
-    protected void execute(MessageCreateEvent event, User user, ServerTextChannel channel, String[] args) {
-        if (args.length == 0 || args[0].length() != "00:00:00".length()) {
-            channel.sendMessage(new CustomEmbed()
-                    .create(false)
-                    .setDescription(this.getUsage("<HH:MM:SS>\nExample: 00:01:14")));
+    public void execute(SlashCommandInteractionEvent event) {
+        Guild guild = event.getGuild();
+        if (!guild.getAudioManager().isConnected()) {
+            event.replyEmbeds(new CustomEmbed()
+                            .create(CustomEmbed.Type.ERROR)
+                            .setTitle("I'm not connected to any channel.")
+                            .build())
+                    .setEphemeral(true)
+                    .queue();
             return;
         }
 
-        event.getServer().ifPresent(server -> server.getAudioConnection().ifPresentOrElse(connection -> {
-            AudioTrack track = this.bot.getMusicManager().getPlayingTrack(server);
+        AudioTrack track = this.getBot().getMusicManager().getPlayingTrack(guild);
 
-            if (track == null) {
-                channel.sendMessage(new CustomEmbed().create(false)
-                        .setTitle("Currently i'm not playing any song."));
-                return;
-            }
+        if (track == null) {
+            event.replyEmbeds(new CustomEmbed()
+                            .create(CustomEmbed.Type.ERROR)
+                            .setTitle("Currently i'm not playing any song.")
+                            .build())
+                    .setEphemeral(true)
+                    .queue();
+            return;
+        }
+        
+        if (!track.isSeekable()) {
+            event.replyEmbeds(new CustomEmbed()
+                            .create(CustomEmbed.Type.ERROR)
+                            .setTitle("This track is not seekable.")
+                            .build())
+                    .setEphemeral(true)
+                    .queue();
+            return;
+        }
 
-            if (!track.isSeekable()) {
-                channel.sendMessage(new CustomEmbed().create(false)
-                        .setTitle("This track is not seekable!"));
-                return;
-            }
+        String time = event.getOption("time").getAsString();
+        Duration duration = this.formatDuration(time);
 
-            this.bot.getMusicManager().setPosition(server, this.formatDuration(args[0]).toMillis(), TimeUnit.MILLISECONDS);
+        if (duration == null) {
+            event.replyEmbeds(new CustomEmbed()
+                            .create(CustomEmbed.Type.ERROR)
+                            .setTitle("Invalid time format.")
+                            .build())
+                    .setEphemeral(true)
+                    .queue();
+            return;
+        }
 
-            channel.sendMessage(new CustomEmbed().create(true)
-                    .setAuthor(track.getInfo().title, track.getInfo().uri, "https://img.youtube.com/vi/" + track.getInfo().identifier + "/maxresdefault.jpg")
-                    .setTitle("<:watch:901557828127449099> " + args[0])
-                    .setThumbnail("https://img.youtube.com/vi/" + track.getInfo().identifier + "/maxresdefault.jpg"));
-        }, () -> channel.sendMessage(new CustomEmbed().create(false)
-                .setTitle("I'm not connected to any channel!"))));
+        this.getBot().getMusicManager().setPosition(guild, duration.toMillis(), TimeUnit.MILLISECONDS);
+
+        event.replyEmbeds(new CustomEmbed()
+                        .create(CustomEmbed.Type.SUCCESS)
+                        .setAuthor(track.getInfo().title, track.getInfo().uri, "https://img.youtube.com/vi/" + track.getInfo().identifier + "/maxresdefault.jpg")
+                        .setTitle("<:watch:901557828127449099> " + time)
+                        .setThumbnail("https://img.youtube.com/vi/" + track.getInfo().identifier + "/maxresdefault.jpg")
+                        .build())
+                //.setEphemeral(true)
+                .queue();
     }
 
     private Duration formatDuration(String duration) {
-        return Duration.between(LocalTime.MIN, LocalTime.parse(duration));
+        try {
+            return Duration.between(LocalTime.MIN, LocalTime.parse(duration));
+        } catch (DateTimeParseException ex) {
+            return null;
+        }
     }
 }

@@ -8,8 +8,8 @@ import com.sedmelluq.discord.lavaplayer.source.AudioSourceManagers;
 import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
 import com.sedmelluq.discord.lavaplayer.track.AudioPlaylist;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
-import org.javacord.api.entity.channel.ServerTextChannel;
-import org.javacord.api.entity.server.Server;
+import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import pl.cmclient.bot.BotApplication;
 import pl.cmclient.bot.common.CustomEmbed;
 import pl.cmclient.bot.object.AudioPlayer;
@@ -33,17 +33,17 @@ public class MusicManager {
         this.audioPlayers = new ConcurrentHashMap<>();
     }
 
-    public void queue(String url, Server server, ServerTextChannel channel) {
+    public void queue(String url, Guild server, TextChannel channel) {
         AudioPlayer audioManager = this.get(server);
         this.playerManager.loadItemOrdered(audioManager, url, new AudioLoadResultHandler() {
             @Override
             public void trackLoaded(AudioTrack track) {
-                audioManager.scheduler.queue(track);
-                channel.sendMessage(new CustomEmbed().create(true)
+                audioManager.getScheduler().queue(track);
+                channel.sendMessageEmbeds(new CustomEmbed().create(CustomEmbed.Type.SUCCESS)
                         .setAuthor(track.getInfo().title, track.getInfo().uri, "https://img.youtube.com/vi/" + track.getInfo().identifier + "/maxresdefault.jpg")
                         .setTitle("Added track to queue")
-                        .setDescription(audioManager.scheduler.getQueue().size() == 0 ? "" : "Position in queue: " + audioManager.scheduler.getQueue().size())
-                        .setThumbnail("https://img.youtube.com/vi/" + track.getInfo().identifier + "/maxresdefault.jpg"));
+                        .setDescription(audioManager.getScheduler().getQueue().isEmpty() ? null : "Position in queue: " + audioManager.getScheduler().getQueue().size())
+                        .setThumbnail("https://img.youtube.com/vi/" + track.getInfo().identifier + "/maxresdefault.jpg").build()).queue();
             }
 
             @Override
@@ -52,90 +52,90 @@ public class MusicManager {
                 List<AudioTrack> tracks = new ArrayList<>(playlist.getTracks());
 
                 if (track != null) {
-                    audioManager.scheduler.queue(track);
+                    audioManager.getScheduler().queue(track);
                     tracks.remove(track);
                 } else {
                     track = tracks.get(0);
                 }
 
-                tracks.forEach(audioManager.scheduler::queue);
+                tracks.forEach(audioManager.getScheduler()::queue);
 
-                channel.sendMessage(new CustomEmbed().create(true)
+                channel.sendMessageEmbeds(new CustomEmbed().create(CustomEmbed.Type.SUCCESS)
                         .setAuthor(track.getInfo().title, track.getInfo().uri, "https://img.youtube.com/vi/" + track.getInfo().identifier + "/maxresdefault.jpg")
                         .setTitle("Added playlist to queue (" + playlist.getTracks().size() + " songs)")
-                        .setDescription(audioManager.scheduler.getQueue().size() == 0 ? "" : "Position in queue: " + audioManager.scheduler.getQueue().size())
-                        .setThumbnail("https://img.youtube.com/vi/" + track.getInfo().identifier + "/maxresdefault.jpg"));
+                        .setDescription(audioManager.getScheduler().getQueue().isEmpty() ? null : "Position in queue: " + audioManager.getScheduler().getQueue().size())
+                        .setThumbnail("https://img.youtube.com/vi/" + track.getInfo().identifier + "/maxresdefault.jpg").build()).queue();
             }
 
             @Override
             public void noMatches() {
-                channel.sendMessage(new CustomEmbed().create(false)
-                        .setTitle("Cannot find any song by this URL."));
+                channel.sendMessageEmbeds(new CustomEmbed().create(CustomEmbed.Type.ERROR)
+                        .setTitle("Cannot find any song by this URL.").build()).queue();
             }
 
             @Override
             public void loadFailed(FriendlyException ex) {
-                channel.sendMessage(new CustomEmbed().create(false)
-                        .setTitle("Error while trying to play that song."));
+                channel.sendMessageEmbeds(new CustomEmbed().create(CustomEmbed.Type.ERROR)
+                        .setTitle("Error while trying to play that song.").build()).queue();
                 BotApplication.getInstance().getLogger().error("Error while trying to play song", ex);
             }
         });
     }
 
-    public void stop(Server server, ServerTextChannel channel) {
+    public void stop(Guild server, TextChannel channel) {
         AudioPlayer audioManager = this.get(server);
-        AudioTrack track = audioManager.scheduler.getPlayingTrack();
+        AudioTrack track = audioManager.getScheduler().getPlayingTrack();
         if (track == null) {
-            channel.sendMessage(new CustomEmbed().create(false).setTitle("Currently nothing playing."));
+            channel.sendMessageEmbeds(new CustomEmbed().create(CustomEmbed.Type.ERROR).setTitle("Currently nothing playing.").build()).queue();
             return;
         }
-        audioManager.scheduler.stopTrack();
-        channel.sendMessage(new CustomEmbed().create(true).setTitle("Stopped playing **" + track.getInfo().title + "**"));
+        audioManager.getScheduler().stopTrack();
+        channel.sendMessageEmbeds(new CustomEmbed().create(CustomEmbed.Type.SUCCESS).setTitle("Stopped playing **" + track.getInfo().title + "**").build()).queue();
     }
 
-    public void skip(Server server, ServerTextChannel channel) {
+    public void skip(Guild server, TextChannel channel) {
         AudioPlayer audioManager = this.get(server);
-        AudioTrack track = audioManager.scheduler.getPlayingTrack();
+        AudioTrack track = audioManager.getScheduler().getPlayingTrack();
         if (track == null) {
-            channel.sendMessage(new CustomEmbed().create(false).setTitle("Currently nothing playing."));
+            channel.sendMessageEmbeds(new CustomEmbed().create(CustomEmbed.Type.ERROR).setTitle("Currently nothing playing.").build()).queue();
             return;
         }
-        audioManager.scheduler.nextTrack();
-        AudioTrack nextTrack = audioManager.scheduler.getPlayingTrack();
-        channel.sendMessage(new CustomEmbed().create(true)
+        audioManager.getScheduler().nextTrack();
+        AudioTrack nextTrack = audioManager.getScheduler().getPlayingTrack();
+        channel.sendMessageEmbeds(new CustomEmbed().create(CustomEmbed.Type.SUCCESS)
                 .setAuthor(nextTrack.getInfo().title, nextTrack.getInfo().uri, "https://img.youtube.com/vi/" + nextTrack.getInfo().identifier + "/maxresdefault.jpg")
                 .setTitle("Skipped track **" + track.getInfo().title + "**")
-                .setThumbnail("https://img.youtube.com/vi/" + track.getInfo().identifier + "/maxresdefault.jpg"));
+                .setThumbnail("https://img.youtube.com/vi/" + track.getInfo().identifier + "/maxresdefault.jpg").build()).queue();
     }
 
-    public void setVolume(int volume, Server server, ServerTextChannel channel) {
+    public void setVolume(int volume, Guild server, TextChannel channel) {
         AudioPlayer audioManager = this.get(server);
-        audioManager.player.setVolume(volume);
-        channel.sendMessage(new CustomEmbed().create(true).setTitle("Volume has been set to: **" + volume + "**%"));
+        audioManager.getPlayer().setVolume(volume);
+        channel.sendMessageEmbeds(new CustomEmbed().create(CustomEmbed.Type.SUCCESS).setTitle("Volume has been set to: **" + volume + "**%").build()).queue();
     }
 
-    public AudioTrack getPlayingTrack(Server server) {
+    public AudioTrack getPlayingTrack(Guild server) {
         AudioPlayer audioManager = this.get(server);
-        return audioManager.player.getPlayingTrack();
+        return audioManager.getPlayer().getPlayingTrack();
     }
 
-    public long setPosition(Server server, long position, TimeUnit unit) {
+    public long setPosition(Guild server, long position, TimeUnit unit) {
         long frameNumber = (unit.toMillis(position) / 20);
         long positionInMillis = frameNumber * 20;
         this.getPlayingTrack(server).setPosition(positionInMillis);
         return positionInMillis;
     }
 
-    public AudioPlayer get(Server server) {
-        AudioPlayer audioManager = this.audioPlayers.get(server.getId());
+    public AudioPlayer get(Guild server) {
+        AudioPlayer audioManager = this.audioPlayers.get(server.getIdLong());
         if (audioManager == null) {
             audioManager = new AudioPlayer(this.playerManager);
-            this.audioPlayers.put(server.getId(), audioManager);
+            this.audioPlayers.put(server.getIdLong(), audioManager);
         }
         return audioManager;
     }
 
-    public Duration getPosition(Server server) {
+    public Duration getPosition(Guild server) {
         return Duration.ofMillis(this.getPlayingTrack(server).getPosition());
     }
 }

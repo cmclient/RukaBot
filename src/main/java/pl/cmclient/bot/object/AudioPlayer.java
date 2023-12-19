@@ -1,14 +1,15 @@
 package pl.cmclient.bot.object;
 
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
-import pl.cmclient.bot.BotApplication;
-import pl.cmclient.bot.audio.LavaplayerAudioSource;
+import lombok.Getter;
+import pl.cmclient.bot.audio.AudioPlayerSendHandler;
 import pl.cmclient.bot.audio.TrackScheduler;
 
+@Getter
 public class AudioPlayer {
 
-    public final com.sedmelluq.discord.lavaplayer.player.AudioPlayer player;
-    public final TrackScheduler scheduler;
+    private final com.sedmelluq.discord.lavaplayer.player.AudioPlayer player;
+    private final TrackScheduler scheduler;
     
     public AudioPlayer(AudioPlayerManager manager) {
         this.player = manager.createPlayer();
@@ -16,7 +17,7 @@ public class AudioPlayer {
         this.player.addListener(this.scheduler);
     }
 
-    public LavaplayerAudioSource getSendHandler() {
-        return new LavaplayerAudioSource(BotApplication.getInstance().getApi(), this.player);
+    public AudioPlayerSendHandler getSendHandler() {
+        return new AudioPlayerSendHandler(this.player);
     }
 }

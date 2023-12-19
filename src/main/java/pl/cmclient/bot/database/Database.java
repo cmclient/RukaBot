@@ -17,7 +17,7 @@ public class Database {
 
     public boolean connect(BotApplication bot) {
         try {
-            String sqliteDatabaseName = bot.getConfig().getSqliteDatabaseName();
+            String sqliteDatabaseName = bot.getConfig().getDatabaseName();
             bot.getLogger().info("Database: sqLite (" + sqliteDatabaseName + ")");
             Class.forName("org.sqlite.JDBC");
             connection = DriverManager.getConnection("jdbc:sqlite:" + sqliteDatabaseName);

@@ -28,9 +28,8 @@ public class YoutubeApiManager {
             if (object.has("items")) {
                 JsonObject video = object.get("items").getAsJsonArray().get(0).getAsJsonObject().get("id").getAsJsonObject();
                 return video.has("videoId") ? Optional.of(("https://www.youtube.com/watch?v=" + video.get("videoId").getAsString())) : Optional.empty();
-            } else {
-                return Optional.empty();
             }
+            return Optional.empty();
         } catch (IOException ex) {
             return Optional.empty();
         }

@@ -1,40 +1,39 @@
 package pl.cmclient.bot.command.impl;
 
-import org.javacord.api.entity.channel.ServerTextChannel;
-import org.javacord.api.entity.permission.PermissionType;
-import org.javacord.api.entity.user.User;
-import org.javacord.api.event.message.MessageCreateEvent;
+import net.dv8tion.jda.api.Permission;
+import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
+import net.dv8tion.jda.api.interactions.commands.DefaultMemberPermissions;
+import net.dv8tion.jda.api.interactions.commands.OptionType;
+import net.dv8tion.jda.api.interactions.commands.build.Commands;
 import pl.cmclient.bot.command.Command;
 import pl.cmclient.bot.command.CommandType;
 import pl.cmclient.bot.common.CustomEmbed;
 
+import java.util.concurrent.CompletableFuture;
+
 public class ClearCommand extends Command {
 
     public ClearCommand() {
-        super("clear", "Purge the chat", CommandType.MODERATION, new String[]{"purge"}, false, PermissionType.MANAGE_MESSAGES);
+        super(Commands.slash("clear", "Purge the chat")
+                        .addOption(OptionType.INTEGER, "amount", "Amount of messages to delete", true)
+                        .setDefaultPermissions(DefaultMemberPermissions.enabledFor(Permission.MESSAGE_MANAGE))
+                        .setGuildOnly(true),
+                CommandType.MODERATION, false);
     }
 
     @Override
-    protected void execute(MessageCreateEvent event, User user, ServerTextChannel channel, String[] args) {
-        if (args.length == 0 || !this.isNumber(args[0])) {
-            channel.sendMessage(new CustomEmbed()
-                    .create(false)
-                    .setDescription(this.getUsage("<amount>")));
-            return;
-        }
-        int amount = Integer.parseInt(args[0]);
-        channel.getMessages(amount)
-                .thenAcceptAsync(messages -> channel.deleteMessages(messages)
-                        .thenAcceptAsync(unused -> channel.sendMessage(new CustomEmbed().create(true)
-                                .setTitle(amount + " messages has been purged."))));
-    }
+    public void execute(SlashCommandInteractionEvent event) {
+        int amount = event.getOption("amount").getAsInt();
 
-    private boolean isNumber(String s) {
-        try {
-            Integer.parseInt(s);
-            return true;
-        } catch (NumberFormatException ex) {
-            return false;
-        }
+        event.deferReply(true).queue(interactionHook -> {
+            event.getChannel().getHistory().retrievePast(amount).queue(messages -> {
+                event.getChannel().purgeMessages(messages).forEach(CompletableFuture::join);
+                interactionHook.editOriginalEmbeds(new CustomEmbed()
+                                .create(CustomEmbed.Type.SUCCESS)
+                                .setTitle("Purged " + amount + " messages.")
+                                .build())
+                        .queue();
+            });
+        });
     }
 }

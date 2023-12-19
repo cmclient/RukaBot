@@ -1,63 +1,53 @@
 package pl.cmclient.bot.command.impl;
 
-import org.javacord.api.entity.channel.ServerTextChannel;
-import org.javacord.api.entity.permission.PermissionType;
-import org.javacord.api.entity.user.User;
-import org.javacord.api.event.message.MessageCreateEvent;
+import net.dv8tion.jda.api.Permission;
+import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
+import net.dv8tion.jda.api.interactions.commands.DefaultMemberPermissions;
+import net.dv8tion.jda.api.interactions.commands.OptionType;
+import net.dv8tion.jda.api.interactions.commands.build.Commands;
 import pl.cmclient.bot.command.Command;
 import pl.cmclient.bot.command.CommandType;
 import pl.cmclient.bot.common.CustomEmbed;
-import pl.cmclient.bot.helper.StringHelper;
 
-import java.util.List;
-import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 
 public class BanCommand extends Command {
 
     public BanCommand() {
-        super("ban", "Bans user from server", CommandType.MODERATION, new String[0], false, PermissionType.BAN_MEMBERS);
+        super(Commands.slash("ban", "Ban user from server")
+                        .addOption(OptionType.USER, "user", "Select user", true)
+                        .addOption(OptionType.STRING, "reason", "Reason", false)
+                        .setDefaultPermissions(DefaultMemberPermissions.enabledFor(Permission.BAN_MEMBERS))
+                        .setGuildOnly(true),
+                CommandType.MODERATION, false);
     }
 
     @Override
-    protected void execute(MessageCreateEvent event, User user, ServerTextChannel channel, String[] args) {
-        if (args.length == 0) {
-            channel.sendMessage(new CustomEmbed()
-                    .create(false)
-                    .setDescription(this.getUsage("<user mention> [reason]")));
+    public void execute(SlashCommandInteractionEvent event) {
+        Member member = event.getOption("user").getAsMember();
+        String reason = event.getOption("reason") == null ? "No reason" : event.getOption("reason").getAsString();
+
+        if (!event.getGuild().getSelfMember().canInteract(member)) {
+            event.replyEmbeds(new CustomEmbed()
+                            .create(CustomEmbed.Type.ERROR)
+                            .setTitle(":warning: I do not have permission to interact with this user.")
+                            .build())
+                    .setEphemeral(true)
+                    .queue();
             return;
         }
-        List<User> mentions = event.getMessage().getMentionedUsers();
-        if (mentions.isEmpty()) {
-            channel.sendMessage(new CustomEmbed()
-                    .create(false)
-                    .setDescription(this.getUsage("<user mention> [reason]")));
-            return;
-        }
-        event.getServer().ifPresent(server -> {
-            User other = mentions.get(0);
-            if (!server.canBanUser(this.bot.getApi().getYourself(), other)) {
-                channel.sendMessage(new CustomEmbed()
-                        .create(false)
-                        .setDescription(":warning: I do not have permission to ban this user."));
-                return;
-            }
-            String reason = args.length == 1 ? "No reason" : StringHelper.join(args, " ", 1, args.length);
-            CompletableFuture<Void> future = server.banUser(other, 0, TimeUnit.DAYS, reason);
-            future.whenComplete((unused, throwable) -> {
-                if (throwable != null) {
-                    channel.sendMessage(new CustomEmbed()
-                            .create(false)
-                            .setDescription("I cant kick him.\nError: " + throwable.getMessage()));
-                    future.completeExceptionally(throwable);
-                    return;
-                }
-                channel.sendMessage(new CustomEmbed()
-                        .create(true)
-                        .setDescription(":white_check_mark: User " + other.getMentionTag() + " has been banned from this server")
-                        .addField("Reason", reason));
-                future.complete(unused);
-            });
-        });
+
+        member.ban(24, TimeUnit.HOURS).queue(unused -> event.replyEmbeds(new CustomEmbed()
+                        .create(CustomEmbed.Type.SUCCESS)
+                        .setDescription(":white_check_mark: User " + member.getAsMention() + " has been banned from this server")
+                        .addField("Reason", reason, false).build()).queue(),
+                throwable -> event.replyEmbeds(new CustomEmbed()
+                                .create(CustomEmbed.Type.ERROR)
+                                .setTitle(":warning: Unable to ban user " + member.getAsMention() + ".")
+                                .addField("Error", throwable.toString(), false)
+                                .build())
+                        .setEphemeral(true)
+                        .queue());
     }
 }

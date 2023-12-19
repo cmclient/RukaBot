@@ -1,43 +1,61 @@
 package pl.cmclient.bot.command.impl;
 
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
-import org.javacord.api.entity.channel.ServerTextChannel;
-import org.javacord.api.entity.user.User;
-import org.javacord.api.event.message.MessageCreateEvent;
+import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
+import net.dv8tion.jda.api.interactions.commands.build.Commands;
 import pl.cmclient.bot.command.Command;
 import pl.cmclient.bot.command.CommandType;
 import pl.cmclient.bot.common.CustomEmbed;
-import pl.cmclient.bot.object.AudioPlayer;
 
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 
 public class QueueCommand extends Command {
 
     public QueueCommand() {
-        super("queue", "Sends song queue", CommandType.MUSIC, new String[0], false, null);
+        super(Commands.slash("queue", "Displays song queue")
+                        .setGuildOnly(true),
+                CommandType.MUSIC, false);
     }
 
     @Override
-    protected void execute(MessageCreateEvent event, User user, ServerTextChannel channel, String[] args) {
-        event.getServer().ifPresent(server -> server.getAudioConnection().ifPresentOrElse(connection -> {
-            AudioPlayer audioPlayer = this.bot.getMusicManager().get(server);
-            BlockingQueue<AudioTrack> queue = audioPlayer.scheduler.getQueue();
+    public void execute(SlashCommandInteractionEvent event) {
+        Guild guild = event.getGuild();
+        if (!guild.getAudioManager().isConnected()) {
+            event.replyEmbeds(new CustomEmbed()
+                            .create(CustomEmbed.Type.ERROR)
+                            .setTitle("I'm not connected to any channel.")
+                            .build())
+                    .setEphemeral(true)
+                    .queue();
+            return;
+        }
 
-            if (queue.isEmpty()) {
-                channel.sendMessage(new CustomEmbed().create(false)
-                        .setTitle("Song queue is empty."));
-                return;
-            }
+        BlockingQueue<AudioTrack> queue = this.getBot().getMusicManager().get(guild).getScheduler().getQueue();
 
-            AtomicInteger i = new AtomicInteger();
-            StringBuilder sb = new StringBuilder();
-            queue.forEach(audioTrack -> sb.append(i.incrementAndGet()).append(". ").append(audioTrack.getInfo().title).append('\n'));
+        if (queue.isEmpty()) {
+            event.replyEmbeds(new CustomEmbed()
+                            .create(CustomEmbed.Type.ERROR)
+                            .setTitle("Song queue is empty.")
+                            .build())
+                    .setEphemeral(true)
+                    .queue();
+            return;
+        }
 
-            channel.sendMessage(new CustomEmbed().create(true)
-                    .setTitle("Song queue:")
-                    .setDescription(sb.toString()));
-        }, () -> channel.sendMessage(new CustomEmbed().create(false)
-                .setTitle("I'm not connected to any channel!"))));
+        AtomicInteger counter = new AtomicInteger(1);
+        String result = queue.stream()
+                .map(audioTrack -> counter.getAndIncrement() + ". " + audioTrack.getInfo().title + '\n')
+                .collect(Collectors.joining());
+
+        event.replyEmbeds(new CustomEmbed()
+                        .create(CustomEmbed.Type.SUCCESS)
+                        .setTitle("Song queue:")
+                        .setDescription(result)
+                        .build())
+                //.setEphemeral(true)
+                .queue();
     }
 }

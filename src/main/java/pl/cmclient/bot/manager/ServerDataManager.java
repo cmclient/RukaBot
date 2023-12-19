@@ -1,5 +1,6 @@
 package pl.cmclient.bot.manager;
 
+import lombok.Getter;
 import pl.cmclient.bot.BotApplication;
 import pl.cmclient.bot.object.ServerData;
 
@@ -7,6 +8,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+@Getter
 public class ServerDataManager {
 
     private final List<ServerData> servers;
@@ -21,15 +23,11 @@ public class ServerDataManager {
                 while (rs.next()) {
                     this.servers.add(new ServerData(rs));
                 }
-            } catch (SQLException e) {
-                e.printStackTrace();
+            } catch (SQLException ex) {
+                bot.getLogger().error("Failed to load servers data!", ex);
             }
-            bot.getLogger().info("Loaded " + servers.size() + " servers data");
+            bot.getLogger().info("Loaded data of {} servers.", servers.size());
         });
-    }
-
-    public List<ServerData> getServers() {
-        return servers;
     }
 
     public ServerData add(long id) {

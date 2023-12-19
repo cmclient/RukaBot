@@ -1,8 +1,8 @@
 package pl.cmclient.bot.command.impl;
 
-import org.javacord.api.entity.channel.ServerTextChannel;
-import org.javacord.api.entity.user.User;
-import org.javacord.api.event.message.MessageCreateEvent;
+import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
+import net.dv8tion.jda.api.interactions.commands.OptionType;
+import net.dv8tion.jda.api.interactions.commands.build.Commands;
 import pl.cmclient.bot.command.Command;
 import pl.cmclient.bot.command.CommandType;
 import pl.cmclient.bot.common.CustomEmbed;
@@ -10,35 +10,35 @@ import pl.cmclient.bot.common.CustomEmbed;
 public class VolumeCommand extends Command {
 
     public VolumeCommand() {
-        super("volume", "Change volume", CommandType.MUSIC, new String[0], false, null);
+        super(Commands.slash("volume", "Change volume")
+                        .addOption(OptionType.NUMBER, "volume", "Volume", true)
+                        .setGuildOnly(true),
+                CommandType.MUSIC, false);
     }
 
     @Override
-    protected void execute(MessageCreateEvent event, User user, ServerTextChannel channel, String[] args) {
-        if (args.length == 0 || !this.isNumber(args[0])) {
-            channel.sendMessage(new CustomEmbed().create(false)
-                    .setDescription(this.getUsage("<volume>")));
+    public void execute(SlashCommandInteractionEvent event) {
+        if (!event.getGuild().getAudioManager().isConnected()) {
+            event.replyEmbeds(new CustomEmbed()
+                            .create(CustomEmbed.Type.ERROR)
+                            .setTitle("I'm not connected to any channel.")
+                            .build())
+                    .setEphemeral(true)
+                    .queue();
             return;
         }
 
-        event.getServer().ifPresent(server -> server.getAudioConnection().ifPresentOrElse(connection -> {
-            int volume = Integer.parseInt(args[0]);
-            if (volume <= 0 || volume > 500) {
-                channel.sendMessage(new CustomEmbed().create(false).setTitle("Minimum volume is 1, maximum is 500"));
-                return;
-            }
-            this.bot.getMusicManager().setVolume(volume, server, channel);
-        }, () -> channel.sendMessage(new CustomEmbed().create(false)
-                .setTitle("I'm not connected to any channel!"))));
-    }
+        int volume = event.getOption("volume").getAsInt();
+        if (volume <= 0 || volume > 500) {
+            event.replyEmbeds(new CustomEmbed()
+                            .create(CustomEmbed.Type.ERROR)
+                            .setTitle("Minimum volume is 1, maximum is 500")
+                            .build())
+                    .setEphemeral(true)
+                    .queue();
+            return;
+        }
 
-    private boolean isNumber(String s) {
-        try {
-            Integer.parseInt(s);
-            return true;
-        }
-        catch (NumberFormatException ex) {
-            return false;
-        }
+        this.getBot().getMusicManager().setVolume(volume, event.getGuild(), event.getInteraction().getChannel().asTextChannel());
     }
 }

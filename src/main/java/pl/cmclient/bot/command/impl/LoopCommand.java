@@ -1,8 +1,7 @@
 package pl.cmclient.bot.command.impl;
 
-import org.javacord.api.entity.channel.ServerTextChannel;
-import org.javacord.api.entity.user.User;
-import org.javacord.api.event.message.MessageCreateEvent;
+import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
+import net.dv8tion.jda.api.interactions.commands.build.Commands;
 import pl.cmclient.bot.audio.TrackScheduler;
 import pl.cmclient.bot.command.Command;
 import pl.cmclient.bot.command.CommandType;
@@ -11,17 +10,24 @@ import pl.cmclient.bot.common.CustomEmbed;
 public class LoopCommand extends Command {
 
     public LoopCommand() {
-        super("loop", "Enables/disables loop-mode", CommandType.MUSIC, new String[0], false, null);
+        super(Commands.slash("loop", "Enables/disables loop-mode")
+                        .setGuildOnly(true),
+                CommandType.MUSIC, false);
     }
 
     @Override
-    protected void execute(MessageCreateEvent event, User user, ServerTextChannel channel, String[] args) {
-        event.getServer().ifPresent(server -> server.getAudioConnection().ifPresentOrElse(connection -> {
-            TrackScheduler scheduler = this.bot.getMusicManager().get(server).scheduler;
-            scheduler.setLoop(!scheduler.isLoop());
-            channel.sendMessage(new CustomEmbed().create(true)
-                    .setTitle("Loop mode has been: " + (scheduler.isLoop() ? "enabled" : "disabled")));
-        }, () -> channel.sendMessage(new CustomEmbed().create(false)
-                .setTitle("I'm not connected to any channel!"))));
+    public void execute(SlashCommandInteractionEvent event) {
+        if (!event.getGuild().getAudioManager().isConnected()) {
+            event.replyEmbeds(new CustomEmbed()
+                            .create(CustomEmbed.Type.ERROR)
+                            .setTitle("I'm not connected to any channel.")
+                            .build())
+                    .setEphemeral(true)
+                    .queue();
+            return;
+        }
+
+        TrackScheduler scheduler = this.getBot().getMusicManager().get(event.getGuild()).getScheduler();
+        scheduler.setLoop(!scheduler.isLoop());
     }
 }
