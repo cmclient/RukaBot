@@ -20,4 +20,4 @@ mvn clean install
 ```
 
 ## Wanna invite the bot without hosting it by yourself?
-- https://discord.com/oauth2/authorize?client_id=900457114781241375&scope=bot&permissions=8
+- [Invite Link](https://discord.com/oauth2/authorize?client_id=900457114781241375&scope=bot&permissions=8)
