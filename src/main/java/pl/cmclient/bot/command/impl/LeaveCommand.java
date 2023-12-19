@@ -35,5 +35,12 @@ public class LeaveCommand extends Command {
         }
 
         audioManager.closeAudioConnection();
+
+        event.replyEmbeds(new CustomEmbed()
+                        .create(CustomEmbed.Type.SUCCESS)
+                        .setTitle("Disconnected from voice channel.")
+                        .build())
+                //.setEphemeral(true)
+                .queue();
     }
 }
