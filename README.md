@@ -1,14 +1,15 @@
 <h1 align="center">RukaBot</h1>
 
-RukaBot is a open source Discord bot coded in Java with JavaCord.
-Feel free to add a star ⭐ to the repository to promote the project.
+<p align="center">
+  <img alt="GitHub stars" src="https://img.shields.io/github/stars/cmclient/RukaBot?style=flat-square">
+  <img alt="GitHub last commit" src="https://img.shields.io/github/last-commit/cmclient/RukaBot?style=flat-square">
+  <img alt="GitHub issues" src="https://img.shields.io/github/issues/cmclient/RukaBot?style=flat-square">
+</p>
 
-![Build Status](https://img.shields.io/appveyor/build/cmclient/RukaBot)
-![CodeQualityScore](https://www.code-inspector.com/project/29488/score/svg) 
-![CodeQualityGrade](https://www.code-inspector.com/project/29488/status/svg)
+RukaBot is an open-source Discord bot coded in Java using JDA. Feel free to add a star ⭐ to the repository to promote the project.
 
 ## 🚧 Prerequisites
-- [Java 11+](https://adoptium.net/?variant=openjdk11&jvmVariant=hotspot)
+- [JDK 17+](https://adoptium.net/?variant=openjdk17&jvmVariant=hotspot)
 - [Maven](https://maven.apache.org/download.cgi)
 
 ## 📝 Building bot
@@ -16,4 +17,3 @@ Feel free to add a star ⭐ to the repository to promote the project.
 git clone https://github.com/cmclient/RukaBot
 cd RukaBot
 mvn clean install
-```
