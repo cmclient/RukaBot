@@ -6,7 +6,7 @@
   <img alt="GitHub issues" src="https://img.shields.io/github/issues/cmclient/RukaBot?style=flat-square">
 </p>
 
-RukaBot is an open-source Discord bot coded in Java using JDA. Feel free to add a star ⭐ to the repository to promote the project.
+RukaBot is an open-source Discord bot with music player coded in Java using JDA. Feel free to add a star ⭐ to the repository to promote the project.
 
 ## 🚧 Prerequisites
 - [JDK 17+](https://adoptium.net/?variant=openjdk17&jvmVariant=hotspot)
