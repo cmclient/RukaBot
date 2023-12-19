@@ -39,6 +39,6 @@ public class VolumeCommand extends Command {
             return;
         }
 
-        this.getBot().getMusicManager().setVolume(volume, event.getGuild(), event.getInteraction().getChannel().asTextChannel());
+        this.getBot().getMusicManager().setVolume(volume, event);
     }
 }

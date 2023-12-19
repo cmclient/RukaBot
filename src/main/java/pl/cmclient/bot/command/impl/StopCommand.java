@@ -26,6 +26,6 @@ public class StopCommand extends Command {
             return;
         }
 
-        this.getBot().getMusicManager().stop(event.getGuild(), event.getChannel().asTextChannel());
+        this.getBot().getMusicManager().stop(event);
     }
 }

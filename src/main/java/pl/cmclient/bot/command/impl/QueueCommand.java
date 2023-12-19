@@ -40,7 +40,7 @@ public class QueueCommand extends Command {
                             .create(CustomEmbed.Type.ERROR)
                             .setTitle("Song queue is empty.")
                             .build())
-                    .setEphemeral(true)
+                    //.setEphemeral(true)
                     .queue();
             return;
         }

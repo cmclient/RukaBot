@@ -10,6 +10,7 @@ import com.sedmelluq.discord.lavaplayer.track.AudioPlaylist;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
+import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import pl.cmclient.bot.BotApplication;
 import pl.cmclient.bot.common.CustomEmbed;
 import pl.cmclient.bot.object.AudioPlayer;
@@ -82,36 +83,36 @@ public class MusicManager {
         });
     }
 
-    public void stop(Guild server, TextChannel channel) {
-        AudioPlayer audioManager = this.get(server);
+    public void stop(SlashCommandInteractionEvent event) {
+        AudioPlayer audioManager = this.get(event.getGuild());
         AudioTrack track = audioManager.getScheduler().getPlayingTrack();
         if (track == null) {
-            channel.sendMessageEmbeds(new CustomEmbed().create(CustomEmbed.Type.ERROR).setTitle("Currently nothing playing.").build()).queue();
+            event.replyEmbeds(new CustomEmbed().create(CustomEmbed.Type.ERROR).setTitle("Currently nothing playing.").build()).setEphemeral(true).queue();
             return;
         }
         audioManager.getScheduler().stopTrack();
-        channel.sendMessageEmbeds(new CustomEmbed().create(CustomEmbed.Type.SUCCESS).setTitle("Stopped playing **" + track.getInfo().title + "**").build()).queue();
+        event.replyEmbeds(new CustomEmbed().create(CustomEmbed.Type.SUCCESS).setTitle("Stopped playing **" + track.getInfo().title + "**").build()).queue();
     }
 
-    public void skip(Guild server, TextChannel channel) {
-        AudioPlayer audioManager = this.get(server);
+    public void skip(SlashCommandInteractionEvent event) {
+        AudioPlayer audioManager = this.get(event.getGuild());
         AudioTrack track = audioManager.getScheduler().getPlayingTrack();
         if (track == null) {
-            channel.sendMessageEmbeds(new CustomEmbed().create(CustomEmbed.Type.ERROR).setTitle("Currently nothing playing.").build()).queue();
+            event.replyEmbeds(new CustomEmbed().create(CustomEmbed.Type.ERROR).setTitle("Currently nothing playing.").build()).setEphemeral(true).queue();
             return;
         }
         audioManager.getScheduler().nextTrack();
         AudioTrack nextTrack = audioManager.getScheduler().getPlayingTrack();
-        channel.sendMessageEmbeds(new CustomEmbed().create(CustomEmbed.Type.SUCCESS)
+        event.replyEmbeds(new CustomEmbed().create(CustomEmbed.Type.SUCCESS)
                 .setAuthor(nextTrack.getInfo().title, nextTrack.getInfo().uri, "https://img.youtube.com/vi/" + nextTrack.getInfo().identifier + "/maxresdefault.jpg")
                 .setTitle("Skipped track **" + track.getInfo().title + "**")
                 .setThumbnail("https://img.youtube.com/vi/" + track.getInfo().identifier + "/maxresdefault.jpg").build()).queue();
     }
 
-    public void setVolume(int volume, Guild server, TextChannel channel) {
-        AudioPlayer audioManager = this.get(server);
+    public void setVolume(int volume, SlashCommandInteractionEvent event) {
+        AudioPlayer audioManager = this.get(event.getGuild());
         audioManager.getPlayer().setVolume(volume);
-        channel.sendMessageEmbeds(new CustomEmbed().create(CustomEmbed.Type.SUCCESS).setTitle("Volume has been set to: **" + volume + "**%").build()).queue();
+        event.replyEmbeds(new CustomEmbed().create(CustomEmbed.Type.SUCCESS).setTitle("Volume has been set to: **" + volume + "**%").build()).queue();
     }
 
     public AudioTrack getPlayingTrack(Guild server) {

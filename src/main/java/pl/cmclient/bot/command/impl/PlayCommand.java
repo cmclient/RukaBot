@@ -23,7 +23,7 @@ public class PlayCommand extends Command {
     public void execute(SlashCommandInteractionEvent event) {
         GuildVoiceState voiceState = event.getMember().getVoiceState();
 
-        if (voiceState == null) {
+        if (voiceState == null || !voiceState.inAudioChannel()) {
             event.replyEmbeds(new CustomEmbed()
                             .create(CustomEmbed.Type.ERROR)
                             .setTitle("You are not connected in any voice channel.")

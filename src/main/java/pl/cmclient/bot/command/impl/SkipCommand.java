@@ -27,6 +27,6 @@ public class SkipCommand extends Command {
             return;
         }
 
-        this.getBot().getMusicManager().skip(event.getGuild(), event.getChannel().asTextChannel());
+        this.getBot().getMusicManager().skip(event);
     }
 }

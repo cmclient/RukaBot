@@ -1,7 +1,8 @@
 package pl.cmclient.bot.object;
 
-import org.javacord.api.entity.permission.PermissionType;
-import org.javacord.api.entity.user.User;
+import lombok.Getter;
+import net.dv8tion.jda.api.Permission;
+import net.dv8tion.jda.api.entities.User;
 import pl.cmclient.bot.BotApplication;
 import pl.cmclient.bot.database.Database;
 import pl.cmclient.bot.helper.StringHelper;
@@ -13,12 +14,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+@Getter
 public class ServerData {
 
     private final long serverId;
     private final Database database;
     private boolean inviteBans;
-    private final Map<User, PermissionType> userPermissions;
+    private final Map<User, Permission> userPermissions;
     private final List<String> bannedWords;
 
     public ServerData(long serverId) {
@@ -37,24 +39,11 @@ public class ServerData {
         this.database = BotApplication.getInstance().getDatabase();
     }
 
-    public long getServerId() {
-        return serverId;
-    }
-
-    public boolean isInviteBans() {
-        return inviteBans;
-    }
-
     public void setInviteBans(boolean inviteBans) {
         this.inviteBans = inviteBans;
         this.database.update("UPDATE `servers` SET " +
                 "`inviteBans`='" + (this.inviteBans ? 1 : 0) + "' WHERE `serverId` = '" + this.serverId + "'");
     }
-
-    public List<String> getBannedWords() {
-        return bannedWords;
-    }
-
     public void addBannedWord(String s) {
         this.bannedWords.add(s);
         this.database.update("UPDATE `servers` SET " +
@@ -65,10 +54,6 @@ public class ServerData {
         this.bannedWords.remove(s);
         this.database.update("UPDATE `servers` SET " +
                 "`bannedWords`='" + StringHelper.join(this.bannedWords, ",") + "' WHERE `serverId` = '" + this.serverId + "'");
-    }
-
-    public Map<User, PermissionType> getUserPermissions() {
-        return userPermissions;
     }
 
     private void insert() {
