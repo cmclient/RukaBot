@@ -9,10 +9,7 @@ import pl.cmclient.bot.command.CommandType;
 import pl.cmclient.bot.command.impl.*;
 import pl.cmclient.bot.helper.StringHelper;
 
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Getter
@@ -65,13 +62,13 @@ public class CommandManager {
 
     public String getCommandsList() {
         StringBuilder sb = new StringBuilder("\n");
-        for (CommandType type : CommandType.values()) {
+        Arrays.stream(CommandType.values()).forEach(type -> {
             List<String> list = this.commands.values().stream().filter(command -> command.getCommandType() == type).map(command -> "`" + command.getData().getName() + "`").collect(Collectors.toList());
             if (!list.isEmpty()) {
                 sb.append(type.getName()).append(":\n");
                 sb.append(StringHelper.join(list, ", ")).append("\n\n");
             }
-        }
+        });
         return sb.toString();
     }
 }
