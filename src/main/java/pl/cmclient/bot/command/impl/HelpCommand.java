@@ -16,6 +16,7 @@ public class HelpCommand extends Command {
     public void execute(SlashCommandInteractionEvent event) {
         event.replyEmbeds(new CustomEmbed()
                         .create(CustomEmbed.Type.SUCCESS)
+                        .setAuthor(event.getJDA().getSelfUser().getName(), null, event.getJDA().getSelfUser().getAvatarUrl())
                         .setTitle("List of available commands")
                         .setThumbnail(event.getMember().getUser().getAvatarUrl())
                         .setDescription(this.getBot().getCommandManager().getCommandsList())

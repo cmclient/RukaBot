@@ -25,15 +25,13 @@ public class ClearCommand extends Command {
     public void execute(SlashCommandInteractionEvent event) {
         int amount = event.getOption("amount").getAsInt();
 
-        event.deferReply(true).queue(interactionHook -> {
-            event.getChannel().getHistory().retrievePast(amount).queue(messages -> {
-                event.getChannel().purgeMessages(messages).forEach(CompletableFuture::join);
-                interactionHook.editOriginalEmbeds(new CustomEmbed()
-                                .create(CustomEmbed.Type.SUCCESS)
-                                .setTitle("Purged " + amount + " messages.")
-                                .build())
-                        .queue();
-            });
-        });
+        event.deferReply(true).queue(interactionHook -> event.getChannel().getHistory().retrievePast(amount).queue(messages -> {
+            event.getChannel().purgeMessages(messages).forEach(CompletableFuture::join);
+            interactionHook.editOriginalEmbeds(new CustomEmbed()
+                            .create(CustomEmbed.Type.SUCCESS)
+                            .setTitle("Purged " + amount + " messages.")
+                            .build())
+                    .queue();
+        }));
     }
 }
