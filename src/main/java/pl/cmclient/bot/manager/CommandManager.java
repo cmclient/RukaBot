@@ -28,6 +28,7 @@ public class CommandManager {
             (new UserInfoCommand()),
 
             // ADMINISTRATION
+            (new EmbedCommand()),
             (new ClearInvitesCommand()),
             (new UnbanAllCommand()),
 
