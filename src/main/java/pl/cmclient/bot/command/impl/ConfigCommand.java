@@ -55,7 +55,8 @@ public class ConfigCommand extends Command {
                 if (value == null) {
                     event.replyEmbeds(new CustomEmbed()
                                     .create(CustomEmbed.Type.SUCCESS)
-                                    .setTitle("Currently banned words:\n" + StringHelper.join(serverData.getBannedWords(), ", "))
+                                    .setTitle(":no_entry_sign: Currently banned words:")
+                                    .setDescription(StringHelper.join(serverData.getBannedWords(), ", "))
                                     .build())
                             //.setEphemeral(true)
                             .queue();
