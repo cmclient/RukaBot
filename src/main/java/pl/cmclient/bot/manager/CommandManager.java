@@ -36,6 +36,7 @@ public class CommandManager {
             (new KickCommand()),
             (new BanCommand()),
             (new ClearCommand()),
+            (new PollCommand()),
 
             // MUSIC
             (new PlayCommand()),
