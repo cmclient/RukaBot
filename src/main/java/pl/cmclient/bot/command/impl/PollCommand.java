@@ -31,7 +31,7 @@ public class PollCommand extends Command {
             eb.setTitle(split[0]);
             eb.setDescription(split[1].replace("\\n", "\n"));
         } else {
-            eb.setDescription(question.replace("\\n", "\n"));
+            eb.setTitle(question.replace("\\n", "\n"));
         }
 
         event.deferReply().queue(interactionHook -> interactionHook.editOriginalEmbeds(eb.build()).queue(message -> {
