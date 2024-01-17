@@ -3,6 +3,7 @@ package pl.cmclient.bot;
 import lombok.Getter;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
+import net.dv8tion.jda.api.OnlineStatus;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Activity;
 import net.dv8tion.jda.api.requests.GatewayIntent;
@@ -65,8 +66,12 @@ public class BotApplication {
         this.logger.info("Loading JDA...");
         this.jda = JDABuilder.create(this.config.getToken(), List.of(GatewayIntent.values()))
                 .addEventListeners(new MessageListener(this), new SlashCommandListener(this))
+                .setStatus(OnlineStatus.DO_NOT_DISTURB)
                 .setActivity(Activity.listening("/help"))
                 .build();
+
+        this.jda.getPresence().setStatus(OnlineStatus.DO_NOT_DISTURB);
+
         this.logger.info("Loading commands...");
         (this.commandManager = new CommandManager()).load(this, this.jda);
         this.logger.info("Waiting for bot to be ready..");
