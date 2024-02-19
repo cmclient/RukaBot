@@ -21,7 +21,7 @@ public class PingCommand extends Command {
                                 .addField("Gateway", event.getJDA().getGatewayPing() + "ms", false)
                                 .addField("Rest", restPing + "ms", false)
                                 .build())
-                //.setEphemeral(true)
+                .setEphemeral(true)
                 .queue());
     }
 }

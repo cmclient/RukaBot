@@ -26,7 +26,7 @@ public class AvatarCommand extends Command {
                                 .setDescription(user.getAsMention() + "'s avatar")
                                 .setImage(user.getAvatarUrl())
                                 .build())
-                //.setEphemeral(true)
+                .setEphemeral(true)
                 .queue();
     }
 }
