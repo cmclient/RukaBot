@@ -44,13 +44,13 @@
         <dependency>
             <groupId>org.xerial</groupId>
             <artifactId>sqlite-jdbc</artifactId>
-            <version>3.45.3.0</version>
+            <version>3.46.0.0</version>
         </dependency>
         <!-- https://github.com/lavalink-devs/lavaplayer -->
         <dependency>
             <groupId>dev.arbjerg</groupId>
             <artifactId>lavaplayer</artifactId>
-            <version>2.1.2</version>
+            <version>2.2.0</version>
         </dependency>
         <!-- https://github.com/google/gson -->
         <dependency>
