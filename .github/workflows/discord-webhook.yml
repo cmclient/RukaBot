@@ -1,0 +1,53 @@
+name: Send Discord Embed on Commit
+
+on:
+  push:
+    branches:
+      - master  # Replace with the branch you want to monitor, e.g., 'main', 'master', etc.
+
+jobs:
+  send_discord_embed:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Send commit info to Discord
+        env:
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+        run: |
+          commit_hash=$(git log -1 --pretty=format:"%h")
+          commit_message=$(git log -1 --pretty=format:"%s")
+          commit_author=$(git log -1 --pretty=format:"%an")
+          commit_email=$(git log -1 --pretty=format:"%ae")
+          commit_url="https://github.com/${{ github.repository }}/commit/$commit_hash"
+          repo_name="${{ github.repository }}"
+          branch_name="${{ github.ref_name }}"
+
+          # Extract the author's GitHub username
+          author_username=$(echo "$commit_email" | awk -F '@' '{print $1}')
+          author_profile_url="https://github.com/$author_username"
+
+          # Generate the GitHub avatar URL
+          avatar_url="https://avatars.githubusercontent.com/$author_username"
+
+          # Create the JSON payload for Discord webhook
+          json_payload=$(echo '{
+            "username": "GitHub",
+            "embeds": [
+              {
+                "author": {
+                  "name": "'"$commit_author"'",
+                  "url": "'"$author_profile_url"'",
+                  "icon_url": "'"$avatar_url"'"
+                },
+                "title": "'"$repo_name:$branch_name"' new commit",
+                "url": "'"$commit_url"'",
+                "description": "['"$commit_hash"']('"$commit_url"') '"$commit_message"'",
+                "color": 5814783
+              }
+            ]
+          }')
+
+          # Send the payload to Discord
+          curl -H "Content-Type: application/json" -X POST -d "$json_payload" "$DISCORD_WEBHOOK_URL"
