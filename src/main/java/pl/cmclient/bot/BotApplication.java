@@ -1,5 +1,6 @@
 package pl.cmclient.bot;
 
+import com.sedmelluq.discord.lavaplayer.jdaudp.NativeAudioSendFactory;
 import lombok.Getter;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
@@ -9,6 +10,7 @@ import net.dv8tion.jda.api.entities.Activity;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import pl.cmclient.bot.audio.LinkConverter;
 import pl.cmclient.bot.config.Config;
 import pl.cmclient.bot.database.Database;
 import pl.cmclient.bot.listener.MessageListener;
@@ -18,6 +20,7 @@ import pl.cmclient.bot.manager.MusicManager;
 import pl.cmclient.bot.manager.ServerDataManager;
 import pl.cmclient.bot.manager.YoutubeApiManager;
 
+import java.sql.SQLException;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -34,6 +37,7 @@ public class BotApplication {
     private ServerDataManager serverDataManager;
     private MusicManager musicManager;
     private YoutubeApiManager youtubeApiManager;
+    private LinkConverter linkConverter;
     private JDA jda;
 
     public BotApplication() {
@@ -49,10 +53,10 @@ public class BotApplication {
     private void start() throws InterruptedException {
         this.logger.info(this.getAsciiArtLogo());
         this.logger.info("Loading configuration...");
-        (this.config = new Config()).load(this);
-        this.logger.info("Token: " + this.censor(this.config.getToken()));
+        (this.config = new Config(this)).load();
+        this.logger.info("Token: {}", this.censor(this.config.getToken()));
         this.logger.info("Loading database...");
-        if ((this.database = new Database()).connect(this)) {
+        if ((this.database = new Database(this)).connect()) {
             this.logger.info("Writing tables...");
             this.database.update("CREATE TABLE IF NOT EXISTS `servers` (`id` INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, `serverId` int NOT NULL, `inviteBans` int NOT NULL, `bannedWords` text NOT NULL);");
             this.logger.info("Loading servers data...");
@@ -63,8 +67,10 @@ public class BotApplication {
         this.logger.info("Loading audio player...");
         this.musicManager = new MusicManager();
         this.youtubeApiManager = new YoutubeApiManager(this);
+        this.linkConverter = new LinkConverter(this);
         this.logger.info("Loading JDA...");
         this.jda = JDABuilder.create(this.config.getToken(), List.of(GatewayIntent.values()))
+                .setAudioSendFactory(new NativeAudioSendFactory())
                 .addEventListeners(new MessageListener(this), new SlashCommandListener(this))
                 .setStatus(OnlineStatus.DO_NOT_DISTURB)
                 .setActivity(Activity.listening("/help"))
@@ -101,9 +107,12 @@ public class BotApplication {
                 } else {
                     this.logger.warn("Can't complete some database tasks!");
                 }
-                this.database.disconnect();
-            } catch (Exception e) {
-                e.printStackTrace();
+            } catch (Exception ex) {
+                this.logger.error("Failed to clean database connection!", ex);
+            } finally {
+                try {
+                    this.database.disconnect();
+                } catch (SQLException ignored) {}
             }
             this.logger.info("Goodbye!");
         }, "Shutdown Hook"));

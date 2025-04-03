@@ -10,6 +10,8 @@ import pl.cmclient.bot.command.Command;
 import pl.cmclient.bot.command.CommandType;
 import pl.cmclient.bot.common.CustomEmbed;
 
+import java.util.ArrayList;
+
 public class PlayCommand extends Command {
 
     public PlayCommand() {
@@ -57,6 +59,32 @@ public class PlayCommand extends Command {
     }
 
     private void play(SlashCommandInteractionEvent event, String query) {
+        if (query.startsWith("https://open.spotify.com/track/")) {
+            try {
+                event.replyEmbeds(new CustomEmbed().create(CustomEmbed.Type.SUCCESS)
+                        .setTitle("Searching **" + query + "**...").build()).queue();
+                ArrayList<String> tracks = this.getBot().getLinkConverter().convert(query);
+                if (tracks.isEmpty()) {
+                    event.replyEmbeds(new CustomEmbed().create(CustomEmbed.Type.ERROR)
+                            .setTitle("Cannot find any song by this URL.").build()).queue();
+                    return;
+                }
+                if (tracks.size() > 1) {
+                    event.replyEmbeds(new CustomEmbed().create(CustomEmbed.Type.ERROR)
+                            .setTitle("Playing playlists from Spotify is unsupported.").build()).queue();
+                    return;
+                }
+                this.getBot().getYoutubeApiManager().search(tracks.getFirst())
+                        .ifPresentOrElse(url -> this.getBot().getMusicManager().queue(url, event.getGuild(), event.getInteraction().getChannel().asTextChannel()),
+                                () -> event.replyEmbeds(new CustomEmbed().create(CustomEmbed.Type.ERROR)
+                                        .setTitle("Failed to find any song.").build()).queue());
+            } catch (Exception e) {
+                event.replyEmbeds(new CustomEmbed().create(CustomEmbed.Type.ERROR)
+                        .setTitle("Failed to search track from Spotify!").build()).queue();
+            }
+            return;
+        }
+
         if (query.contains("://")) {
             this.getBot().getMusicManager().queue(query.replace("&list=LM", ""), event.getGuild(), event.getChannel().asTextChannel());
             return;
