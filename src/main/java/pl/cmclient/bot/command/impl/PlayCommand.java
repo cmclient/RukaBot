@@ -10,7 +10,7 @@ import pl.cmclient.bot.command.Command;
 import pl.cmclient.bot.command.CommandType;
 import pl.cmclient.bot.common.CustomEmbed;
 
-import java.util.ArrayList;
+import java.util.List;
 
 public class PlayCommand extends Command {
 
@@ -63,7 +63,7 @@ public class PlayCommand extends Command {
             try {
                 event.replyEmbeds(new CustomEmbed().create(CustomEmbed.Type.SUCCESS)
                         .setTitle("Searching **" + query + "**...").build()).queue();
-                ArrayList<String> tracks = this.getBot().getLinkConverter().convert(query);
+                List<String> tracks = this.getBot().getLinkConverter().convert(query);
                 if (tracks.isEmpty()) {
                     event.replyEmbeds(new CustomEmbed().create(CustomEmbed.Type.ERROR)
                             .setTitle("Cannot find any song by this URL.").build()).queue();

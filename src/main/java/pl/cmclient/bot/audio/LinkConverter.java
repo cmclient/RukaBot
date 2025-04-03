@@ -10,14 +10,13 @@ import se.michaelthelin.spotify.requests.data.tracks.GetTrackRequest;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.stream.Collectors;
 
 public class LinkConverter {
 
     private final BotApplication bot;
     private SpotifyApi spotifyApi;
-    private String id;
-    private String type;
 
     public LinkConverter(BotApplication bot) {
         this.bot = bot;
@@ -39,19 +38,20 @@ public class LinkConverter {
         spotifyApi.setAccessToken(creds.getAccessToken());
     }
 
-    public ArrayList<String> convert(String link) throws Exception {
+    public List<String> convert(String link) throws Exception {
         String[] firstSplit = link.split("/");
         String[] secondSplit;
 
+        String type;
         if (firstSplit.length > 5) {
             secondSplit = firstSplit[6].split("\\?");
-            this.type = firstSplit[5];
+            type = firstSplit[5];
         } else {
             secondSplit = firstSplit[4].split("\\?");
-            this.type = firstSplit[3];
+            type = firstSplit[3];
         }
-        this.id = secondSplit[0];
-        ArrayList<String> listOfTracks = new ArrayList<>();
+        String id = secondSplit[0];
+        List<String> listOfTracks = new ArrayList<>();
 
         if (type.contentEquals("track")) {
             listOfTracks.add(getArtistAndName(id));
@@ -78,13 +78,9 @@ public class LinkConverter {
 
     private String getArtistAndName(String trackID) throws Exception {
         GetTrackRequest trackRequest = spotifyApi.getTrack(trackID).build();
-
         Track track = trackRequest.execute();
-        String artistNameAndTrackName;
-
         ArtistSimplified[] artists = track.getArtists();
-        artistNameAndTrackName = Arrays.stream(artists).map(i -> i.getName() + " ").collect(Collectors.joining("", track.getName() + " - ", ""));
 
-        return artistNameAndTrackName;
+        return Arrays.stream(artists).map(i -> i.getName() + " ").collect(Collectors.joining("", track.getName() + " - ", ""));
     }
 }
