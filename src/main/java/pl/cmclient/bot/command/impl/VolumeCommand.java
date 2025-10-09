@@ -1,6 +1,7 @@
 package pl.cmclient.bot.command.impl;
 
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
+import net.dv8tion.jda.api.interactions.InteractionContextType;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.Commands;
 import pl.cmclient.bot.command.Command;
@@ -12,7 +13,7 @@ public class VolumeCommand extends Command {
     public VolumeCommand() {
         super(Commands.slash("volume", "Change volume")
                         .addOption(OptionType.NUMBER, "volume", "Volume", true)
-                        .setGuildOnly(true),
+                        .setContexts(InteractionContextType.GUILD),
                 CommandType.MUSIC, false);
     }
 

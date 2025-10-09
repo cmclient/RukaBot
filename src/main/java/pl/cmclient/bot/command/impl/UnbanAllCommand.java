@@ -3,6 +3,7 @@ package pl.cmclient.bot.command.impl;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
+import net.dv8tion.jda.api.interactions.InteractionContextType;
 import net.dv8tion.jda.api.interactions.commands.DefaultMemberPermissions;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
@@ -20,8 +21,8 @@ public class UnbanAllCommand extends Command {
     public UnbanAllCommand() {
         super(Commands.slash("unbanall", "Unban all people from the server")
                         .addOption(OptionType.BOOLEAN, "accept", "Are you sure? This action is irreversible!", true)
-                        .setDefaultPermissions(DefaultMemberPermissions.enabledFor(Permission.BAN_MEMBERS))
-                        .setGuildOnly(true),
+                        .setDefaultPermissions(DefaultMemberPermissions.enabledFor(Permission.ADMINISTRATOR))
+                        .setContexts(InteractionContextType.GUILD),
                 CommandType.ADMINISTRATION, false);
     }
 

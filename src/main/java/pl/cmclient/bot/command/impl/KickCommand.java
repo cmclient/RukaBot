@@ -1,14 +1,21 @@
 package pl.cmclient.bot.command.impl;
 
 import net.dv8tion.jda.api.Permission;
+import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
+import net.dv8tion.jda.api.interactions.InteractionContextType;
 import net.dv8tion.jda.api.interactions.commands.DefaultMemberPermissions;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.Commands;
+import pl.cmclient.bot.BotApplication;
 import pl.cmclient.bot.command.Command;
 import pl.cmclient.bot.command.CommandType;
 import pl.cmclient.bot.common.CustomEmbed;
+import pl.cmclient.bot.helper.BotHelper;
+
+import java.time.Instant;
 
 public class KickCommand extends Command {
 
@@ -17,35 +24,50 @@ public class KickCommand extends Command {
                         .addOption(OptionType.USER, "user", "Select user", true)
                         .addOption(OptionType.STRING, "reason", "Reason", false)
                         .setDefaultPermissions(DefaultMemberPermissions.enabledFor(Permission.KICK_MEMBERS))
-                        .setGuildOnly(true),
+                        .setContexts(InteractionContextType.GUILD),
                 CommandType.MODERATION, false);
     }
 
     @Override
     public void execute(SlashCommandInteractionEvent event) {
-        Member member = event.getOption("user").getAsMember();
-        String reason = event.getOption("reason") == null ? "No reason" : event.getOption("reason").getAsString();
+        Guild guild = event.getGuild();
+        Member member = event.getMember();
+        User user = event.getUser();
 
         if (!event.getGuild().getSelfMember().canInteract(member)) {
             event.replyEmbeds(new CustomEmbed()
-                            .create(CustomEmbed.Type.ERROR)
-                            .setTitle(":warning: I do not have permission to interact with this user.")
-                            .build())
-                    .setEphemeral(true)
-                    .queue();
+                    .create(CustomEmbed.Type.ERROR)
+                    .setDescription("<:cm_exclamation_mark:1296554775038398495> I cannot interact with this member. They might have a higher role than me or I'm missing permissions.")
+                    .build()).queue();
             return;
         }
 
-        member.kick().queue(unused -> event.replyEmbeds(new CustomEmbed()
-                        .create(CustomEmbed.Type.SUCCESS)
-                        .setDescription(":white_check_mark: User " + member.getAsMention() + " has been kicked from this server")
-                        .addField("Reason", reason, false).build()).queue(),
-                throwable -> event.replyEmbeds(new CustomEmbed()
-                                .create(CustomEmbed.Type.ERROR)
-                                .setTitle(":warning: Unable to kick user " + member.getAsMention() + ".")
-                                .addField("Error", throwable.toString(), false)
-                                .build())
-                        .setEphemeral(true)
-                        .queue());
+        User other = event.getOption("user").getAsUser();
+        String reason = event.getOption("reason") != null ? event.getOption("reason").getAsString() : "No reason";
+
+        BotHelper.safeDM(other, new CustomEmbed().create(CustomEmbed.Type.ERROR)
+                        .setTitle("<:cm_exclamation_mark:1296554775038398495> You have been kicked.")
+                        .addField("Reason:", reason, false)
+                        .addField("Moderator:", "@" + user.getName() + " (" + user.getAsMention() + ")", false)
+                        .setFooter(BotApplication.getInstance().getConfig().getBotName(),
+                                BotApplication.getInstance().getJda().getSelfUser().getAvatarUrl())
+                        .setTimestamp(Instant.now()),
+                unused -> kickUser(guild, other, reason, user, event),
+                ex -> kickUser(guild, other, reason, user, event));
+    }
+
+    private void kickUser(Guild guild, User target, String reason, User kicker,
+                          SlashCommandInteractionEvent event) {
+        guild.kick(target).reason(reason + " | Moderator: @" + kicker.getName()).queue(unused -> {
+            event.replyEmbeds(new CustomEmbed()
+                    .create(CustomEmbed.Type.SUCCESS)
+                    .setDescription("<:cm_checkbox:1296554768747073549> User @" + target.getName() + " (" + target.getAsMention() + ") has been kicked.")
+                    .addField("Reason", reason, false)
+                    .addField("Moderator", "@" + kicker.getName() + " (" + kicker.getAsMention() + ")", false)
+                    .build()).queue();
+        }, throwable -> event.replyEmbeds(new CustomEmbed()
+                .create(CustomEmbed.Type.ERROR)
+                .setDescription("<:cm_exclamation_mark:1296554775038398495> Failed to kick this user.\nError: " + throwable.getMessage())
+                .build()).queue());
     }
 }

@@ -1,6 +1,7 @@
 package pl.cmclient.bot.command.impl;
 
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
+import net.dv8tion.jda.api.interactions.InteractionContextType;
 import net.dv8tion.jda.api.interactions.commands.build.Commands;
 import pl.cmclient.bot.audio.TrackScheduler;
 import pl.cmclient.bot.command.Command;
@@ -11,7 +12,7 @@ public class LoopCommand extends Command {
 
     public LoopCommand() {
         super(Commands.slash("loop", "Enables/disables loop-mode")
-                        .setGuildOnly(true),
+                        .setContexts(InteractionContextType.GUILD),
                 CommandType.MUSIC, false);
     }
 

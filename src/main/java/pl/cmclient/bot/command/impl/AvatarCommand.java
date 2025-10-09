@@ -13,7 +13,11 @@ public class AvatarCommand extends Command {
 
     public AvatarCommand() {
         super(Commands.slash("avatar", "Sends your avatar")
-                .addOption(OptionType.USER, "user", "Select user", false), CommandType.GENERAL, false);
+                        .addOption(OptionType.USER, "user", "Select user", false)
+                        .addOption(OptionType.BOOLEAN, "ephemeral", "Hide the response", false),
+                CommandType.GENERAL,
+                false
+        );
     }
 
     @Override
@@ -21,12 +25,15 @@ public class AvatarCommand extends Command {
         OptionMapping userOption = event.getOption("user");
         User user = userOption == null ? event.getUser() : userOption.getAsUser();
 
+        OptionMapping ephemeralOption = event.getOption("ephemeral");
+        boolean ephemeral = ephemeralOption != null && ephemeralOption.getAsBoolean();
+
         event.replyEmbeds(new CustomEmbed()
-                                .create(CustomEmbed.Type.SUCCESS)
-                                .setDescription(user.getAsMention() + "'s avatar")
-                                .setImage(user.getAvatarUrl())
-                                .build())
-                .setEphemeral(true)
+                        .create(CustomEmbed.Type.SUCCESS)
+                        .setDescription(user.getAsMention() + "'s avatar")
+                        .setImage(user.getAvatarUrl() + "?size=2048&quality=lossless")
+                        .build())
+                .setEphemeral(ephemeral)
                 .queue();
     }
 }

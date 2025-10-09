@@ -3,6 +3,7 @@ package pl.cmclient.bot.command.impl;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
+import net.dv8tion.jda.api.interactions.InteractionContextType;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.Commands;
 import pl.cmclient.bot.command.Command;
@@ -19,7 +20,7 @@ public class SeekCommand extends Command {
     public SeekCommand() {
         super(Commands.slash("seek", "Seek")
                         .addOption(OptionType.STRING, "time", "Format: <HH:MM:SS> | Example: 00:01:14", true)
-                        .setGuildOnly(true),
+                        .setContexts(InteractionContextType.GUILD),
                 CommandType.MUSIC, false);
     }
 

@@ -3,6 +3,7 @@ package pl.cmclient.bot.command.impl;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Invite;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
+import net.dv8tion.jda.api.interactions.InteractionContextType;
 import net.dv8tion.jda.api.interactions.commands.DefaultMemberPermissions;
 import net.dv8tion.jda.api.interactions.commands.build.Commands;
 import pl.cmclient.bot.command.Command;
@@ -19,8 +20,8 @@ public class ClearInvitesCommand extends Command {
 
     public ClearInvitesCommand() {
         super(Commands.slash("clearinvites", "Removes unused invites")
-                        .setDefaultPermissions(DefaultMemberPermissions.enabledFor(Permission.MANAGE_SERVER))
-                        .setGuildOnly(true),
+                        .setDefaultPermissions(DefaultMemberPermissions.enabledFor(Permission.ADMINISTRATOR))
+                        .setContexts(InteractionContextType.GUILD),
                 CommandType.ADMINISTRATION, false);
     }
 
@@ -33,25 +34,20 @@ public class ClearInvitesCommand extends Command {
                             .create(CustomEmbed.Type.WARNING)
                             .setTitle("Removing " + filtered.size() + " invites...")
                             .build())
-                    //.setEphemeral(true)
                     .queue(interactionHook -> {
                         Instant start = Instant.now();
 
-                        // Use AtomicInteger to count the number of invites deleted
                         AtomicInteger deletedCount = new AtomicInteger(0);
 
                         filtered.forEach(invite -> invite.delete().queue(
                                 success -> {
-                                    // Increment the counter for each successful deletion
                                     deletedCount.incrementAndGet();
 
-                                    // Check if all invites are deleted
                                     if (deletedCount.get() == filtered.size()) {
                                         Instant end = Instant.now();
                                         Duration duration = Duration.between(start, end);
                                         String timeElapsed = StringHelper.formatDuration(duration);
 
-                                        // Edit the message after all invites are deleted
                                         interactionHook.editOriginalEmbeds(new CustomEmbed()
                                                 .create(CustomEmbed.Type.SUCCESS)
                                                 .setTitle("Completed, removed " + deletedCount.get() + " invites.")

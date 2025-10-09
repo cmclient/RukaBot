@@ -1,6 +1,7 @@
 package pl.cmclient.bot.command.impl;
 
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
+import net.dv8tion.jda.api.interactions.InteractionContextType;
 import net.dv8tion.jda.api.interactions.commands.build.Commands;
 import pl.cmclient.bot.command.Command;
 import pl.cmclient.bot.command.CommandType;
@@ -10,7 +11,7 @@ public class SkipCommand extends Command {
 
     public SkipCommand() {
         super(Commands.slash("skip", "Skip to next track")
-                        .setGuildOnly(true),
+                        .setContexts(InteractionContextType.GUILD),
                 CommandType.MUSIC, false);
     }
 

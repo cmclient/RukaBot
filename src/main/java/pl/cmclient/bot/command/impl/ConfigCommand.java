@@ -2,6 +2,7 @@ package pl.cmclient.bot.command.impl;
 
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
+import net.dv8tion.jda.api.interactions.InteractionContextType;
 import net.dv8tion.jda.api.interactions.commands.DefaultMemberPermissions;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.Commands;
@@ -18,7 +19,7 @@ public class ConfigCommand extends Command {
                         .addOption(OptionType.STRING, "key", "Key", true)
                         .addOption(OptionType.STRING, "value", "Value", false)
                         .setDefaultPermissions(DefaultMemberPermissions.enabledFor(Permission.MANAGE_SERVER))
-                        .setGuildOnly(true),
+                        .setContexts(InteractionContextType.GUILD),
                 CommandType.GLOBAL, false);
     }
 

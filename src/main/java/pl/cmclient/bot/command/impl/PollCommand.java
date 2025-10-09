@@ -3,6 +3,7 @@ package pl.cmclient.bot.command.impl;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
+import net.dv8tion.jda.api.interactions.InteractionContextType;
 import net.dv8tion.jda.api.interactions.commands.DefaultMemberPermissions;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.Commands;
@@ -18,7 +19,7 @@ public class PollCommand extends Command {
         super(Commands.slash("poll", "Create a poll")
                 .addOption(OptionType.STRING, "question", "The poll question (use '|' to separate title from description, '\\n' for a new line)", true)
                 .setDefaultPermissions(DefaultMemberPermissions.enabledFor(Permission.MESSAGE_MANAGE))
-                .setGuildOnly(true), CommandType.MODERATION, false);
+                .setContexts(InteractionContextType.GUILD), CommandType.MODERATION, false);
     }
 
     @Override

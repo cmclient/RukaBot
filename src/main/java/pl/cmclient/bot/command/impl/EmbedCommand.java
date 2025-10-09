@@ -3,6 +3,7 @@ package pl.cmclient.bot.command.impl;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
+import net.dv8tion.jda.api.interactions.InteractionContextType;
 import net.dv8tion.jda.api.interactions.commands.DefaultMemberPermissions;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.Commands;
@@ -16,7 +17,7 @@ public class EmbedCommand extends Command {
         super(Commands.slash("embed", "Send embed")
                 .addOption(OptionType.STRING, "message", "Message (seperate title from description with |, for new line use \\n)", true)
                 .setDefaultPermissions(DefaultMemberPermissions.enabledFor(Permission.MESSAGE_MANAGE))
-                .setGuildOnly(true), CommandType.ADMINISTRATION, false);
+                .setContexts(InteractionContextType.GUILD), CommandType.ADMINISTRATION, false);
     }
 
     @Override

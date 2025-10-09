@@ -1,6 +1,7 @@
 package pl.cmclient.bot.command.impl;
 
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
+import net.dv8tion.jda.api.interactions.InteractionContextType;
 import net.dv8tion.jda.api.interactions.commands.build.Commands;
 import net.dv8tion.jda.api.managers.AudioManager;
 import pl.cmclient.bot.command.Command;
@@ -12,7 +13,7 @@ public class LeaveCommand extends Command {
 
     public LeaveCommand() {
         super(Commands.slash("leave", "Leave voice channel")
-                        .setGuildOnly(true),
+                        .setContexts(InteractionContextType.GUILD),
                 CommandType.MUSIC, false);
     }
 

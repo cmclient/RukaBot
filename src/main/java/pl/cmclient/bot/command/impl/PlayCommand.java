@@ -3,6 +3,7 @@ package pl.cmclient.bot.command.impl;
 import net.dv8tion.jda.api.entities.GuildVoiceState;
 import net.dv8tion.jda.api.entities.channel.concrete.VoiceChannel;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
+import net.dv8tion.jda.api.interactions.InteractionContextType;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.Commands;
 import net.dv8tion.jda.api.managers.AudioManager;
@@ -17,7 +18,7 @@ public class PlayCommand extends Command {
     public PlayCommand() {
         super(Commands.slash("play", "Play a song")
                         .addOption(OptionType.STRING, "name", "Artist - Name", true)
-                        .setGuildOnly(true),
+                        .setContexts(InteractionContextType.GUILD),
                 CommandType.MUSIC, false);
     }
 
