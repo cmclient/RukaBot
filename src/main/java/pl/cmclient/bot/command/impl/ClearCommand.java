@@ -38,7 +38,7 @@ public class ClearCommand extends Command {
                         if (messages.isEmpty()) {
                             interactionHook.editOriginalEmbeds(new CustomEmbed()
                                             .create(CustomEmbed.Type.SUCCESS)
-                                            .setTitle("<:cm_checkbox:1296554768747073549> Purged " + deleted.get() + " messages.")
+                                            .setTitle(":white_check_mark: Purged " + deleted.get() + " messages.")
                                             .build())
                                     .queue();
                             return;
@@ -50,7 +50,7 @@ public class ClearCommand extends Command {
 
                         interactionHook.editOriginalEmbeds(new CustomEmbed()
                                         .create(CustomEmbed.Type.WARNING)
-                                        .setTitle("<:cm_information:1263254317897486437> Purging messages...")
+                                        .setTitle(":information_source: Purging messages...")
                                         .setDescription("Deleted " + deleted.get() + "/" + (deleted.get() + amount.get()) + " so far")
                                         .build())
                                 .queue();
@@ -58,7 +58,7 @@ public class ClearCommand extends Command {
                         if (amount.get() > 0) run();
                         else interactionHook.editOriginalEmbeds(new CustomEmbed()
                                         .create(CustomEmbed.Type.SUCCESS)
-                                        .setTitle("<:cm_checkbox:1296554768747073549> Purged " + deleted.get() + " messages.")
+                                        .setTitle(":white_check_mark: Purged " + deleted.get() + " messages.")
                                         .build())
                                 .queue();
                     });

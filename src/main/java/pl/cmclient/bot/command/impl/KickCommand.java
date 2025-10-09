@@ -37,7 +37,7 @@ public class KickCommand extends Command {
         if (!event.getGuild().getSelfMember().canInteract(member)) {
             event.replyEmbeds(new CustomEmbed()
                     .create(CustomEmbed.Type.ERROR)
-                    .setDescription("<:cm_exclamation_mark:1296554775038398495> I cannot interact with this member. They might have a higher role than me or I'm missing permissions.")
+                    .setDescription(":interrobang: I cannot interact with this member. They might have a higher role than me or I'm missing permissions.")
                     .build()).queue();
             return;
         }
@@ -46,7 +46,7 @@ public class KickCommand extends Command {
         String reason = event.getOption("reason") != null ? event.getOption("reason").getAsString() : "No reason";
 
         BotHelper.safeDM(other, new CustomEmbed().create(CustomEmbed.Type.ERROR)
-                        .setTitle("<:cm_exclamation_mark:1296554775038398495> You have been kicked.")
+                        .setTitle(":interrobang: You have been kicked.")
                         .addField("Reason:", reason, false)
                         .addField("Moderator:", "@" + user.getName() + " (" + user.getAsMention() + ")", false)
                         .setFooter(BotApplication.getInstance().getConfig().getBotName(),
@@ -61,13 +61,13 @@ public class KickCommand extends Command {
         guild.kick(target).reason(reason + " | Moderator: @" + kicker.getName()).queue(unused -> {
             event.replyEmbeds(new CustomEmbed()
                     .create(CustomEmbed.Type.SUCCESS)
-                    .setDescription("<:cm_checkbox:1296554768747073549> User @" + target.getName() + " (" + target.getAsMention() + ") has been kicked.")
+                    .setDescription(":white_check_mark: User @" + target.getName() + " (" + target.getAsMention() + ") has been kicked.")
                     .addField("Reason", reason, false)
                     .addField("Moderator", "@" + kicker.getName() + " (" + kicker.getAsMention() + ")", false)
                     .build()).queue();
         }, throwable -> event.replyEmbeds(new CustomEmbed()
                 .create(CustomEmbed.Type.ERROR)
-                .setDescription("<:cm_exclamation_mark:1296554775038398495> Failed to kick this user.\nError: " + throwable.getMessage())
+                .setDescription(":interrobang: Failed to kick this user.\nError: " + throwable.getMessage())
                 .build()).queue());
     }
 }

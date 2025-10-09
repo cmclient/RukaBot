@@ -63,12 +63,12 @@ public class TimeoutCommand extends Command {
             }
             target.removeTimeout().reason(reason).queue(unused -> {
                 event.replyEmbeds(new CustomEmbed().create(CustomEmbed.Type.SUCCESS)
-                        .setDescription("<:cm_checkbox:1296554768747073549> Timeout cleared for " + target.getUser().getAsMention())
+                        .setDescription(":white_check_mark: Timeout cleared for " + target.getUser().getAsMention())
                         .build()).queue();
 
                 BotHelper.safeDM(target.getUser(),
                         new CustomEmbed().create(CustomEmbed.Type.SUCCESS)
-                                .setTitle("<:cm_hourglass:1296554804226818138> Your timeout has been cleared")
+                                .setTitle(":hourglass: Your timeout has been cleared")
                                 .addField("Moderator:", "@" + moderator.getName() + " (" + moderator.getAsMention() + ")", false)
                                 .addField("Reason:", reason, false)
                                 .setFooter(BotApplication.getInstance().getConfig().getBotName(),
@@ -109,7 +109,7 @@ public class TimeoutCommand extends Command {
         final User targetUser = target.getUser();
 
         BotHelper.safeDM(targetUser, new CustomEmbed().create(CustomEmbed.Type.WARNING)
-                        .setTitle("<:cm_hourglass:1296554804226818138> You have been timed out.")
+                        .setTitle(":hourglass: You have been timed out.")
                         .addField("Duration:", durationStr, false)
                         .addField("Reason:", reason, false)
                         .addField("Moderator:", "@" + moderator.getName() + " (" + moderator.getAsMention() + ")", false)
@@ -124,7 +124,7 @@ public class TimeoutCommand extends Command {
         target.timeoutFor(Duration.ofMillis(durationMillis))
                 .reason(reason + " | Moderator: @" + moderator.getName())
                 .queue(unused -> event.replyEmbeds(new CustomEmbed().create(CustomEmbed.Type.SUCCESS)
-                                .setDescription("<:cm_checkbox:1296554768747073549> User @" + target.getUser().getName() + " (" + target.getAsMention() + ") has been timed out.")
+                                .setDescription(":white_check_mark: User @" + target.getUser().getName() + " (" + target.getAsMention() + ") has been timed out.")
                                 .addField("Duration:", durationStr, false)
                                 .addField("Reason", reason, false)
                                 .addField("Moderator", "@" + moderator.getName() + " (" + moderator.getAsMention() + ")", false)
