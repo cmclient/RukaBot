@@ -6,6 +6,7 @@ import com.sedmelluq.discord.lavaplayer.player.AudioLoadResultHandler;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.player.DefaultAudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.source.http.HttpAudioSourceManager;
+import pl.cmclient.bot.audio.YtDlpAudioSourceManager;
 import com.sedmelluq.discord.lavaplayer.source.soundcloud.SoundCloudAudioSourceManager;
 import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
 import com.sedmelluq.discord.lavaplayer.track.AudioPlaylist;
@@ -37,14 +38,20 @@ public class MusicManager {
 
     public MusicManager(pl.cmclient.bot.config.Config config) {
         this.playerManager = new DefaultAudioPlayerManager();
-        YoutubeAudioSourceManager youtubeSource = new YoutubeAudioSourceManager();
-        if (config != null) {
-            String oauthToken = config.getYoutubeOAuthToken();
-            if (oauthToken != null && !oauthToken.isBlank()) {
-                youtubeSource.useOauth2(oauthToken, false);
+        if (config != null && isValidYtDlpPath(config.getYtDlpPath())) {
+            BotApplication.getInstance().getLogger().info("Using yt-dlp source manager ({})", config.getYtDlpPath());
+            this.playerManager.registerSourceManager(new YtDlpAudioSourceManager(config.getYtDlpPath(), config.getYtDlpCookiesPath()));
+        } else {
+            BotApplication.getInstance().getLogger().info("Using default youtube-source manager");
+            YoutubeAudioSourceManager youtubeSource = new YoutubeAudioSourceManager();
+            if (config != null) {
+                String oauthToken = config.getYoutubeOAuthToken();
+                if (oauthToken != null && !oauthToken.isBlank()) {
+                    youtubeSource.useOauth2(oauthToken, false);
+                }
             }
+            this.playerManager.registerSourceManager(youtubeSource);
         }
-        this.playerManager.registerSourceManager(youtubeSource);
         this.playerManager.registerSourceManager(SoundCloudAudioSourceManager.createDefault());
         this.playerManager.registerSourceManager(new HttpAudioSourceManager(MediaContainerRegistry.DEFAULT_REGISTRY));
         this.playerManager.getConfiguration().setResamplingQuality(AudioConfiguration.ResamplingQuality.HIGH);
@@ -143,6 +150,18 @@ public class MusicManager {
         long positionInMillis = frameNumber * 20;
         this.getPlayingTrack(server).setPosition(positionInMillis);
         return positionInMillis;
+    }
+
+    private static boolean isValidYtDlpPath(String path) {
+        BotApplication.getInstance().getLogger().info("Checking if yt-dlp path is valid: {}", path);
+        if (path == null || path.isBlank()) {
+            BotApplication.getInstance().getLogger().info("yt-dlp path is null or blank");
+            return false;
+        }
+        java.io.File file = new java.io.File(path);
+        BotApplication.getInstance().getLogger().info("Checking if file exists: {}", file.exists());
+        BotApplication.getInstance().getLogger().info("Checking if file is executable: {}", file.canExecute());
+        return file.exists() && file.canExecute();
     }
 
     public AudioPlayer get(Guild server) {

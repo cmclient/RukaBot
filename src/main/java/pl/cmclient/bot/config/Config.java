@@ -19,6 +19,8 @@ public class Config {
     private String spotifyClientID;
     private String spotifyClientSecret;
     private String youtubeOAuthToken;
+    private String ytDlpPath;
+    private String ytDlpCookiesPath;
 
     public void load() {
         File file = new File("rukabot.cfg");
@@ -36,6 +38,8 @@ public class Config {
             this.spotifyClientID = properties.getProperty("spotifyClientID");
             this.spotifyClientSecret = properties.getProperty("spotifyClientSecret");
             this.youtubeOAuthToken = properties.getProperty("youtubeOAuthToken", "");
+            this.ytDlpPath = stripQuotes(properties.getProperty("ytDlpPath", ""));
+            this.ytDlpCookiesPath = stripQuotes(properties.getProperty("ytDlpCookiesPath", ""));
         } catch (IOException ex) {
             bot.getLogger().error("Failed to load configuration!", ex);
         }
@@ -48,6 +52,13 @@ public class Config {
         }
     }
 
+    private static String stripQuotes(String value) {
+        if (value != null && value.length() >= 2 && value.startsWith("\"") && value.endsWith("\"")) {
+            return value.substring(1, value.length() - 1);
+        }
+        return value;
+    }
+
     private void saveDefault(Properties properties, File file) {
         properties.setProperty("botName", "RukaBot");
         properties.setProperty("databaseName", "rukabot.db");
@@ -56,6 +67,8 @@ public class Config {
         properties.setProperty("spotifyClientID", "default");
         properties.setProperty("spotifyClientSecret", "default");
         properties.setProperty("youtubeOAuthToken", "");
+        properties.setProperty("ytDlpPath", "");
+        properties.setProperty("ytDlpCookiesPath", "");
         try (OutputStream out = new FileOutputStream(file)) {
             properties.store(out, null);
         } catch (IOException ex) {
