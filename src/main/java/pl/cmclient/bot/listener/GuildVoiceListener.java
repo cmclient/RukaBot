@@ -1,6 +1,5 @@
 package pl.cmclient.bot.listener;
 
-import lombok.RequiredArgsConstructor;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.channel.middleman.AudioChannel;
 import net.dv8tion.jda.api.events.guild.voice.GuildVoiceUpdateEvent;
@@ -11,10 +10,19 @@ import pl.cmclient.bot.BotApplication;
 import pl.cmclient.bot.object.AudioPlayer;
 import pl.cmclient.bot.object.ServerData;
 
-@RequiredArgsConstructor
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+
 public class GuildVoiceListener extends ListenerAdapter {
 
+    private static final ScheduledExecutorService SCHEDULER = Executors.newSingleThreadScheduledExecutor();
+
     private final BotApplication bot;
+
+    public GuildVoiceListener(BotApplication bot) {
+        this.bot = bot;
+    }
 
     @Override
     public void onGuildVoiceUpdate(@NotNull GuildVoiceUpdateEvent event) {
@@ -49,7 +57,7 @@ public class GuildVoiceListener extends ListenerAdapter {
             if (audioPlayer.getScheduler().getPlayingTrack() != null) {
                 audioPlayer.getScheduler().stopTrack();
             }
-            audioManager.closeAudioConnection();
+            SCHEDULER.schedule(audioManager::closeAudioConnection, 500, TimeUnit.MILLISECONDS);
         }
     }
 }
