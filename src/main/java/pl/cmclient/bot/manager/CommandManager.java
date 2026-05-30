@@ -26,6 +26,7 @@ public class CommandManager {
             (new AvatarCommand()),
             (new PingCommand()),
             (new UserInfoCommand()),
+            (new ServerInfoCommand()),
 
             // ADMINISTRATION
             (new EmbedCommand()),
@@ -48,7 +49,8 @@ public class CommandManager {
             (new SkipCommand()),
             (new QueueCommand()),
             (new ClearQueueCommand()),
-            (new VolumeCommand())
+            (new VolumeCommand()),
+            (new TwoFourSevenCommand())
     );
 
     public void load(BotApplication bot, JDA jda) {

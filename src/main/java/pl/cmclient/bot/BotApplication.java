@@ -2,10 +2,7 @@ package pl.cmclient.bot;
 
 import com.sedmelluq.discord.lavaplayer.jdaudp.NativeAudioSendFactory;
 import lombok.Getter;
-import net.dv8tion.jda.api.JDA;
-import net.dv8tion.jda.api.JDABuilder;
-import net.dv8tion.jda.api.OnlineStatus;
-import net.dv8tion.jda.api.Permission;
+import net.dv8tion.jda.api.*;
 import net.dv8tion.jda.api.entities.Activity;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 import org.slf4j.Logger;
@@ -13,6 +10,7 @@ import org.slf4j.LoggerFactory;
 import pl.cmclient.bot.audio.LinkConverter;
 import pl.cmclient.bot.config.Config;
 import pl.cmclient.bot.database.Database;
+import pl.cmclient.bot.listener.GuildVoiceListener;
 import pl.cmclient.bot.listener.MessageListener;
 import pl.cmclient.bot.listener.SlashCommandListener;
 import pl.cmclient.bot.manager.CommandManager;
@@ -69,14 +67,12 @@ public class BotApplication {
         this.youtubeApiManager = new YoutubeApiManager(this);
         this.linkConverter = new LinkConverter(this);
         this.logger.info("Loading JDA...");
+        this.logger.info("JDA version: {}", JDAInfo.VERSION);
         this.jda = JDABuilder.create(this.config.getToken(), List.of(GatewayIntent.values()))
                 .setAudioSendFactory(new NativeAudioSendFactory())
-                .addEventListeners(new MessageListener(this), new SlashCommandListener(this))
-                .setStatus(OnlineStatus.DO_NOT_DISTURB)
+                .addEventListeners(new MessageListener(this), new SlashCommandListener(this), new GuildVoiceListener(this))
                 .setActivity(Activity.listening("/help"))
                 .build();
-
-        this.jda.getPresence().setStatus(OnlineStatus.DO_NOT_DISTURB);
 
         this.logger.info("Loading commands...");
         (this.commandManager = new CommandManager()).load(this, this.jda);

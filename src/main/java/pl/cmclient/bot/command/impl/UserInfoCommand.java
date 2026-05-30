@@ -34,7 +34,7 @@ public class UserInfoCommand extends Command {
                         .addField("User name", user.getName(), true)
                         .addField("User Id", user.getId(), true)
                         .addField("Activity", member.getActivities().isEmpty() ? "none" : member.getActivities().stream().map(Activity::getName).collect(Collectors.joining("\n")), true)
-                        .setImage(user.getAvatarUrl())
+                        .setImage(user.getAvatarUrl() + "?size=2048&quality=lossless")
                         .build())
                 //.setEphemeral(true)
                 .queue();

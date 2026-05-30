@@ -14,13 +14,7 @@
         <maven.compiler.source>21</maven.compiler.source>
         <maven.compiler.target>21</maven.compiler.target>
     </properties>
-
     <repositories>
-        <repository>
-            <id>dv8tion</id>
-            <name>m2-dv8tion</name>
-            <url>https://m2.dv8tion.net/releases</url>
-        </repository>
         <repository>
             <id>jitpack</id>
             <url>https://jitpack.io</url>
@@ -36,23 +30,27 @@
         <dependency>
             <groupId>net.dv8tion</groupId>
             <artifactId>JDA</artifactId>
-            <version>6.0.0</version>
+            <version>6.4.1</version>
         </dependency>
+        <!-- https://mvnrepository.com/artifact/club.minnced/udpqueue-native-linux-x86-64 -->
         <dependency>
             <groupId>club.minnced</groupId>
             <artifactId>udpqueue-native-linux-x86-64</artifactId>
-            <version>0.2.9</version>
+            <version>0.2.12</version>
         </dependency>
+        <!-- https://mvnrepository.com/artifact/club.minnced/udpqueue-native-win-x86-64 -->
         <dependency>
             <groupId>club.minnced</groupId>
             <artifactId>udpqueue-native-win-x86-64</artifactId>
-            <version>0.2.9</version>
+            <version>0.2.12</version>
         </dependency>
+        <!-- https://mvnrepository.com/artifact/club.minnced/udpqueue-native-linux-aarch64 -->
         <dependency>
             <groupId>club.minnced</groupId>
             <artifactId>udpqueue-native-linux-aarch64</artifactId>
-            <version>0.2.9</version>
+            <version>0.2.12</version>
         </dependency>
+        <!-- https://mvnrepository.com/artifact/org.slf4j/slf4j-simple -->
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-simple</artifactId>
@@ -63,53 +61,58 @@
         <dependency>
             <groupId>org.xerial</groupId>
             <artifactId>sqlite-jdbc</artifactId>
-            <version>3.50.3.0</version>
+            <version>3.53.1.0</version>
         </dependency>
         <!-- https://mvnrepository.com/artifact/se.michaelthelin.spotify/spotify-web-api-java -->
         <dependency>
             <groupId>se.michaelthelin.spotify</groupId>
             <artifactId>spotify-web-api-java</artifactId>
-            <version>9.3.0</version>
+            <version>9.4.0</version>
         </dependency>
         <!-- https://github.com/lavalink-devs/lavaplayer -->
         <dependency>
             <groupId>dev.arbjerg</groupId>
             <artifactId>lavaplayer</artifactId>
-            <version>2.2.4</version>
+            <version>2.2.6</version>
         </dependency>
+        <!-- https://mvnrepository.com/artifact/dev.lavalink.youtube/common -->
         <dependency>
             <groupId>dev.lavalink.youtube</groupId>
             <artifactId>common</artifactId>
-            <version>1.14.0</version>
+            <version>1.18.1</version>
         </dependency>
         <!-- https://github.com/google/gson -->
         <dependency>
             <groupId>com.google.code.gson</groupId>
             <artifactId>gson</artifactId>
-            <version>2.13.2</version>
+            <version>2.14.0</version>
         </dependency>
         <!-- https://projectlombok.org/setup/maven -->
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
-            <version>1.18.42</version>
+            <version>1.18.46</version>
             <scope>provided</scope>
         </dependency>
     </dependencies>
 
     <build>
         <plugins>
+            <!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-compiler-plugin -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.15.0</version>
                 <configuration>
                     <source>21</source>
                     <target>21</target>
                 </configuration>
             </plugin>
-
+            <!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-assembly-plugin -->
             <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-assembly-plugin</artifactId>
+                <version>3.8.0</version>
                 <configuration>
                     <archive>
                         <manifest>

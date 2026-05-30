@@ -1,6 +1,7 @@
 package pl.cmclient.bot.object;
 
 import lombok.Getter;
+import lombok.Setter;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.User;
 import pl.cmclient.bot.BotApplication;
@@ -20,6 +21,8 @@ public class ServerData {
     private final long serverId;
     private final Database database;
     private boolean inviteBans;
+    @Setter
+    private boolean twoFourSeven;
     private final Map<User, Permission> userPermissions;
     private final List<String> bannedWords;
 
@@ -44,6 +47,7 @@ public class ServerData {
         this.database.update("UPDATE `servers` SET " +
                 "`inviteBans`='" + (this.inviteBans ? 1 : 0) + "' WHERE `serverId` = '" + this.serverId + "'");
     }
+
     public void addBannedWord(String s) {
         this.bannedWords.add(s);
         this.database.update("UPDATE `servers` SET " +
