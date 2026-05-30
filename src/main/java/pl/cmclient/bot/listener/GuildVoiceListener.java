@@ -18,42 +18,33 @@ public class GuildVoiceListener extends ListenerAdapter {
 
     @Override
     public void onGuildVoiceUpdate(@NotNull GuildVoiceUpdateEvent event) {
-        // Only care about users leaving a channel
         AudioChannel leftChannel = event.getChannelLeft();
-        if (leftChannel == null) {
-            return;
-        }
-
-        // Ignore bot events
-        if (event.getMember().getUser().isBot()) {
+        if (leftChannel == null || event.getMember().getUser().isBot()) {
             return;
         }
 
         Guild guild = event.getGuild();
         AudioManager audioManager = guild.getAudioManager();
 
-        // Bot must be connected
         if (!audioManager.isConnected()) {
             return;
         }
 
-        // The user must have left the same channel the bot is in
         AudioChannel botChannel = audioManager.getConnectedChannel();
         if (botChannel == null || !botChannel.getId().equals(leftChannel.getId())) {
             return;
         }
 
-        // Check if 24/7 mode is enabled for this server
         ServerData serverData = this.bot.getServerDataManager().get(guild.getIdLong());
         if (serverData.isTwoFourSeven()) {
             return;
         }
 
-        // Check if any non-bot users remain in the channel
         boolean anyHumansLeft = botChannel.getMembers().stream()
                 .anyMatch(member -> !member.getUser().isBot());
 
         if (!anyHumansLeft) {
+//            bot.getLogger().info("No non-bot users left in voice channel {} in guild {}. Disconnecting.", botChannel.getName(), guild.getName());
             AudioPlayer audioPlayer = this.bot.getMusicManager().get(guild);
             if (audioPlayer.getScheduler().getPlayingTrack() != null) {
                 audioPlayer.getScheduler().stopTrack();

@@ -18,6 +18,7 @@ public class Config {
     private String youtubeApiKey;
     private String spotifyClientID;
     private String spotifyClientSecret;
+    private String youtubeOAuthToken;
 
     public void load() {
         File file = new File("rukabot.cfg");
@@ -34,6 +35,7 @@ public class Config {
             this.youtubeApiKey = properties.getProperty("youtubeApiKey");
             this.spotifyClientID = properties.getProperty("spotifyClientID");
             this.spotifyClientSecret = properties.getProperty("spotifyClientSecret");
+            this.youtubeOAuthToken = properties.getProperty("youtubeOAuthToken", "");
         } catch (IOException ex) {
             bot.getLogger().error("Failed to load configuration!", ex);
         }
@@ -53,6 +55,7 @@ public class Config {
         properties.setProperty("youtubeApiKey", "default");
         properties.setProperty("spotifyClientID", "default");
         properties.setProperty("spotifyClientSecret", "default");
+        properties.setProperty("youtubeOAuthToken", "");
         try (OutputStream out = new FileOutputStream(file)) {
             properties.store(out, null);
         } catch (IOException ex) {

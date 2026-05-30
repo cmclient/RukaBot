@@ -14,6 +14,7 @@ import dev.lavalink.youtube.YoutubeAudioSourceManager;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
+import net.dv8tion.jda.api.interactions.InteractionHook;
 import pl.cmclient.bot.BotApplication;
 import pl.cmclient.bot.common.CustomEmbed;
 import pl.cmclient.bot.object.AudioPlayer;
@@ -31,8 +32,19 @@ public class MusicManager {
     private final Map<Long, AudioPlayer> audioPlayers;
 
     public MusicManager() {
+        this(null);
+    }
+
+    public MusicManager(pl.cmclient.bot.config.Config config) {
         this.playerManager = new DefaultAudioPlayerManager();
-        this.playerManager.registerSourceManager(new YoutubeAudioSourceManager());
+        YoutubeAudioSourceManager youtubeSource = new YoutubeAudioSourceManager();
+        if (config != null) {
+            String oauthToken = config.getYoutubeOAuthToken();
+            if (oauthToken != null && !oauthToken.isBlank()) {
+                youtubeSource.useOauth2(oauthToken, false);
+            }
+        }
+        this.playerManager.registerSourceManager(youtubeSource);
         this.playerManager.registerSourceManager(SoundCloudAudioSourceManager.createDefault());
         this.playerManager.registerSourceManager(new HttpAudioSourceManager(MediaContainerRegistry.DEFAULT_REGISTRY));
         this.playerManager.getConfiguration().setResamplingQuality(AudioConfiguration.ResamplingQuality.HIGH);
@@ -40,13 +52,13 @@ public class MusicManager {
         this.audioPlayers = new ConcurrentHashMap<>();
     }
 
-    public void queue(String url, Guild server, TextChannel channel) {
+    public void queue(InteractionHook hook, String url, Guild server) {
         AudioPlayer audioManager = this.get(server);
         this.playerManager.loadItemOrdered(audioManager, url, new AudioLoadResultHandler() {
             @Override
             public void trackLoaded(AudioTrack track) {
                 audioManager.getScheduler().queue(track);
-                channel.sendMessageEmbeds(new CustomEmbed().create(CustomEmbed.Type.SUCCESS)
+                hook.sendMessageEmbeds(new CustomEmbed().create(CustomEmbed.Type.SUCCESS)
                         .setAuthor(track.getInfo().title, track.getInfo().uri, "https://img.youtube.com/vi/" + track.getInfo().identifier + "/maxresdefault.jpg")
                         .setTitle("Added track to queue")
                         .setDescription(audioManager.getScheduler().getQueue().isEmpty() ? null : "Position in queue: " + audioManager.getScheduler().getQueue().size())
@@ -67,7 +79,7 @@ public class MusicManager {
 
                 tracks.forEach(audioManager.getScheduler()::queue);
 
-                channel.sendMessageEmbeds(new CustomEmbed().create(CustomEmbed.Type.SUCCESS)
+                hook.sendMessageEmbeds(new CustomEmbed().create(CustomEmbed.Type.SUCCESS)
                         .setAuthor(track.getInfo().title, track.getInfo().uri, "https://img.youtube.com/vi/" + track.getInfo().identifier + "/maxresdefault.jpg")
                         .setTitle("Added playlist to queue (" + playlist.getTracks().size() + " songs)")
                         .setDescription(audioManager.getScheduler().getQueue().isEmpty() ? null : "Position in queue: " + audioManager.getScheduler().getQueue().size())
@@ -76,13 +88,13 @@ public class MusicManager {
 
             @Override
             public void noMatches() {
-                channel.sendMessageEmbeds(new CustomEmbed().create(CustomEmbed.Type.ERROR)
+                hook.sendMessageEmbeds(new CustomEmbed().create(CustomEmbed.Type.ERROR)
                         .setTitle("Cannot find any song by this URL.").build()).queue();
             }
 
             @Override
             public void loadFailed(FriendlyException ex) {
-                channel.sendMessageEmbeds(new CustomEmbed().create(CustomEmbed.Type.ERROR)
+                hook.sendMessageEmbeds(new CustomEmbed().create(CustomEmbed.Type.ERROR)
                         .setTitle("Error while trying to play that song.").build()).queue();
                 BotApplication.getInstance().getLogger().error("Error while trying to play song", ex);
             }

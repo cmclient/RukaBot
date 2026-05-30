@@ -29,8 +29,10 @@ public class YoutubeApiManager {
                 JsonObject video = object.get("items").getAsJsonArray().get(0).getAsJsonObject().get("id").getAsJsonObject();
                 return video.has("videoId") ? Optional.of(("https://www.youtube.com/watch?v=" + video.get("videoId").getAsString())) : Optional.empty();
             }
+            bot.getLogger().warn("No video found for query: {}", query);
             return Optional.empty();
         } catch (IOException ex) {
+            bot.getLogger().error("Failed to search video on YouTube!", ex);
             return Optional.empty();
         }
     }

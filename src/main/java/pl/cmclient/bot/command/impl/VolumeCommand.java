@@ -12,7 +12,7 @@ public class VolumeCommand extends Command {
 
     public VolumeCommand() {
         super(Commands.slash("volume", "Change volume")
-                        .addOption(OptionType.NUMBER, "volume", "Volume", true)
+                        .addOption(OptionType.INTEGER, "volume", "Volume", true)
                         .setContexts(InteractionContextType.GUILD),
                 CommandType.MUSIC, false);
     }

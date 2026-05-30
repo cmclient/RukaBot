@@ -11,14 +11,14 @@
     <description>RukaBot is an open source Discord bot coded in Java using JavaCord.</description>
 
     <properties>
-        <maven.compiler.source>21</maven.compiler.source>
-        <maven.compiler.target>21</maven.compiler.target>
+        <maven.compiler.source>25</maven.compiler.source>
+        <maven.compiler.target>25</maven.compiler.target>
     </properties>
     <repositories>
-        <repository>
-            <id>jitpack</id>
-            <url>https://jitpack.io</url>
-        </repository>
+<!--        <repository>-->
+<!--            <id>jitpack</id>-->
+<!--            <url>https://jitpack.io</url>-->
+<!--        </repository>-->
         <repository>
             <id>lavalink-releases</id>
             <url>https://maven.lavalink.dev/releases</url>
@@ -87,6 +87,28 @@
             <artifactId>gson</artifactId>
             <version>2.14.0</version>
         </dependency>
+        <!-- https://github.com/MinnDevelopment/jdave - DAVE Protocol (Discord E2EE audio, Java 25 FFM) -->
+        <dependency>
+            <groupId>club.minnced</groupId>
+            <artifactId>jdave-api</artifactId>
+            <version>0.1.2</version>
+        </dependency>
+        <!-- Natives: include all common platforms -->
+        <dependency>
+            <groupId>club.minnced</groupId>
+            <artifactId>jdave-native-linux-x86-64</artifactId>
+            <version>0.1.2</version>
+        </dependency>
+        <dependency>
+            <groupId>club.minnced</groupId>
+            <artifactId>jdave-native-linux-aarch64</artifactId>
+            <version>0.1.2</version>
+        </dependency>
+        <dependency>
+            <groupId>club.minnced</groupId>
+            <artifactId>jdave-native-win-x86-64</artifactId>
+            <version>0.1.2</version>
+        </dependency>
         <!-- https://projectlombok.org/setup/maven -->
         <dependency>
             <groupId>org.projectlombok</groupId>
@@ -104,8 +126,8 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.15.0</version>
                 <configuration>
-                    <source>21</source>
-                    <target>21</target>
+                    <source>25</source>
+                    <target>25</target>
                 </configuration>
             </plugin>
             <!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-assembly-plugin -->
@@ -118,6 +140,9 @@
                         <manifest>
                             <mainClass>pl.cmclient.Main</mainClass>
                         </manifest>
+                        <manifestEntries>
+                            <Enable-Native-Access>ALL-UNNAMED</Enable-Native-Access>
+                        </manifestEntries>
                     </archive>
                     <descriptorRefs>
                         <descriptorRef>jar-with-dependencies</descriptorRef>

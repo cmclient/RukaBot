@@ -2,7 +2,9 @@ package pl.cmclient.bot;
 
 import com.sedmelluq.discord.lavaplayer.jdaudp.NativeAudioSendFactory;
 import lombok.Getter;
+import club.minnced.discord.jdave.interop.JDaveSessionFactory;
 import net.dv8tion.jda.api.*;
+import net.dv8tion.jda.api.audio.AudioModuleConfig;
 import net.dv8tion.jda.api.entities.Activity;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 import org.slf4j.Logger;
@@ -63,13 +65,15 @@ public class BotApplication {
             this.logger.warn("Unable to connect to the database.");
         }
         this.logger.info("Loading audio player...");
-        this.musicManager = new MusicManager();
+        this.musicManager = new MusicManager(this.config);
         this.youtubeApiManager = new YoutubeApiManager(this);
         this.linkConverter = new LinkConverter(this);
         this.logger.info("Loading JDA...");
         this.logger.info("JDA version: {}", JDAInfo.VERSION);
         this.jda = JDABuilder.create(this.config.getToken(), List.of(GatewayIntent.values()))
-                .setAudioSendFactory(new NativeAudioSendFactory())
+                .setAudioModuleConfig(new AudioModuleConfig()
+                        .withDaveSessionFactory(new JDaveSessionFactory())
+                        .withAudioSendFactory(new NativeAudioSendFactory()))
                 .addEventListeners(new MessageListener(this), new SlashCommandListener(this), new GuildVoiceListener(this))
                 .setActivity(Activity.listening("/help"))
                 .build();
