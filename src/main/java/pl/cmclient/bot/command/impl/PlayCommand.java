@@ -38,7 +38,7 @@ public class PlayCommand extends Command {
 
         VoiceChannel voiceChannel = voiceState.getChannel().asVoiceChannel();
         AudioManager audioManager = event.getGuild().getAudioManager();
-        
+
         String query = event.getOption("query").getAsString();
 
         if (!audioManager.isConnected()) {
@@ -102,7 +102,6 @@ public class PlayCommand extends Command {
             return;
         }
 
-        // First and only direct reply — follow-up error must go through the hook
         event.replyEmbeds(new CustomEmbed().create(CustomEmbed.Type.SUCCESS)
                 .setTitle("Searching **" + query + "**...").build()).queue();
 
