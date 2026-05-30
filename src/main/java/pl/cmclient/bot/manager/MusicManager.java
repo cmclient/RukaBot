@@ -40,7 +40,7 @@ public class MusicManager {
         this.playerManager = new DefaultAudioPlayerManager();
         if (config != null && isValidYtDlpPath(config.getYtDlpPath())) {
             BotApplication.getInstance().getLogger().info("Using yt-dlp source manager ({})", config.getYtDlpPath());
-            this.playerManager.registerSourceManager(new YtDlpAudioSourceManager(config.getYtDlpPath(), config.getYtDlpCookiesPath()));
+            this.playerManager.registerSourceManager(new YtDlpAudioSourceManager(config.getYtDlpPath(), config.getYtDlpCookiesPath(), config.getYtDlpJsRuntimes()));
         } else {
             BotApplication.getInstance().getLogger().info("Using default youtube-source manager");
             YoutubeAudioSourceManager youtubeSource = new YoutubeAudioSourceManager();

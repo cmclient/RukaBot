@@ -1,9 +1,7 @@
 package pl.cmclient.bot.audio;
 
-import com.sedmelluq.discord.lavaplayer.container.MediaContainerRegistry;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.source.AudioSourceManager;
-import com.sedmelluq.discord.lavaplayer.source.http.HttpAudioSourceManager;
 import com.sedmelluq.discord.lavaplayer.track.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,6 +9,7 @@ import org.slf4j.LoggerFactory;
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
+import java.util.Arrays;
 
 public class YtDlpAudioSourceManager implements AudioSourceManager {
 
@@ -18,12 +17,12 @@ public class YtDlpAudioSourceManager implements AudioSourceManager {
 
     private final String ytDlpPath;
     private final String cookiesPath;
-    private final HttpAudioSourceManager httpSourceManager;
+    private final String jsRuntimes;
 
-    public YtDlpAudioSourceManager(String ytDlpPath, String cookiesPath) {
+    public YtDlpAudioSourceManager(String ytDlpPath, String cookiesPath, String jsRuntimes) {
         this.ytDlpPath = ytDlpPath;
         this.cookiesPath = cookiesPath;
-        this.httpSourceManager = new HttpAudioSourceManager(MediaContainerRegistry.DEFAULT_REGISTRY);
+        this.jsRuntimes = jsRuntimes;
     }
 
     @Override
@@ -38,39 +37,90 @@ public class YtDlpAudioSourceManager implements AudioSourceManager {
             return null;
         }
         try {
-            String directUrl = resolveDirectUrl(url);
+            String[] meta = resolveMetadata(url);
+            String directUrl = meta[0];
+            String title     = meta[1];
+            String author    = meta[2];
+            long   duration  = parseDurationSeconds(meta[3]);
+            String webUrl    = meta[4];
+            String videoId   = meta[5];
+
             if (directUrl == null || directUrl.isBlank()) {
                 log.error("yt-dlp returned no URL for: {}", url);
                 return AudioReference.NO_TRACK;
             }
-            AudioItem item = httpSourceManager.loadItem(manager, new AudioReference(directUrl, reference.title));
-            if (item instanceof AudioTrack track) {
-                return new YtDlpAudioTrack(track.getInfo(), this);
-            }
-            return item;
+
+            AudioTrackInfo info = new AudioTrackInfo(
+                    title  != null && !title.isBlank()  ? title  : "Unknown title",
+                    author != null && !author.isBlank() ? author : "Unknown artist",
+                    duration,
+                    videoId != null && !videoId.isBlank() ? videoId : url,
+                    false,
+                    webUrl  != null && !webUrl.isBlank()  ? webUrl  : url
+            );
+            return new YtDlpAudioTrack(info, this);
         } catch (Exception ex) {
             log.error("Failed to resolve URL via yt-dlp for: {}", url, ex);
             return AudioReference.NO_TRACK;
         }
     }
 
-    public String resolveDirectUrlPublic(String videoUrl) throws IOException, InterruptedException {
-        return resolveDirectUrl(videoUrl);
+    private long parseDurationSeconds(String raw) {
+        if (raw == null || raw.isBlank()) return 0L;
+        try {
+            return (long) (Double.parseDouble(raw.trim()) * 1000L);
+        } catch (NumberFormatException e) {
+            return 0L;
+        }
     }
 
-    private String resolveDirectUrl(String videoUrl) throws IOException, InterruptedException {
-        ProcessBuilder pb;
+    public String resolveDirectUrlPublic(String videoUrl) throws IOException, InterruptedException {
+        return resolveMetadata(videoUrl)[0];
+    }
+
+    /**
+     * Returns [directUrl, title, uploader, durationSeconds, webpageUrl, videoId]
+     */
+    private String[] resolveMetadata(String videoUrl) throws IOException, InterruptedException {
+        java.util.List<String> cmd = new java.util.ArrayList<>();
+        cmd.add(ytDlpPath);
         if (cookiesPath != null && !cookiesPath.isBlank()) {
-            pb = new ProcessBuilder(ytDlpPath, "--cookies", cookiesPath, "--js-runtimes", "node", "-f", "bestaudio", "--get-url", videoUrl);
-        } else {
-            pb = new ProcessBuilder(ytDlpPath, "-f", "bestaudio", "--get-url", videoUrl);
+            cmd.add("--cookies");
+            cmd.add(cookiesPath);
         }
+        if (jsRuntimes != null && !jsRuntimes.isBlank()) {
+            cmd.add("--js-runtimes");
+            cmd.add(jsRuntimes);
+        }
+        cmd.add("-f");
+        cmd.add("bestaudio");
+        cmd.add("--print");
+        cmd.add("url");
+        cmd.add("--print");
+        cmd.add("title");
+        cmd.add("--print");
+        cmd.add("uploader");
+        cmd.add("--print");
+        cmd.add("duration");
+        cmd.add("--print");
+        cmd.add("webpage_url");
+        cmd.add("--print");
+        cmd.add("id");
+        cmd.add("--no-playlist");
+        cmd.add(videoUrl);
+        log.info("Executing command: {}", cmd);
+        ProcessBuilder pb = new ProcessBuilder(cmd);
         pb.redirectErrorStream(false);
         Process process = pb.start();
         String output = new String(process.getInputStream().readAllBytes()).trim();
         process.waitFor();
-        // Return only the first line (in case multiple formats are printed)
-        return output.lines().findFirst().orElse(null);
+        String[] lines = output.split("\n", -1);
+        String[] result = new String[6];
+        Arrays.fill(result, "");
+        for (int i = 0; i < Math.min(lines.length, result.length); i++) {
+            result[i] = lines[i].trim();
+        }
+        return result;
     }
 
     private boolean isYoutubeUrl(String url) {
@@ -94,10 +144,5 @@ public class YtDlpAudioSourceManager implements AudioSourceManager {
 
     @Override
     public void shutdown() {
-        httpSourceManager.shutdown();
-    }
-
-    public HttpAudioSourceManager getHttpSourceManager() {
-        return httpSourceManager;
     }
 }

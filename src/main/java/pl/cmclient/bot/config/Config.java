@@ -21,6 +21,7 @@ public class Config {
     private String youtubeOAuthToken;
     private String ytDlpPath;
     private String ytDlpCookiesPath;
+    private String ytDlpJsRuntimes;
 
     public void load() {
         File file = new File("rukabot.cfg");
@@ -40,6 +41,7 @@ public class Config {
             this.youtubeOAuthToken = properties.getProperty("youtubeOAuthToken", "");
             this.ytDlpPath = stripQuotes(properties.getProperty("ytDlpPath", ""));
             this.ytDlpCookiesPath = stripQuotes(properties.getProperty("ytDlpCookiesPath", ""));
+            this.ytDlpJsRuntimes = properties.getProperty("ytDlpJsRuntimes", "");
         } catch (IOException ex) {
             bot.getLogger().error("Failed to load configuration!", ex);
         }
@@ -69,6 +71,7 @@ public class Config {
         properties.setProperty("youtubeOAuthToken", "");
         properties.setProperty("ytDlpPath", "");
         properties.setProperty("ytDlpCookiesPath", "");
+        properties.setProperty("ytDlpJsRuntimes", "");
         try (OutputStream out = new FileOutputStream(file)) {
             properties.store(out, null);
         } catch (IOException ex) {
