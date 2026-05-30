@@ -9,7 +9,7 @@
 RukaBot is an open-source Discord bot with music player coded in Java using JDA. Feel free to add a star ⭐ to the repository to promote the project.
 
 ## 🚧 Prerequisites
-- [JDK 25+](https://adoptium.net/?variant=openjdk17&jvmVariant=hotspot)
+- [JDK 25+](https://www.azul.com/downloads/?version=java-25-lts&package=jdk#zulu)
 - [Maven](https://maven.apache.org/download.cgi)
 
 ## 📝 Building bot
