@@ -52,6 +52,18 @@ public class Config {
         if (this.youtubeApiKey.equals("default")) {
             bot.getLogger().warn("YouTube API key is not defined! Searching will be unavailable.");
         }
+        if (this.youtubeOAuthToken.isEmpty()) {
+            bot.getLogger().warn("YouTube OAuth token is not defined!");
+        }
+        if (this.ytDlpPath.isEmpty()) {
+            bot.getLogger().warn("yt-dlp path is not defined! Playing YouTube videos from datacenter ASN may not work.");
+        }
+        if (this.ytDlpCookiesPath.isEmpty()) {
+            bot.getLogger().warn("yt-dlp cookies path is not defined! Playing YouTube videos from datacenter ASN may not work.");
+        }
+        if (this.ytDlpJsRuntimes.isEmpty()) {
+            bot.getLogger().warn("yt-dlp JS runtimes path is not defined! Playing YouTube videos from datacenter ASN may not work.");
+        }
     }
 
     private static String stripQuotes(String value) {
