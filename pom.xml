@@ -30,7 +30,7 @@
         <dependency>
             <groupId>net.dv8tion</groupId>
             <artifactId>JDA</artifactId>
-            <version>6.4.1</version>
+            <version>6.4.2</version>
         </dependency>
         <!-- https://mvnrepository.com/artifact/club.minnced/udpqueue-native-linux-x86-64 -->
         <dependency>
@@ -61,7 +61,7 @@
         <dependency>
             <groupId>org.xerial</groupId>
             <artifactId>sqlite-jdbc</artifactId>
-            <version>3.53.1.0</version>
+            <version>3.53.2.0</version>
         </dependency>
         <!-- https://mvnrepository.com/artifact/se.michaelthelin.spotify/spotify-web-api-java -->
         <dependency>
@@ -91,23 +91,23 @@
         <dependency>
             <groupId>club.minnced</groupId>
             <artifactId>jdave-api</artifactId>
-            <version>0.1.2</version>
+            <version>0.1.8</version>
         </dependency>
         <!-- Natives: include all common platforms -->
         <dependency>
             <groupId>club.minnced</groupId>
             <artifactId>jdave-native-linux-x86-64</artifactId>
-            <version>0.1.2</version>
+            <version>0.1.8</version>
         </dependency>
         <dependency>
             <groupId>club.minnced</groupId>
             <artifactId>jdave-native-linux-aarch64</artifactId>
-            <version>0.1.2</version>
+            <version>0.1.8</version>
         </dependency>
         <dependency>
             <groupId>club.minnced</groupId>
             <artifactId>jdave-native-win-x86-64</artifactId>
-            <version>0.1.2</version>
+            <version>0.1.8</version>
         </dependency>
         <!-- https://projectlombok.org/setup/maven -->
         <dependency>
