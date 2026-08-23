@@ -1,5 +1,6 @@
 package pl.cmclient.bot.audio;
 
+import lombok.Getter;
 import pl.cmclient.bot.BotApplication;
 import se.michaelthelin.spotify.SpotifyApi;
 import se.michaelthelin.spotify.model_objects.credentials.ClientCredentials;
@@ -16,6 +17,7 @@ import java.util.stream.Collectors;
 public class LinkConverter {
 
     private final BotApplication bot;
+    private @Getter boolean available;
     private SpotifyApi spotifyApi;
 
     public LinkConverter(BotApplication bot) {
@@ -28,14 +30,24 @@ public class LinkConverter {
     }
 
     private void initSpotify() throws Exception {
+        String spotifyClientID = bot.getConfig().getSpotifyClientID();
+        String spotifyClientSecret = bot.getConfig().getSpotifyClientSecret();
+
+        if (spotifyClientID.isEmpty() || spotifyClientSecret.isEmpty()) {
+            available = false;
+            bot.getLogger().warn("Spotify API token is not defined!");
+            return;
+        }
+
         this.spotifyApi = new SpotifyApi.Builder()
-                .setClientId(bot.getConfig().getSpotifyClientID())
-                .setClientSecret(bot.getConfig().getSpotifyClientSecret())
+                .setClientId(spotifyClientID)
+                .setClientSecret(spotifyClientSecret)
                 .build();
 
         ClientCredentialsRequest.Builder request = new ClientCredentialsRequest.Builder(spotifyApi.getClientId(), spotifyApi.getClientSecret());
         ClientCredentials creds = request.grant_type("client_credentials").build().execute();
         spotifyApi.setAccessToken(creds.getAccessToken());
+        available = spotifyApi != null;
     }
 
     public List<String> convert(String link) throws Exception {

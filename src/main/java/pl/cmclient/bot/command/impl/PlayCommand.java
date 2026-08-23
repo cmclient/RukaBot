@@ -60,7 +60,7 @@ public class PlayCommand extends Command {
     }
 
     private void play(SlashCommandInteractionEvent event, String query) {
-        if (query.startsWith("https://open.spotify.com/track/")) {
+        if (getBot().getLinkConverter().isAvailable() && query.startsWith("https://open.spotify.com/track/")) {
             try {
                 event.replyEmbeds(new CustomEmbed().create(CustomEmbed.Type.SUCCESS)
                         .setTitle("Searching **" + query + "**...").build()).queue();
