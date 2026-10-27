@@ -60,13 +60,13 @@ public class PlayCommand extends Command {
     }
 
     private void play(SlashCommandInteractionEvent event, String query) {
-        if (getBot().getLinkConverter().isAvailable() && query.startsWith("https://open.spotify.com/track/")) {
+        if (getBot().getLinkConverter().isAvailable() && query.contains("open.spotify.com/")) {
             try {
                 event.replyEmbeds(new CustomEmbed().create(CustomEmbed.Type.SUCCESS)
                         .setTitle("Searching **" + query + "**...").build()).queue();
 
                 List<String> tracks = getBot().getLinkConverter().convert(query);
-                if (tracks.isEmpty()) {
+                if (tracks == null || tracks.isEmpty()) {
                     event.getHook().sendMessageEmbeds(new CustomEmbed().create(CustomEmbed.Type.ERROR)
                             .setTitle("Cannot find any song by this URL.").build()).queue();
                     return;

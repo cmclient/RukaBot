@@ -3,12 +3,15 @@ package pl.cmclient.bot.audio;
 import lombok.Getter;
 import pl.cmclient.bot.BotApplication;
 import se.michaelthelin.spotify.SpotifyApi;
+import se.michaelthelin.spotify.enums.ModelObjectType;
+import se.michaelthelin.spotify.model_objects.IPlaylistItem;
 import se.michaelthelin.spotify.model_objects.credentials.ClientCredentials;
 import se.michaelthelin.spotify.model_objects.specification.*;
 import se.michaelthelin.spotify.requests.authorization.client_credentials.ClientCredentialsRequest;
 import se.michaelthelin.spotify.requests.data.playlists.GetPlaylistRequest;
 import se.michaelthelin.spotify.requests.data.tracks.GetTrackRequest;
 
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -51,18 +54,35 @@ public class LinkConverter {
     }
 
     public List<String> convert(String link) throws Exception {
-        String[] firstSplit = link.split("/");
-        String[] secondSplit;
-
-        String type;
-        if (firstSplit.length > 5) {
-            secondSplit = firstSplit[6].split("\\?");
-            type = firstSplit[5];
-        } else {
-            secondSplit = firstSplit[4].split("\\?");
-            type = firstSplit[3];
+        String path = URI.create(link).getPath();
+        if (path == null) {
+            return null;
         }
-        String id = secondSplit[0];
+
+        List<String> segments = Arrays.stream(path.split("/"))
+                .filter(s -> !s.isEmpty())
+                .collect(Collectors.toList());
+
+        int index = 0;
+        // Spotify sometimes prefixes links with a locale segment, e.g. "/intl-en/track/ID"
+        if (index < segments.size() && segments.get(index).startsWith("intl-")) {
+            index++;
+        }
+        // Embed links, e.g. "/embed/track/ID"
+        if (index < segments.size() && segments.get(index).equals("embed")) {
+            index++;
+        }
+        // Legacy playlist links, e.g. "/user/{userId}/playlist/ID"
+        if (index < segments.size() && segments.get(index).equals("user")) {
+            index += 2;
+        }
+
+        if (segments.size() < index + 2) {
+            return null;
+        }
+
+        String type = segments.get(index);
+        String id = segments.get(index + 1);
         List<String> listOfTracks = new ArrayList<>();
 
         if (type.contentEquals("track")) {
@@ -73,13 +93,15 @@ public class LinkConverter {
         if (type.contentEquals("playlist")) {
             GetPlaylistRequest playlistRequest = spotifyApi.getPlaylist(id).build();
             Playlist playlist = playlistRequest.execute();
-            Paging<PlaylistTrack> playlistPaging = playlist.getTracks();
+            Paging<PlaylistTrack> playlistPaging = playlist.getItems();
             PlaylistTrack[] playlistTracks = playlistPaging.getItems();
 
             for (PlaylistTrack i : playlistTracks) {
-                Track track = (Track) i.getTrack();
-                String trackID = track.getId();
-                listOfTracks.add(getArtistAndName(trackID));
+                IPlaylistItem item = i.getItem();
+                if (item == null || item.getType() != ModelObjectType.TRACK) {
+                    continue;
+                }
+                listOfTracks.add(getArtistAndName(item.getId()));
             }
 
             return listOfTracks;
