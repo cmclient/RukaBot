@@ -30,7 +30,7 @@
         <dependency>
             <groupId>net.dv8tion</groupId>
             <artifactId>JDA</artifactId>
-            <version>6.5.0</version>
+            <version>6.7.0</version>
         </dependency>
         <!-- https://mvnrepository.com/artifact/club.minnced/udpqueue-native-linux-x86-64 -->
         <dependency>
@@ -54,20 +54,20 @@
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-simple</artifactId>
-            <version>2.0.17</version>
+            <version>2.0.19</version>
             <scope>compile</scope>
         </dependency>
         <!-- https://mvnrepository.com/artifact/org.xerial/sqlite-jdbc -->
         <dependency>
             <groupId>org.xerial</groupId>
             <artifactId>sqlite-jdbc</artifactId>
-            <version>3.53.2.1</version>
+            <version>3.53.4.0</version>
         </dependency>
         <!-- https://mvnrepository.com/artifact/se.michaelthelin.spotify/spotify-web-api-java -->
         <dependency>
             <groupId>se.michaelthelin.spotify</groupId>
             <artifactId>spotify-web-api-java</artifactId>
-            <version>9.4.0</version>
+            <version>10.0.0</version>
         </dependency>
         <!-- https://github.com/lavalink-devs/lavaplayer -->
         <dependency>
@@ -85,7 +85,7 @@
         <dependency>
             <groupId>com.google.code.gson</groupId>
             <artifactId>gson</artifactId>
-            <version>2.14.0</version>
+            <version>2.15.0</version>
         </dependency>
         <!-- https://github.com/MinnDevelopment/jdave - DAVE Protocol (Discord E2EE audio, Java 25 FFM) -->
         <dependency>
@@ -113,7 +113,7 @@
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
-            <version>1.18.46</version>
+            <version>1.18.48</version>
             <scope>provided</scope>
         </dependency>
     </dependencies>
@@ -124,7 +124,7 @@
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>exec-maven-plugin</artifactId>
-                <version>3.6.3</version>
+                <version>3.6.4</version>
                 <configuration>
                     <mainClass>pl.cmclient.Main</mainClass>
                 </configuration>
@@ -133,7 +133,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.15.0</version>
+                <version>3.16.0</version>
                 <configuration>
                     <source>25</source>
                     <target>25</target>
@@ -141,7 +141,7 @@
                         <path>
                             <groupId>org.projectlombok</groupId>
                             <artifactId>lombok</artifactId>
-                            <version>1.18.46</version>
+                            <version>1.18.48</version>
                         </path>
                     </annotationProcessorPaths>
                 </configuration>

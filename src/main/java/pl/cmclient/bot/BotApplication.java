@@ -70,14 +70,13 @@ public class BotApplication {
         this.linkConverter = new LinkConverter(this);
         this.logger.info("Loading JDA...");
         this.logger.info("JDA version: {}", JDAInfo.VERSION);
-        this.jda = JDABuilder.create(this.config.getToken(), List.of(GatewayIntent.values()))
+        this.jda = JDABuilder.createDefault(this.config.getToken())
                 .setAudioModuleConfig(new AudioModuleConfig()
                         .withDaveSessionFactory(new JDaveSessionFactory())
                         .withAudioSendFactory(new NativeAudioSendFactory()))
                 .addEventListeners(new MessageListener(this), new SlashCommandListener(this), new GuildVoiceListener(this))
                 .setActivity(Activity.listening("/help"))
                 .build();
-
         this.logger.info("Loading commands...");
         (this.commandManager = new CommandManager()).load(this, this.jda);
         this.logger.info("Waiting for bot to be ready..");
