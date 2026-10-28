@@ -8,23 +8,19 @@ import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.SelfUser;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.build.Commands;
-import org.slf4j.LoggerFactory;
 import org.sqlite.SQLiteJDBCLoader;
 import pl.cmclient.bot.command.Command;
 import pl.cmclient.bot.command.CommandType;
 import pl.cmclient.bot.common.CustomEmbed;
+import pl.cmclient.bot.helper.BuildInfo;
 import pl.cmclient.bot.manager.MusicManager;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.time.Duration;
 import java.time.Instant;
-import java.util.Properties;
 
 public class BotInfoCommand extends Command {
 
     private static final String REPOSITORY = "https://github.com/cmclient/RukaBot";
-    private static final Properties VERSION = readBuildProperties();
 
     public BotInfoCommand() {
         super(Commands.slash("botinfo", "Everything about this bot"), CommandType.GENERAL, false);
@@ -53,7 +49,7 @@ public class BotInfoCommand extends Command {
                         .addField(":hourglass: Uptime", getUptime(), true)
                         .addField(":musical_note: Music engine", getMusicEngine(musicManager), true)
                         .addField(":floppy_disk: Memory", getMemoryUsage(), true)
-                        .addField(":gear: Version", getBotVersion(), true)
+                        .addField(":gear: Version", "`" + BuildInfo.getVersion() + "`", true)
                         .addField(":books: Built with", getLibraries(), true)
                         .addField(":computer: Running on", getRuntimeInfo(), true)
                         .addField(":link: Links", "[Invite me](" + event.getJDA().getInviteUrl(Permission.ADMINISTRATOR) + ")\n[Source code](" + REPOSITORY + ")", true)
@@ -90,30 +86,6 @@ public class BotInfoCommand extends Command {
         long used = (runtime.totalMemory() - runtime.freeMemory()) / 1048576L;
         long max = runtime.maxMemory() / 1048576L;
         return used + " MB / " + max + " MB";
-    }
-
-    /**
-     * Reads the version Maven filtered into rukabot.properties, which works both from the jar and
-     * from an IDE run. Falls back to the jar manifest, then to a placeholder.
-     */
-    private static String getBotVersion() {
-        String version = VERSION.getProperty("version");
-        if (version == null || version.isBlank() || version.startsWith("${")) {
-            version = BotInfoCommand.class.getPackage().getImplementationVersion();
-        }
-        return "`" + (version == null ? "dev build" : version) + "`";
-    }
-
-    private static Properties readBuildProperties() {
-        Properties properties = new Properties();
-        try (InputStream stream = BotInfoCommand.class.getResourceAsStream("/rukabot.properties")) {
-            if (stream != null) {
-                properties.load(stream);
-            }
-        } catch (IOException ex) {
-            LoggerFactory.getLogger(BotInfoCommand.class).warn("Failed to read build properties", ex);
-        }
-        return properties;
     }
 
     private static String getUptime() {

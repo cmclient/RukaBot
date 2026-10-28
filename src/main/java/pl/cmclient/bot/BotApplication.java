@@ -1,19 +1,21 @@
 package pl.cmclient.bot;
 
+import club.minnced.discord.jdave.interop.JDaveSessionFactory;
 import com.sedmelluq.discord.lavaplayer.jdaudp.NativeAudioSendFactory;
 import lombok.Getter;
-import club.minnced.discord.jdave.interop.JDaveSessionFactory;
-import net.dv8tion.jda.api.*;
+import net.dv8tion.jda.api.JDA;
+import net.dv8tion.jda.api.JDABuilder;
+import net.dv8tion.jda.api.JDAInfo;
+import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.audio.AudioModuleConfig;
 import net.dv8tion.jda.api.entities.Activity;
-import net.dv8tion.jda.api.requests.GatewayIntent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import pl.cmclient.bot.audio.LinkConverter;
 import pl.cmclient.bot.config.Config;
 import pl.cmclient.bot.database.Database;
+import pl.cmclient.bot.helper.BuildInfo;
 import pl.cmclient.bot.listener.GuildVoiceListener;
-import pl.cmclient.bot.listener.MessageListener;
 import pl.cmclient.bot.listener.SlashCommandListener;
 import pl.cmclient.bot.manager.CommandManager;
 import pl.cmclient.bot.manager.MusicManager;
@@ -21,7 +23,6 @@ import pl.cmclient.bot.manager.ServerDataManager;
 import pl.cmclient.bot.manager.YoutubeApiManager;
 
 import java.sql.SQLException;
-import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 @Getter
@@ -52,6 +53,7 @@ public class BotApplication {
 
     private void start() throws InterruptedException {
         this.logger.info(this.getAsciiArtLogo());
+        this.logger.info("RukaBot version: {}", BuildInfo.getVersion());
         this.logger.info("Loading configuration...");
         (this.config = new Config(this)).load();
         this.logger.info("Token: {}", this.censor(this.config.getToken()));
