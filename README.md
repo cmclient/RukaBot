@@ -1,3 +1,7 @@
+<p align="center">
+  <img alt="RukaBot avatar" width="140" src="https://cdn.discordapp.com/avatars/900457114781241375/55cfd0fb9c0695a4f0786e3e3e938e4e.png?size=2048&quality=lossless">
+</p>
+
 <h1 align="center">RukaBot</h1>
 
 <p align="center">
@@ -22,7 +26,7 @@ mvn clean install
 
 ## ▶️ Running bot
 ```sh
-java -jar target/rukabot-2.0-SNAPSHOT-jar-with-dependencies.jar
+java -jar target/rukabot-2.0.1-SNAPSHOT-jar-with-dependencies.jar
 ```
 
 The first run creates `rukabot.cfg` next to the jar and then exits so you can fill it in. Add your bot

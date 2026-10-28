@@ -23,6 +23,7 @@ public class CommandManager {
 
             // GENERAL
             (new HelpCommand()),
+            (new BotInfoCommand()),
             (new AvatarCommand()),
             (new PingCommand()),
             (new UserInfoCommand()),

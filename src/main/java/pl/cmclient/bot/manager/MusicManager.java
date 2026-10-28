@@ -12,6 +12,7 @@ import com.sedmelluq.discord.lavaplayer.track.AudioPlaylist;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import dev.lavalink.youtube.YoutubeAudioSourceManager;
 import dev.lavalink.youtube.YoutubeSource;
+import lombok.Getter;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.InteractionHook;
@@ -31,6 +32,8 @@ public class MusicManager {
 
     private final AudioPlayerManager playerManager;
     private final Map<Long, AudioPlayer> audioPlayers;
+    private @Getter final String youtubeSourceName;
+    private @Getter final String ytDlpVersion;
 
     public MusicManager() {
         this(null);
@@ -42,8 +45,12 @@ public class MusicManager {
         if (ytDlpPath != null) {
             BotApplication.getInstance().getLogger().info("Using yt-dlp source manager ({})", ytDlpPath);
             this.playerManager.registerSourceManager(new YtDlpAudioSourceManager(ytDlpPath, config.getYtDlpCookiesPath(), config.getYtDlpJsRuntimes()));
+            this.youtubeSourceName = "yt-dlp";
+            this.ytDlpVersion = readYtDlpVersion(ytDlpPath);
         } else {
             this.playerManager.registerSourceManager(createYoutubeSource(config));
+            this.youtubeSourceName = "youtube-source";
+            this.ytDlpVersion = null;
         }
         this.playerManager.registerSourceManager(SoundCloudAudioSourceManager.createDefault());
         this.playerManager.registerSourceManager(new HttpAudioSourceManager(MediaContainerRegistry.DEFAULT_REGISTRY));
@@ -203,6 +210,37 @@ public class MusicManager {
 
     private static boolean isExecutable(java.io.File file) {
         return file.isFile() && file.canExecute();
+    }
+
+    /**
+     * Asks yt-dlp for its own version once at startup, so /botinfo can show how fresh the
+     * extractor is without spawning a process every time the command is used.
+     *
+     * @return the reported version, or null if yt-dlp did not answer.
+     */
+    private static String readYtDlpVersion(String ytDlpPath) {
+        try {
+            Process process = new ProcessBuilder(ytDlpPath, "--version").redirectErrorStream(true).start();
+            String output = new String(process.getInputStream().readAllBytes()).trim();
+            if (!process.waitFor(10, TimeUnit.SECONDS)) {
+                process.destroyForcibly();
+                return null;
+            }
+            return process.exitValue() == 0 && !output.isEmpty() ? output : null;
+        } catch (java.io.IOException ex) {
+            BotApplication.getInstance().getLogger().warn("Failed to read yt-dlp version", ex);
+            return null;
+        } catch (InterruptedException ex) {
+            Thread.currentThread().interrupt();
+            return null;
+        }
+    }
+
+    /**
+     * @return how many servers are listening to something right now.
+     */
+    public long getActivePlayerCount() {
+        return this.audioPlayers.values().stream().filter(player -> player.getPlayer().getPlayingTrack() != null).count();
     }
 
     public AudioPlayer get(Guild server) {
