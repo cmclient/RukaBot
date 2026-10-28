@@ -19,6 +19,8 @@ public class Config {
     private String spotifyClientID;
     private String spotifyClientSecret;
     private String youtubeOAuthToken;
+    private String youtubePoToken;
+    private String youtubeVisitorData;
     private String ytDlpPath;
     private String ytDlpCookiesPath;
     private String ytDlpJsRuntimes;
@@ -39,6 +41,8 @@ public class Config {
             this.spotifyClientID = properties.getProperty("spotifyClientID");
             this.spotifyClientSecret = properties.getProperty("spotifyClientSecret");
             this.youtubeOAuthToken = properties.getProperty("youtubeOAuthToken", "");
+            this.youtubePoToken = properties.getProperty("youtubePoToken", "");
+            this.youtubeVisitorData = properties.getProperty("youtubeVisitorData", "");
             this.ytDlpPath = stripQuotes(properties.getProperty("ytDlpPath", ""));
             this.ytDlpCookiesPath = stripQuotes(properties.getProperty("ytDlpCookiesPath", ""));
             this.ytDlpJsRuntimes = properties.getProperty("ytDlpJsRuntimes", "");
@@ -56,13 +60,14 @@ public class Config {
             bot.getLogger().warn("YouTube OAuth token is not defined!");
         }
         if (this.ytDlpPath.isEmpty()) {
-            bot.getLogger().warn("yt-dlp path is not defined! Playing YouTube videos from datacenter ASN may not work.");
-        }
-        if (this.ytDlpCookiesPath.isEmpty()) {
-            bot.getLogger().warn("yt-dlp cookies path is not defined! Playing YouTube videos from datacenter ASN may not work.");
-        }
-        if (this.ytDlpJsRuntimes.isEmpty()) {
-            bot.getLogger().warn("yt-dlp JS runtimes path is not defined! Playing YouTube videos from datacenter ASN may not work.");
+            bot.getLogger().info("yt-dlp path is not defined, looking for yt-dlp on PATH instead.");
+        } else {
+            if (this.ytDlpCookiesPath.isEmpty()) {
+                bot.getLogger().warn("yt-dlp cookies path is not defined! Playing YouTube videos from datacenter ASN may not work.");
+            }
+            if (this.ytDlpJsRuntimes.isEmpty()) {
+                bot.getLogger().warn("yt-dlp JS runtimes path is not defined! Playing YouTube videos from datacenter ASN may not work.");
+            }
         }
     }
 
@@ -81,6 +86,8 @@ public class Config {
         properties.setProperty("spotifyClientID", "default");
         properties.setProperty("spotifyClientSecret", "default");
         properties.setProperty("youtubeOAuthToken", "");
+        properties.setProperty("youtubePoToken", "");
+        properties.setProperty("youtubeVisitorData", "");
         properties.setProperty("ytDlpPath", "");
         properties.setProperty("ytDlpCookiesPath", "");
         properties.setProperty("ytDlpJsRuntimes", "");

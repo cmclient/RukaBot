@@ -74,7 +74,7 @@ public class BotApplication {
                 .setAudioModuleConfig(new AudioModuleConfig()
                         .withDaveSessionFactory(new JDaveSessionFactory())
                         .withAudioSendFactory(new NativeAudioSendFactory()))
-                .addEventListeners(new MessageListener(this), new SlashCommandListener(this), new GuildVoiceListener(this))
+                .addEventListeners(/*new MessageListener(this), */new SlashCommandListener(this), new GuildVoiceListener(this))
                 .setActivity(Activity.listening("/help"))
                 .build();
         this.logger.info("Loading commands...");

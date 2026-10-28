@@ -6,17 +6,17 @@ import com.sedmelluq.discord.lavaplayer.player.AudioLoadResultHandler;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.player.DefaultAudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.source.http.HttpAudioSourceManager;
-import pl.cmclient.bot.audio.YtDlpAudioSourceManager;
 import com.sedmelluq.discord.lavaplayer.source.soundcloud.SoundCloudAudioSourceManager;
 import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
 import com.sedmelluq.discord.lavaplayer.track.AudioPlaylist;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import dev.lavalink.youtube.YoutubeAudioSourceManager;
+import dev.lavalink.youtube.YoutubeSource;
 import net.dv8tion.jda.api.entities.Guild;
-import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.InteractionHook;
 import pl.cmclient.bot.BotApplication;
+import pl.cmclient.bot.audio.YtDlpAudioSourceManager;
 import pl.cmclient.bot.common.CustomEmbed;
 import pl.cmclient.bot.object.AudioPlayer;
 
@@ -38,19 +38,12 @@ public class MusicManager {
 
     public MusicManager(pl.cmclient.bot.config.Config config) {
         this.playerManager = new DefaultAudioPlayerManager();
-        if (config != null && isValidYtDlpPath(config.getYtDlpPath())) {
-            BotApplication.getInstance().getLogger().info("Using yt-dlp source manager ({})", config.getYtDlpPath());
-            this.playerManager.registerSourceManager(new YtDlpAudioSourceManager(config.getYtDlpPath(), config.getYtDlpCookiesPath(), config.getYtDlpJsRuntimes()));
+        String ytDlpPath = config == null ? null : resolveYtDlpPath(config.getYtDlpPath());
+        if (ytDlpPath != null) {
+            BotApplication.getInstance().getLogger().info("Using yt-dlp source manager ({})", ytDlpPath);
+            this.playerManager.registerSourceManager(new YtDlpAudioSourceManager(ytDlpPath, config.getYtDlpCookiesPath(), config.getYtDlpJsRuntimes()));
         } else {
-            BotApplication.getInstance().getLogger().info("Using default youtube-source manager");
-            YoutubeAudioSourceManager youtubeSource = new YoutubeAudioSourceManager();
-            if (config != null) {
-                String oauthToken = config.getYoutubeOAuthToken();
-                if (oauthToken != null && !oauthToken.isBlank()) {
-                    youtubeSource.useOauth2(oauthToken, false);
-                }
-            }
-            this.playerManager.registerSourceManager(youtubeSource);
+            this.playerManager.registerSourceManager(createYoutubeSource(config));
         }
         this.playerManager.registerSourceManager(SoundCloudAudioSourceManager.createDefault());
         this.playerManager.registerSourceManager(new HttpAudioSourceManager(MediaContainerRegistry.DEFAULT_REGISTRY));
@@ -152,16 +145,64 @@ public class MusicManager {
         return positionInMillis;
     }
 
-    private static boolean isValidYtDlpPath(String path) {
-        BotApplication.getInstance().getLogger().info("Checking if yt-dlp path is valid: {}", path);
-        if (path == null || path.isBlank()) {
-            BotApplication.getInstance().getLogger().info("yt-dlp path is null or blank");
-            return false;
+    /**
+     * Fallback for when yt-dlp is unavailable. As of youtube-source 1.18.2 none of the innertube
+     * clients can actually stream: TVHTML5_SIMPLY hits "Sign in to confirm you're not a bot",
+     * MWEB/ANDROID_* fail signature extraction or demand login, and WEB only gets SABR-only
+     * responses. A poToken may revive WEB/WEBEMBEDDED, hence the config hooks below.
+     */
+    private static YoutubeAudioSourceManager createYoutubeSource(pl.cmclient.bot.config.Config config) {
+        BotApplication.getInstance().getLogger().warn("yt-dlp unavailable, falling back to youtube-source; YouTube playback will likely fail.");
+        YoutubeAudioSourceManager youtubeSource = new YoutubeAudioSourceManager();
+        if (config == null) {
+            return youtubeSource;
         }
-        java.io.File file = new java.io.File(path);
-        BotApplication.getInstance().getLogger().info("Checking if file exists: {}", file.exists());
-        BotApplication.getInstance().getLogger().info("Checking if file is executable: {}", file.canExecute());
-        return file.exists() && file.canExecute();
+        String poToken = config.getYoutubePoToken();
+        String visitorData = config.getYoutubeVisitorData();
+        if (poToken != null && !poToken.isBlank() && visitorData != null && !visitorData.isBlank()) {
+            BotApplication.getInstance().getLogger().info("Applying YouTube poToken to WEB/WEBEMBEDDED clients");
+            YoutubeSource.setPoTokenAndVisitorData(poToken, visitorData);
+        }
+        String oauthToken = config.getYoutubeOAuthToken();
+        if (oauthToken != null && !oauthToken.isBlank()) {
+            youtubeSource.useOauth2(oauthToken, false);
+        }
+        return youtubeSource;
+    }
+
+    /**
+     * Resolves the yt-dlp executable, preferring the configured path and falling back to a PATH
+     * lookup so a normal yt-dlp install is picked up without any configuration.
+     *
+     * @return a usable executable path, or null if yt-dlp could not be found.
+     */
+    private static String resolveYtDlpPath(String configuredPath) {
+        if (configuredPath != null && !configuredPath.isBlank()) {
+            if (isExecutable(new java.io.File(configuredPath))) {
+                return configuredPath;
+            }
+            BotApplication.getInstance().getLogger().warn("Configured yt-dlp path is not an executable file: {}", configuredPath);
+        }
+        String path = System.getenv("PATH");
+        if (path == null) {
+            return null;
+        }
+        for (String directory : path.split(java.io.File.pathSeparator)) {
+            if (directory.isBlank()) {
+                continue;
+            }
+            for (String name : new String[] {"yt-dlp.exe", "yt-dlp.cmd", "yt-dlp"}) {
+                java.io.File candidate = new java.io.File(directory.trim(), name);
+                if (isExecutable(candidate)) {
+                    return candidate.getAbsolutePath();
+                }
+            }
+        }
+        return null;
+    }
+
+    private static boolean isExecutable(java.io.File file) {
+        return file.isFile() && file.canExecute();
     }
 
     public AudioPlayer get(Guild server) {
